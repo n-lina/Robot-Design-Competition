@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name H_Bridge)(type KiCad)(uri ${KIPRJMOD}/H_Bridge.pretty)(options "")(descr ""))
+)

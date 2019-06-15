@@ -1,0 +1,273 @@
+EESchema-LIBRARY Version 2.4
+#encoding utf-8
+#
+# Device_C
+#
+DEF Device_C C 0 10 N Y 1 F N
+F0 "C" 25 100 50 H V L CNN
+F1 "Device_C" 25 -100 50 H V L CNN
+F2 "" 38 -150 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ C_*
+$ENDFPLIST
+DRAW
+P 2 0 1 20 -80 -30 80 -30 N
+P 2 0 1 20 -80 30 80 30 N
+X ~ 1 0 150 110 D 50 50 1 1 P
+X ~ 2 0 -150 110 U 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+# Device_CP1
+#
+DEF Device_CP1 C 0 10 N N 1 F N
+F0 "C" 25 100 50 H V L CNN
+F1 "Device_CP1" 25 -100 50 H V L CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ CP_*
+$ENDFPLIST
+DRAW
+A 0 -150 128 1287 513 0 1 20 N -80 -50 80 -50
+P 2 0 1 20 -80 30 80 30 N
+P 2 0 1 0 -70 90 -30 90 N
+P 2 0 1 0 -50 70 -50 110 N
+X ~ 1 0 150 110 D 50 50 1 1 P
+X ~ 2 0 -150 130 U 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+# Device_R
+#
+DEF Device_R R 0 0 N Y 1 F N
+F0 "R" 80 0 50 V V C CNN
+F1 "Device_R" 0 0 50 V V C CNN
+F2 "" -70 0 50 V I C CNN
+F3 "" 0 0 50 H I C CNN
+$FPLIST
+ R_*
+$ENDFPLIST
+DRAW
+S -40 -100 40 100 0 1 10 N
+X ~ 1 0 150 50 D 50 50 1 1 P
+X ~ 2 0 -150 50 U 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+# Motor_Motor_DC
+#
+DEF Motor_Motor_DC M 0 0 Y Y 1 F N
+F0 "M" 100 100 50 H V L CNN
+F1 "Motor_Motor_DC" 100 -200 50 H V L TNN
+F2 "" 0 -90 50 H I C CNN
+F3 "" 0 -90 50 H I C CNN
+$FPLIST
+ PinHeader*P2.54mm*
+ TerminalBlock*
+$ENDFPLIST
+DRAW
+C 0 -60 128 0 1 10 N
+P 5 0 0 0 -50 -130 -50 20 0 -80 50 20 50 -130 N
+P 2 0 1 0 0 -300 0 -280 N
+P 2 0 1 0 0 -188 0 -204 N
+P 2 0 1 0 0 68 0 82 N
+P 2 0 1 0 0 80 0 100 N
+X + 1 0 200 100 D 50 50 1 1 P
+X - 2 0 -300 100 U 50 50 1 1 P
+ENDDRAW
+ENDDEF
+#
+# dk_Battery-Holders-Clips-Contacts_BS-7
+#
+DEF dk_Battery-Holders-Clips-Contacts_BS-7 BAT 0 40 N Y 1 F N
+F0 "BAT" -50 150 60 H V R CNN
+F1 "dk_Battery-Holders-Clips-Contacts_BS-7" -50 -150 60 H V R CNN
+F2 "digikey-footprints:Battery_Holder_Coin_2032_BS-7" 200 200 60 H I L CNN
+F3 "http://www.memoryprotectiondevices.com/datasheets/BS-7-datasheet.pdf" 200 300 60 V I L CNN
+F4 "BS-7-ND" 200 400 60 H I L CNN "Digi-Key_PN"
+F5 "BS-7" 200 500 60 H I L CNN "MPN"
+F6 "Battery Products" 200 600 60 H I L CNN "Category"
+F7 "Battery Holders, Clips, Contacts" 200 700 60 H I L CNN "Family"
+F8 "http://www.memoryprotectiondevices.com/datasheets/BS-7-datasheet.pdf" 200 800 60 H I L CNN "DK_Datasheet_Link"
+F9 "/product-detail/en/mpd-memory-protection-devices/BS-7/BS-7-ND/389447" 200 900 60 H I L CNN "DK_Detail_Page"
+F10 "BATTERY HOLDER COIN 20MM PC PIN" 200 1000 60 H I L CNN "Description"
+F11 "MPD (Memory Protection Devices)" 200 1100 60 H I L CNN "Manufacturer"
+F12 "Active" 200 1200 60 H I L CNN "Status"
+DRAW
+P 2 1 1 0 0 -100 0 -75 N
+P 2 1 1 0 0 75 0 100 N
+P 2 1 1 0 50 -75 -50 -75 N
+P 2 1 1 0 50 25 -50 25 N
+P 2 1 1 0 50 90 50 130 N
+P 2 1 1 0 70 110 30 110 N
+P 2 1 1 0 100 -25 -100 -25 N
+P 2 1 1 0 100 75 -100 75 N
+X ~ Neg 0 -200 100 U 50 50 1 1 w
+X ~ Pos 0 200 100 D 50 50 1 1 w
+ENDDRAW
+ENDDEF
+#
+# dk_Transistors-FETs-MOSFETs-Single_2N7000
+#
+DEF dk_Transistors-FETs-MOSFETs-Single_2N7000 Q 0 0 Y Y 1 F N
+F0 "Q" -106 143 60 H V R CNN
+F1 "dk_Transistors-FETs-MOSFETs-Single_2N7000" 136 0 60 V V C CNN
+F2 "digikey-footprints:TO-92-3" 200 200 60 H I L CNN
+F3 "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF" 200 300 60 H I L CNN
+F4 "2N7000FS-ND" 200 400 60 H I L CNN "Digi-Key_PN"
+F5 "2N7000" 200 500 60 H I L CNN "MPN"
+F6 "Discrete Semiconductor Products" 200 600 60 H I L CNN "Category"
+F7 "Transistors - FETs, MOSFETs - Single" 200 700 60 H I L CNN "Family"
+F8 "https://www.onsemi.com/pub/Collateral/NDS7002A-D.PDF" 200 800 60 H I L CNN "DK_Datasheet_Link"
+F9 "/product-detail/en/on-semiconductor/2N7000/2N7000FS-ND/244278" 200 900 60 H I L CNN "DK_Detail_Page"
+F10 "MOSFET N-CH 60V 200MA TO-92" 200 1000 60 H I L CNN "Description"
+F11 "ON Semiconductor" 200 1100 60 H I L CNN "Manufacturer"
+F12 "Active" 200 1200 60 H I L CNN "Status"
+DRAW
+C -50 0 130 0 1 0 f
+C 0 -75 5 0 1 0 N
+C 0 -55 5 0 1 0 N
+C 0 75 5 0 1 0 N
+P 2 0 1 0 0 -55 -100 -55 N
+P 3 0 1 0 -200 -100 -120 -100 -120 55 N
+P 3 0 1 0 0 -100 0 0 -100 0 N
+P 3 0 1 0 0 100 0 55 -100 55 N
+P 5 0 1 0 -5 -75 40 -75 40 55 40 75 -5 75 N
+P 2 1 1 0 -100 -55 -100 -75 N
+P 2 1 1 0 -100 -55 -100 -35 N
+P 2 1 1 0 -100 0 -100 -20 N
+P 2 1 1 0 -100 0 -100 20 N
+P 2 1 1 0 -100 75 -100 35 N
+P 2 1 1 0 60 20 20 20 N
+P 4 1 1 0 -100 0 -70 20 -70 -20 -100 0 F
+P 4 1 1 0 40 20 20 -10 60 -10 40 20 F
+X S 1 0 -200 100 U 50 50 1 1 B
+X G 2 -300 -100 100 R 50 50 1 1 B
+X D 3 0 200 100 D 50 50 1 1 B
+ENDDRAW
+ENDDEF
+#
+# dk_Transistors-FETs-MOSFETs-Single_IRLB3034PBF
+#
+DEF dk_Transistors-FETs-MOSFETs-Single_IRLB3034PBF Q 0 0 Y Y 1 F N
+F0 "Q" -106 143 60 H V R CNN
+F1 "dk_Transistors-FETs-MOSFETs-Single_IRLB3034PBF" 136 0 60 V V C CNN
+F2 "digikey-footprints:TO-220-3" 200 200 60 H I L CNN
+F3 "https://www.infineon.com/dgdl/irlb3034pbf.pdf?fileId=5546d462533600a40153566027b22585" 200 300 60 H I L CNN
+F4 "IRLB3034PBF-ND" 200 400 60 H I L CNN "Digi-Key_PN"
+F5 "IRLB3034PBF" 200 500 60 H I L CNN "MPN"
+F6 "Discrete Semiconductor Products" 200 600 60 H I L CNN "Category"
+F7 "Transistors - FETs, MOSFETs - Single" 200 700 60 H I L CNN "Family"
+F8 "https://www.infineon.com/dgdl/irlb3034pbf.pdf?fileId=5546d462533600a40153566027b22585" 200 800 60 H I L CNN "DK_Datasheet_Link"
+F9 "/product-detail/en/infineon-technologies/IRLB3034PBF/IRLB3034PBF-ND/2096638" 200 900 60 H I L CNN "DK_Detail_Page"
+F10 "MOSFET N-CH 40V 195A TO220AB" 200 1000 60 H I L CNN "Description"
+F11 "Infineon Technologies" 200 1100 60 H I L CNN "Manufacturer"
+F12 "Active" 200 1200 60 H I L CNN "Status"
+DRAW
+C -50 0 130 0 1 0 f
+C 0 -75 5 0 1 0 N
+C 0 -55 5 0 1 0 N
+C 0 75 5 0 1 0 N
+P 2 0 1 0 0 -55 -100 -55 N
+P 2 0 1 0 20 20 14 14 N
+P 2 0 1 0 60 20 66 26 N
+P 3 0 1 0 -200 -100 -120 -100 -120 55 N
+P 3 0 1 0 0 -100 0 0 -100 0 N
+P 3 0 1 0 0 100 0 55 -100 55 N
+P 5 0 1 0 -5 -75 40 -75 40 55 40 75 -5 75 N
+P 2 1 1 0 -100 -55 -100 -75 N
+P 2 1 1 0 -100 -55 -100 -35 N
+P 2 1 1 0 -100 0 -100 -20 N
+P 2 1 1 0 -100 0 -100 20 N
+P 2 1 1 0 -100 75 -100 35 N
+P 2 1 1 0 60 20 20 20 N
+P 4 1 1 0 -100 0 -70 20 -70 -20 -100 0 F
+P 4 1 1 0 40 20 20 -10 60 -10 40 20 F
+X G 1 -300 -100 100 R 50 50 1 1 B
+X D 2 0 200 100 D 50 50 1 1 B
+X S 3 0 -200 100 U 50 50 1 1 B
+ENDDRAW
+ENDDEF
+#
+# h_bridge_LT1161
+#
+DEF h_bridge_LT1161 U 0 40 Y Y 1 F N
+F0 "U" -350 250 50 H V C CNN
+F1 "h_bridge_LT1161" 200 -1400 50 H V C CNN
+F2 "" -250 100 50 H I C CNN
+F3 "" -250 100 50 H I C CNN
+DRAW
+S -400 200 350 -1350 0 1 0 N
+X GND 1 -500 100 100 R 50 50 1 1 I
+X GND 10 -500 -1250 100 R 50 50 1 1 I
+X V+ 11 450 -1250 100 L 50 50 1 1 I
+X Gate4 12 450 -1100 100 L 50 50 1 1 I
+X Sense4 13 450 -950 100 L 50 50 1 1 I
+X Gate3 14 450 -800 100 L 50 50 1 1 I
+X Sense3 15 450 -650 100 L 50 50 1 1 I
+X Gate2 16 450 -500 100 L 50 50 1 1 I
+X Sense2 17 450 -350 100 L 50 50 1 1 I
+X Gate1 18 450 -200 100 L 50 50 1 1 I
+X Sense1 19 450 -50 100 L 50 50 1 1 I
+X Timer1 2 -500 -50 100 R 50 50 1 1 I
+X V+ 20 450 100 100 L 50 50 1 1 I
+X Input1 3 -500 -200 100 R 50 50 1 1 I
+X Timer2 4 -500 -350 100 R 50 50 1 1 I
+X Input2 5 -500 -500 100 R 50 50 1 1 I
+X Timer3 6 -500 -650 100 R 50 50 1 1 I
+X Input3 7 -500 -800 100 R 50 50 1 1 I
+X Timer4 8 -500 -950 100 R 50 50 1 1 I
+X Input4 9 -500 -1100 100 R 50 50 1 1 I
+ENDDRAW
+ENDDEF
+#
+# h_bridge_MCT6
+#
+DEF h_bridge_MCT6 U 0 40 Y Y 1 F N
+F0 "U" -300 400 50 H V C CNN
+F1 "h_bridge_MCT6" 300 -400 50 H V C CNN
+F2 "" -100 -50 50 H I C CNN
+F3 "" -100 -50 50 H I C CNN
+DRAW
+S -350 350 400 -350 0 1 0 N
+X Anode 1 -450 250 100 R 50 50 1 1 I
+X Cathode 2 -450 100 100 R 50 50 1 1 O
+X Cathode 3 -450 -100 100 R 50 50 1 1 I
+X Anode 4 -450 -250 100 R 50 50 1 1 O
+X Emitter 5 500 -100 100 L 50 50 1 1 O
+X Collector 6 500 -250 100 L 50 50 1 1 I
+X Collector 7 500 100 100 L 50 50 1 1 I
+X Emitter 8 500 250 100 L 50 50 1 1 O
+ENDDRAW
+ENDDEF
+#
+# power_GND
+#
+DEF power_GND #PWR 0 0 Y Y 1 F P
+F0 "#PWR" 0 -250 50 H I C CNN
+F1 "power_GND" 0 -150 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+P 6 0 1 0 0 0 0 -50 50 -50 0 -100 -50 -50 0 -50 N
+X GND 1 0 0 0 D 50 50 1 1 W N
+ENDDRAW
+ENDDEF
+#
+# power_VCC
+#
+DEF power_VCC #PWR 0 0 Y Y 1 F P
+F0 "#PWR" 0 -150 50 H I C CNN
+F1 "power_VCC" 0 150 50 H V C CNN
+F2 "" 0 0 50 H I C CNN
+F3 "" 0 0 50 H I C CNN
+DRAW
+C 0 75 25 0 1 0 N
+P 2 0 1 0 0 0 0 50 N
+X VCC 1 0 0 0 U 50 50 1 1 W N
+ENDDRAW
+ENDDEF
+#
+#End Library
