@@ -6,6 +6,7 @@
   // PWN values 
   // sensor thresholds 
   // max and min vals 
+  // global variables 
 //#include <FollowTape.h>
   // turn in place
   // go left 
@@ -15,6 +16,7 @@
   // poll main PTs
   // split or tab (bool?)
   // stop?
+  // go home
 //#include <CollectStone.h>
   // raise/lower claw 
   // turn claw x degrees

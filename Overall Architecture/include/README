@@ -37,3 +37,18 @@ Read more about using header files in official GCC documentation:
 * Computed Includes
 
 https://gcc.gnu.org/onlinedocs/cpp/Header-Files.html
+
+/* This code uses Arduino PID library by Brett Beaurgaurd to do the PID calculations.
+*/
+
+// Motors may not be symetrical, introduce offset to make them even 
+// Drive same output both motors, determine offset btwn motors 
+// Determine if offset is variable or constant 
+// Or motors are symemetrical but mass imbalance might require diff inputs into the motors 
+
+// Have something that moniters battery voltage and also include that in motor input calculation 
+// read the full voltage into a voltage divider 
+// P (ID) terms proportional to battery voltage --> if it sags, then increase constants to maintain controller 
+// Test effect of losing voltage by using benchtop power source and seeing motor behaviouir 
+// in cases of diff voltage, turning current all the way up 
+// voltage sagging could effect timing assumptions, ex. software timer control 
