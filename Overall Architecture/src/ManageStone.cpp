@@ -2,15 +2,10 @@
 #include "ManageStone.h"
 #include "Constants.h"
 
-ManageStone::ManageStone(){
-  int stoneNumber = 0; 
-  bool lastEncoderState; 
-  bool encoderState;
-  int clawHeight =0;
-  Servo armServo;
-  Servo clawServo;
-  PinName motor; 
-}
+ManageStone::ManageStone():
+  stoneNumber(0), lastEncoderState(0), encoderState(0), clawHeight(0), armServo(), 
+  clawServo(), motor(0)
+  {}
 
 void ManageStone::collectStone(){
   turnClaw();
@@ -100,7 +95,7 @@ void ManageStone::raiseClaw(){
       clawHeight++;
       lastEncoderState = encoderState;
     }
-    if(analogRead(ARM_SONAR)>=PILLAR_DISTANCE+3){
+    if(analogRead(ARM_SONAR)>=PILLAR_DISTANCE+3){ //check that sonar doesnt become negative
       pwm_start(CLAW_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
       return;
     }
@@ -120,7 +115,7 @@ void ManageStone::lowerClaw(){
       clawHeight--;
       lastEncoderState = encoderState;
     }
-    if(clawHeight == 0){
+    if(clawHeight <= 0){
       pwm_start(CLAW_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
       return;
     }
