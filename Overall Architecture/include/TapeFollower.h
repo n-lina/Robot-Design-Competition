@@ -6,6 +6,8 @@
 #ifndef TapeFollower_h
 #define TapeFollower_h
 
+#include <Servo.h>
+
 class TapeFollower
 {
   public: 
@@ -14,6 +16,8 @@ class TapeFollower
     void splitDecide();
     void followTape(); //polls 2 main PTs
     void goHome(); //after split #x, drop in gauntlet , polls corner PT 
+    Servo L_GauntletServo;
+    Servo R_GauntletServo;
 
   private:
     int splitNumber;

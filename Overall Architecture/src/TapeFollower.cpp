@@ -5,7 +5,7 @@
 TapeFollower::TapeFollower():
   splitNumber(0), derivative(0), loopCounter(0), timeStep(0), position(0), lastPosition(0), 
   PID(0), number(0), leftSensor(0), rightSensor(0), leftSplit(0), rightSplit(0), 
-  leftTab(0), rightTab (0)
+  leftTab(0), rightTab (0), L_GauntletServo(), R_GauntletServo()
   {}
 
 

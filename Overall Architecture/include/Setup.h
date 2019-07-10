@@ -18,10 +18,8 @@ class TuningMenu{
 }
 
 class Setup{
-    public:
-      Setup();
-      static void setup();
-      static void methanosOrThanos(); 
+    Setup();
+    static void setup();
 }
 
 #endif

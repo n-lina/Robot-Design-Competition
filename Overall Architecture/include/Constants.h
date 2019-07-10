@@ -4,6 +4,7 @@
 #define LEFT true
 #define RIGHT false
 int state = 0;
+bool TEAM = true; //true = THANOS, false = METHANOS; 
 
 //checking if the robot has been calibrated at least once 
 #define YES_CALIBRATED 189763
@@ -21,8 +22,8 @@ int state = 0;
 #define CLAW_MOTOR_DOWN 0
 #define ARM_HOME_SWITCH 0
 #define ARM_SERVO 0
-#define GAUNTLET_SERVO_A 0
-#define GAUNTLET_SERVO_B 0
+#define L_GAUNTLET_SERVO 0
+#define R_GAUNTLET_SERVO 0
 #define CLAW_SERVO 0
 #define TUNING_KNOB_A 0
 #define TUNING_KNOB_B 0
@@ -43,7 +44,7 @@ int state = 0;
 #define T_OR_M 0 //switch, HIGH = METHANOS
 
 PinName outputPins [12] ={ARM_SERVO, ARM_MOTOR_LEFT, ARM_MOTOR_RIGHT, CLAW_SERVO, CLAW_MOTOR_UP, CLAW_MOTOR_DOWN, 
-GAUNTLET_SERVO_B, LEFT_FORWARD_WHEEL_MOTOR, RIGHT_FORWARD_WHEEL_MOTOR, GAUNTLET_SERVO_A, LEFT_BACKWARD_WHEEL_MOTOR, 
+L_GAUNTLET_SERVO, LEFT_FORWARD_WHEEL_MOTOR, RIGHT_FORWARD_WHEEL_MOTOR, R_GAUNTLET_SERVO, LEFT_BACKWARD_WHEEL_MOTOR, 
 RIGHT_BACKWARD_WHEEL_MOTOR};
 
 PinName inputPins [16] = {ARM_SONAR, CLAW_ENCODER, ARM_HOME_SWITCH, TUNING_KNOB_A, TUNING_KNOB_B, TUNING_BUTTON,
@@ -55,26 +56,14 @@ L_TAPE_FOLLOW, R_TAPE_FOLLOW, L_SPLIT, R_SPLIT, L_TAB, R_TAB, L_GAUNTLET, R_GAUN
 bool direction = LEFT; 
 
 // TapeFollower library
-volatile int* p_KP_WHEEL = 0x00000000;
-volatile int* p_KD_WHEEL = 0x00000000;
-volatile int* p_THRESHOLD = 0x00000000;
-volatile int* p_SPLIT_THRESHOLD = 0x00000000;
-volatile int* p_GAUNTLET_TAPE_THRESHOLD = 0x00000000;
-volatile int* p_EDGE_THRESHOLD = 0x00000000;
-volatile int* p_COLLISION_THRESHOLD = 0x00000000;
-volatile int* p_CALIBRATED = 0x00000000;
-
-/*
-int KP_WHEEL = 30;
-int KD_WHEEL = 9; // PID derivative constant 
-int THRESHOLD = 200; // Threshold for being on or off the line
-int SPLIT_THRESHOLD = 200; // "" for splits 
-int GAUNTLET_TAPE_THRESHOLD = 200; // "" for gauntlet tapes 
-int EDGE_THRESHOLD_in = 0;
-int COLLISION_THRESHOLD_in = 0;
-*/
-
-//tune direction and these variables 
+volatile int* p_KP_WHEEL = (int*) 0x0801FFF3;
+volatile int* p_KD_WHEEL = (int*) 0x0801FFF7;
+volatile int* p_THRESHOLD = (int*) 0x0801FFFB;
+volatile int* p_SPLIT_THRESHOLD = (int*) 0x0801FFEF;
+volatile int* p_GAUNTLET_TAPE_THRESHOLD = (int*) 0x0801FFEB;
+volatile int* p_EDGE_THRESHOLD = (int*) 0x0801FFE7;
+volatile int* p_COLLISION_THRESHOLD = (int*) 0x0801FFE3;
+volatile int* p_CALIBRATED = (int*) 0x0801FFDF;
 
 #endif
 

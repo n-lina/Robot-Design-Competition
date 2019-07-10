@@ -11,15 +11,15 @@ class ManageStone
     ManageStone();
     void collectStone(); //left = 1, right = 0
     void dropInStorage(); 
+    Servo clawServo; 
+    Servo armServo;
 
   private:
     int stoneNumber; 
-    Servo clawServo; 
-    Servo armServo;
-    PinName motor;
     bool lastEncoderState;
     bool encoderState;
     int clawHeight; 
+    PinName motor;
     void moveArmToPillar();
     void moveArmToCentre();
     void turnClaw();

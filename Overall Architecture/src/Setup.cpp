@@ -1,6 +1,8 @@
 #include "Arduino.h"
 #include "Constants.h"
 #include "Setup.h"
+#include "ManageStone.h"
+#include "TapeFollower.h"
 
 TuningMenu::TuningMenu():
     pointers {p_KP_WHEEL,p_KD_WHEEL,p_THRESHOLD,p_SPLIT_THRESHOLD,p_GAUNTLET_TAPE_THRESHOLD,
@@ -66,22 +68,36 @@ Setup::Setup(){}
 
 static void Setup::setup(){
   //REMEMBER TO CHANGE 10 AND 16 IF MORE PINS ADDED 
+  
+  // Methanos or Thanos
+  switch (digitalRead(T_OR_M)){
+    case HIGH: 
+      TEAM = true;
+    case LOW:
+      TEAM = false;
+  }
+
+  // Instantiating Classes
+  ManageStone stoneRobot; 
+  TapeFollower tapeRobot; 
+  TuningMenu tuneRobot; 
+
+  Servo servos [4] = {stoneRobot.armServo, stoneRobot.clawServo, tapeRobot.L_GauntletServo, 
+  tapeRobot.R_GauntletServo};
+  
+  // Setting up pins
   for (volatile int i=0; i<12; i++){
     pinMode(outputPins[i], OUTPUT);
     pinMode(inputPins[i], INPUT_PULLUP);
-    if((i%3)!=0){
-      pwm_start(outputPins[i], CLOCK_FQ, MAX_SPEED, 0, 1);
+    if((i%3)==0){
+      servos[i/3].attach(outputPins[i]);
+    }
+    else{
+      pwm_start(outputPins[i], CLOCK_FQ, MAX_SPEED, 0, 1);      
     }
   }
   for (volatile int j=12; j<16; j++){
       pinMode(inputPins[j], INPUT_PULLUP);
-  }
-}
-
-static void Setup::methanosOrThanos(){
-  if(digitalRead(T_OR_M)==HIGH){
-    #define METHANOS 1
-    direction = RIGHT;
   }
 }
 
