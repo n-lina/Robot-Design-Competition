@@ -15,6 +15,7 @@ class TapeFollower
     void turnInPlace();
     void splitDecide();
     void followTape(); //polls 2 main PTs
+    void goDistance(int distance); // follows tape without checking for splits or tabs 
     void goHome(); //after split #x, drop in gauntlet , polls corner PT 
     Servo L_GauntletServo;
     Servo R_GauntletServo;
@@ -34,6 +35,12 @@ class TapeFollower
     bool rightSplit;
     bool leftTab;
     bool rightTab;
+    int L_lastEncoder;
+    int L_encoder;
+    int L_distance;
+    int R_lastEncoder; 
+    int R_encoder; 
+    int R_distance;
     int getPosition(); //enum constant in order to know how to go home 
     void turnLeft();
     void turnRight();

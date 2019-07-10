@@ -15,11 +15,11 @@ class TuningMenu{
       bool lastEncoderValue;
       bool encoderValue;
       Adafruit_SSD1306 display;
-}
+};
 
 class Setup{
     Setup();
     static void setup();
-}
+};
 
 #endif

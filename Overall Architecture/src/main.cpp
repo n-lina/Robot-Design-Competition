@@ -51,9 +51,9 @@ void loop() {
     case 3: // Collect Stone {3}
     case 4: // Deposit Stones 
     case 5: // Back away from edge {1 - put in interrupt handler}
-    case 6: // Go to middle of bottom path
-    case 7: // Go to middle of top path 
-    case 8: // Go home and deposit stones at certain time (1:30) {2} turn off split/tab interrupts 
+    case 6: // Go a certain distance without checking for tabs/splits
+    // distance depends on split number 
+    case 7: // Go home and deposit stones at certain time (1:30) {2} turn off split/tab interrupts 
   }
 }
 

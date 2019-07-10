@@ -67,8 +67,7 @@ void TuningMenu::adjustVariables(){
 Setup::Setup(){}
 
 static void Setup::setup(){
-  //REMEMBER TO CHANGE 10 AND 16 IF MORE PINS ADDED 
-  
+    
   // Methanos or Thanos
   switch (digitalRead(T_OR_M)){
     case HIGH: 
@@ -96,7 +95,7 @@ static void Setup::setup(){
       pwm_start(outputPins[i], CLOCK_FQ, MAX_SPEED, 0, 1);      
     }
   }
-  for (volatile int j=12; j<16; j++){
+  for (volatile int j=12; j<18; j++){
       pinMode(inputPins[j], INPUT_PULLUP);
   }
 }
