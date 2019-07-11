@@ -152,12 +152,16 @@ void TapeFollower::goDistance(int set_distance){ //distance = number of rotary e
 void TapeFollower::turnInPlaceLeft(){
   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, -(MAX_SPEED/3), 0);
   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3), 0); 
+  if (direction_facing) direction_facing = false; 
+  else direction_facing = true;
   return;
 }
 
 void TapeFollower::turnInPlaceRight(){
   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3), 0);
-  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, -(MAX_SPEED/3), 0);   
+  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, -(MAX_SPEED/3), 0); 
+  if (direction_facing) direction_facing = false; 
+  else direction_facing = true;
   return;
 }
 
