@@ -57,6 +57,7 @@ void TapeFollower::followTape(){ //add encoder polling
       rightTab = analogRead(R_TAB)>=*p_TAB_THRESHOLD;
 
       if((leftSplit || rightSplit) && (leftSensor && rightSensor) && (!leftTab && !rightTab)){
+        splitNumber++;
         state = 2;
         return;
       }
@@ -161,7 +162,48 @@ void TapeFollower::turnInPlaceRight(){
 }
 
 void TapeFollower::splitDecide(){
-  
+  switch(splitNumber){
+    case 1:
+      if(TEAM){
+        turnLeft();
+      }
+      else{
+        turnRight();
+      }
+    case 2:
+      if(TEAM){
+        turnLeft();
+        state = 6;
+        return;
+      }
+      else{
+        turnRight();
+        state = 6;
+        return;
+      }
+    case 3:
+      if(collisionNumber == 0){
+        state = 7; // go home state 
+        return;
+      }
+      else{
+        if(TEAM){ // may have to travel short distance before turning, 
+          turnInPlaceLeft();
+          splitNumber++;
+          state = 6;
+          return;
+        }
+        else{
+          turnInPlaceRight();
+          splitNumber++;
+          state = 6;
+          return;
+        }
+      }
+    case 4: 
+      state = 7; // go home state 
+      return;
+  }
 }
 
 

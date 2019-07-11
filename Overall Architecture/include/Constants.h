@@ -5,6 +5,7 @@
 #define RIGHT false
 int state = 0;
 bool TEAM = true; //true = THANOS, false = METHANOS; 
+int collisionNumber =0;
 
 //checking if the robot has been calibrated at least once 
 #define YES_CALIBRATED 189763
