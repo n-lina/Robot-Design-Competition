@@ -85,21 +85,13 @@ void TapeFollower::stop(){
 void TapeFollower::turnLeft(){
   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/4)+(5* *p_KD_WHEEL),0);
   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/4)-(5* *p_KD_WHEEL),0);
-  while(true){
-    if(analogRead(L_TAPE_FOLLOW)>=*p_THRESHOLD && analogRead(R_TAPE_FOLLOW)>=*p_THRESHOLD){
-      return;
-    }
-  }
+  return;
 }
 
 void TapeFollower::turnRight(){
   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/4)+(5* *p_KD_WHEEL),0);
   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/4)-(5* *p_KD_WHEEL),0);
-  while(true){
-    if(analogRead(L_TAPE_FOLLOW)>=*p_THRESHOLD && analogRead(R_TAPE_FOLLOW)>=*p_THRESHOLD){
-      return;
-    }
-  }
+  return;
 }
 
 void TapeFollower::goDistance(int distance){ //distance = number of rotary encoder clicks
