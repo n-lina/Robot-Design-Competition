@@ -119,7 +119,7 @@ void loop()
      turnRight();
      delay(3000);
    }
-   else if((rightSplit && rightSplit) && (leftSensor && rightSensor) && (!leftSplit && !leftTab)){
+   else if((rightSplit && rightTab) && (leftSensor && rightSensor) && (!leftSplit && !leftTab)){
      Serial.println("right tab");
      stop();
      delay(1000); 
