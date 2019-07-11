@@ -10,7 +10,7 @@ TapeFollower::TapeFollower():
   {}
 
 
-void TapeFollower::followTape(){
+void TapeFollower::followTape(){ //add encoder polling
   while(state==0){
     leftSensor = analogRead(L_TAPE_FOLLOW)>=*p_THRESHOLD;
     rightSensor = analogRead(R_TAPE_FOLLOW)>=*p_THRESHOLD;
@@ -36,10 +36,8 @@ void TapeFollower::followTape(){
     derivative = (position - lastPosition) / timeStep; 
     PID = (*p_KP_WHEEL * position) + (*p_KD_WHEEL * derivative); 
     
-    if(state==0){
     pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3)-PID, 0);
     pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3)+PID, 0); 
-    }
 
     if(lastPosition != position){
       number++;
@@ -50,24 +48,30 @@ void TapeFollower::followTape(){
     }
     lastPosition = position; 
     loopCounter++;
-    if(state == 0 && loopCounter%10 == 0){
-      leftSplit = analogRead(L_SPLIT)>=*p_THRESHOLD;
-      rightSplit = analogRead(R_SPLIT)>=*p_THRESHOLD;
-      leftTab = analogRead(L_TAB)>=*p_THRESHOLD;
-      rightTab = analogRead(R_TAB)>=*p_THRESHOLD;
-      if((leftSplit || rightSplit) && (!leftTab && !rightTab)){
+    if(loopCounter%10 == 0){
+
+      leftSensor = analogRead(L_TAPE_FOLLOW) >= *p_THRESHOLD;
+      rightSensor = analogRead(R_TAPE_FOLLOW) >= *p_THRESHOLD;
+      leftSplit = analogRead(L_SPLIT)>=*p_SPLIT_THRESHOLD;
+      rightSplit = analogRead(R_SPLIT)>=*p_SPLIT_THRESHOLD;
+      leftTab = analogRead(L_TAB)>=*p_TAB_THRESHOLD;
+      rightTab = analogRead(R_TAB)>=*p_TAB_THRESHOLD;
+
+      if((leftSplit || rightSplit) && (leftSensor && rightSensor) && (!leftTab && !rightTab){
         state = 2;
         return;
       }
-      else if((leftSplit && leftTab) && (!rightSplit && !rightTab)){
+      else if((leftSplit && leftTab) && (leftSensor && rightSensor) && (!rightSplit && !rightTab)){
         direction = LEFT; 
         //move some distance with rotary encoder 
+        stop();
         state = 3; 
         return; 
       }
-      else if((rightSplit && rightSplit) && (!leftSplit && !leftTab)){
+      else if((rightSplit && rightTab) && (leftSensor && rightSensor) && (!leftSplit && !leftTab)){
         direction = RIGHT; 
         //move some distance with rotary encoder 
+        stop();
         state = 3;
          return;
       }
@@ -122,8 +126,8 @@ void TapeFollower::goDistance(int distance){ //distance = number of rotary encod
     PID = (*p_KP_WHEEL * position) + (*p_KD_WHEEL * derivative); 
     
     if(state==6){
-    pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3)-PID, 0);
-    pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3)+PID, 0); 
+      pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3)-PID, 0);
+      pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3)+PID, 0); 
     }
 
     L_encoder = digitalRead(L_ENCODER);
@@ -149,4 +153,23 @@ void TapeFollower::goDistance(int distance){ //distance = number of rotary encod
   }
   return;
 }
+
+void TapeFollower::turnInPlaceLeft(){
+  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, -(MAX_SPEED/3), 0);
+  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3), 0); 
+  return;
+}
+
+void TapeFollower::turnInPlaceRight(){
+  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3), 0);
+  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, -(MAX_SPEED/3), 0);   
+  return;
+}
+
+void TapeFollower::splitDecide(){
+  
+}
+
+
+
 

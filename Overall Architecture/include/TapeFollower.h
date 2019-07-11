@@ -12,7 +12,8 @@ class TapeFollower
 {
   public: 
     TapeFollower();
-    void turnInPlace();
+    void turnInPlaceLeft();
+    void turnInPlaceRight();
     void splitDecide();
     void followTape(); //polls 2 main PTs
     void goDistance(int distance); // follows tape without checking for splits or tabs 

@@ -60,6 +60,7 @@ volatile int* p_KP_WHEEL = (int*) 0x0801FFF3;
 volatile int* p_KD_WHEEL = (int*) 0x0801FFF7;
 volatile int* p_THRESHOLD = (int*) 0x0801FFFB;
 volatile int* p_SPLIT_THRESHOLD = (int*) 0x0801FFEF;
+volatile int* p_TAB_THRESHOLD = (int*) 0x0801FFDB;
 volatile int* p_GAUNTLET_TAPE_THRESHOLD = (int*) 0x0801FFEB;
 volatile int* p_EDGE_THRESHOLD = (int*) 0x0801FFE7;
 volatile int* p_COLLISION_THRESHOLD = (int*) 0x0801FFE3;
