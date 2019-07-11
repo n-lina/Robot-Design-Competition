@@ -14,6 +14,7 @@ bool TEAM = true; //true = THANOS, false = METHANOS;
 #define CLOCK_FQ 100000 
 
 //pins
+#define WHEEL_ENCODER 0
 #define ARM_SONAR 0
 #define CLAW_ENCODER 0 //input
 #define ARM_MOTOR_LEFT 0

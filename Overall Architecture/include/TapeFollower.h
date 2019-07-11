@@ -36,12 +36,9 @@ class TapeFollower
     bool rightSplit;
     bool leftTab;
     bool rightTab;
-    int L_lastEncoder;
-    int L_encoder;
-    int L_distance;
-    int R_lastEncoder; 
-    int R_encoder; 
-    int R_distance;
+    int lastEncoder;
+    int encoder;
+    int distance;
     int getPosition(); //enum constant in order to know how to go home 
     void turnLeft();
     void turnRight();

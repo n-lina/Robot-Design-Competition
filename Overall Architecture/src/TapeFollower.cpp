@@ -5,8 +5,8 @@
 TapeFollower::TapeFollower():
   splitNumber(0), derivative(0), loopCounter(0), timeStep(0), position(0), lastPosition(0), 
   PID(0), number(0), leftSensor(0), rightSensor(0), leftSplit(0), rightSplit(0), 
-  leftTab(0), rightTab (0), L_GauntletServo(), R_GauntletServo(), L_lastEncoder(0), L_encoder(0),
-  L_distance(0), R_lastEncoder(0), R_encoder(0), R_distance(0)
+  leftTab(0), rightTab (0), L_GauntletServo(), R_GauntletServo(), lastEncoder(0), encoder(0),
+  distance(0)
   {}
 
 
@@ -49,7 +49,6 @@ void TapeFollower::followTape(){ //add encoder polling
     lastPosition = position; 
     loopCounter++;
     if(loopCounter%10 == 0){
-
       leftSensor = analogRead(L_TAPE_FOLLOW) >= *p_THRESHOLD;
       rightSensor = analogRead(R_TAPE_FOLLOW) >= *p_THRESHOLD;
       leftSplit = analogRead(L_SPLIT)>=*p_SPLIT_THRESHOLD;
@@ -57,7 +56,7 @@ void TapeFollower::followTape(){ //add encoder polling
       leftTab = analogRead(L_TAB)>=*p_TAB_THRESHOLD;
       rightTab = analogRead(R_TAB)>=*p_TAB_THRESHOLD;
 
-      if((leftSplit || rightSplit) && (leftSensor && rightSensor) && (!leftTab && !rightTab){
+      if((leftSplit || rightSplit) && (leftSensor && rightSensor) && (!leftTab && !rightTab)){
         state = 2;
         return;
       }
@@ -98,9 +97,9 @@ void TapeFollower::turnRight(){
   return;
 }
 
-void TapeFollower::goDistance(int distance){ //distance = number of rotary encoder clicks
+void TapeFollower::goDistance(int set_distance){ //distance = number of rotary encoder clicks
 //if rotary encoder misses clicks, make distance number smaller 
-  while(state==6 && L_distance <= distance){
+  while(state==6 && distance <= set_distance){
     leftSensor = analogRead(L_TAPE_FOLLOW)>=*p_THRESHOLD;
     rightSensor = analogRead(R_TAPE_FOLLOW)>=*p_THRESHOLD;
     timeStep++;
@@ -130,14 +129,10 @@ void TapeFollower::goDistance(int distance){ //distance = number of rotary encod
       pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3)+PID, 0); 
     }
 
-    L_encoder = digitalRead(L_ENCODER);
-    R_encoder = digitalRead(R_ENCODER);
-    if(L_encoder!=L_lastEncoder){
-      L_distance++;    
-    }
-    if(R_encoder!=R_lastEncoder){ //maybe only test one side of rotary encoder for requiring 
+    encoder = digitalRead(WHEEL_ENCODER);
+    if(encoder!=lastEncoder){ //maybe only test one side of rotary encoder for requiring 
     //less frequent sampling 
-      R_distance++;
+      distance++;    
     }
 
     if(lastPosition != position){
@@ -148,8 +143,7 @@ void TapeFollower::goDistance(int distance){ //distance = number of rotary encod
       } 
     }
     lastPosition = position; 
-    L_lastEncoder = L_encoder; 
-    R_lastEncoder = R_encoder;
+    lastEncoder = encoder; 
   }
   return;
 }
