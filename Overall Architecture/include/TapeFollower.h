@@ -4,7 +4,8 @@
   // stop?
 
 //TODO:
-  //interrupts for collision, edge, go home, how to have global,unchanging-once-declared variables 
+  //interrupts for collision, edge, go home, how to have global,unchanging-once-declared variables, 
+  //static functions and variables for Setup library 
   
 #ifndef TapeFollower_h
 #define TapeFollower_h

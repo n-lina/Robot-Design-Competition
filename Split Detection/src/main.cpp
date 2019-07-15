@@ -21,6 +21,8 @@
 #define THRESHOLD 200 // Threshold for being on or off the line
 #define SPLIT_THRESHOLD 300
 #define TAB_THRESHOLD 200
+#define ALIGN_LEFT_TAB 0 //pin 
+#define ALIGN_RIGHT_TAB 0 //pin
  
 int derivative; 
 int timeStep=0; 
@@ -133,17 +135,54 @@ void loop()
 void turnLeft(){
   pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/4)-(5*KP),0); 
   pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/4)+(5*KP), 0); 
+  return;
 }
 
 void turnRight(){
   pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/4)-(5*KP),0); //turn right
   pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/4)+(5*KP), 0); 
+  return;
 }
 
 void stop(){
   pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0); 
   pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);  
+  return;
 }
+
+
+void alignLeftTab(){
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED/4, 0);
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);
+  delay(10);
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED/4, 0);
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);  
+  delay(10);
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED/4, 0);
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED/4, 0);
+  while(true){
+    if(analogRead(ALIGN_LEFT_TAB) >= THRESHOLD){
+      stop();
+    }
+  }
+}
+
+void alignRightTab(){
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED/4, 0);
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);
+  delay(10);
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED/4, 0);
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);  
+  delay(10);
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED/4, 0);
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED/4, 0);
+  while(true){
+    if(analogRead(ALIGN_RIGHT_TAB) >= THRESHOLD){
+      stop();
+    }
+  }
+}
+
 
 
 /*
