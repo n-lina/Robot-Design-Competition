@@ -1,9 +1,9 @@
-#include "Arduino.h"
+#include <Arduino.h>
 #include "Constants.h"
 #include "TapeFollower.h"
 
-TapeFollower::TapeFollower():
-  splitNumber(0), derivative(0), loopCounter(0), timeStep(0), position(0), lastPosition(0), 
+TapeFollower::TapeFollower(int& state, int& stoneNumber, int& splitNumber, bool& TEAM, bool& direction_facing, bool& direction):
+  _state(state), _TEAM(TEAM), _stoneNumber(stoneNumber), _direction_facing(direction_facing), _direction(LEFT), collisionNumber(0), derivative(0), loopCounter(0), timeStep(0), position(0), lastPosition(0), 
   PID(0), number(0), leftSensor(0), rightSensor(0), leftSplit(0), rightSplit(0), 
   leftTab(0), rightTab (0), L_GauntletServo(), R_GauntletServo(), lastEncoder(0), encoder(0),
   distance(0)
@@ -11,7 +11,7 @@ TapeFollower::TapeFollower():
 
 
 void TapeFollower::followTape(){ //add encoder polling
-  while(state==0){
+  while(_state==1){
     leftSensor = analogRead(L_TAPE_FOLLOW)>=*p_THRESHOLD;
     rightSensor = analogRead(R_TAPE_FOLLOW)>=*p_THRESHOLD;
     timeStep++;
@@ -48,7 +48,7 @@ void TapeFollower::followTape(){ //add encoder polling
     }
     lastPosition = position; 
     loopCounter++;
-    if(loopCounter%10 == 0){
+    if(loopCounter%10 == 0 && _state ==1){
       leftSensor = analogRead(L_TAPE_FOLLOW) >= *p_THRESHOLD;
       rightSensor = analogRead(R_TAPE_FOLLOW) >= *p_THRESHOLD;
       leftSplit = analogRead(L_SPLIT)>=*p_SPLIT_THRESHOLD;
@@ -58,22 +58,22 @@ void TapeFollower::followTape(){ //add encoder polling
 
       if((leftSplit || rightSplit) && (leftSensor && rightSensor) && (!leftTab && !rightTab)){
         splitNumber++;
-        state = 2;
+        _state = 3;
         return;
       }
       else if((leftSplit && leftTab) && (leftSensor && rightSensor) && (!rightSplit && !rightTab)){
-        direction = LEFT; 
+        _direction = LEFT; 
         //move some distance with rotary encoder 
         stop();
-        state = 3; 
+        _state = 4; 
         return; 
       }
       else if((rightSplit && rightTab) && (leftSensor && rightSensor) && (!leftSplit && !leftTab)){
-        direction = RIGHT; 
+        _direction = RIGHT; 
         //move some distance with rotary encoder 
         stop();
-        state = 3;
-         return;
+        _state = 4;
+        return;
       }
       loopCounter = 0;
     }
@@ -98,9 +98,9 @@ void TapeFollower::turnRight(){
   return;
 }
 
-void TapeFollower::goDistance(int set_distance){ //distance = number of rotary encoder clicks
+void TapeFollower::goDistance(int set_distance, bool firstRun, int checkptA, int checkptB){ //distance = number of rotary encoder clicks
 //if rotary encoder misses clicks, make distance number smaller 
-  while(state==6 && distance <= set_distance){
+  while(_state==0 && distance <= set_distance){
     leftSensor = analogRead(L_TAPE_FOLLOW)>=*p_THRESHOLD;
     rightSensor = analogRead(R_TAPE_FOLLOW)>=*p_THRESHOLD;
     timeStep++;
@@ -125,7 +125,7 @@ void TapeFollower::goDistance(int set_distance){ //distance = number of rotary e
     derivative = (position - lastPosition) / timeStep; 
     PID = (*p_KP_WHEEL * position) + (*p_KD_WHEEL * derivative); 
     
-    if(state==6){
+    if(_state==0){
       pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3)-PID, 0);
       pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3)+PID, 0); 
     }
@@ -134,6 +134,17 @@ void TapeFollower::goDistance(int set_distance){ //distance = number of rotary e
     if(encoder!=lastEncoder){ //maybe only test one side of rotary encoder for requiring 
     //less frequent sampling 
       distance++;    
+    }
+
+    if(firstRun && _state==0){
+      if(distance == checkptA || distance == checkptB){
+        if(_TEAM){
+          turnLeft();
+          }
+        else{
+          turnRight();
+        }
+      }
     }
 
     if(lastPosition != position){
@@ -152,60 +163,53 @@ void TapeFollower::goDistance(int set_distance){ //distance = number of rotary e
 void TapeFollower::turnInPlaceLeft(){
   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, -(MAX_SPEED/3), 0);
   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3), 0); 
-  if (direction_facing) direction_facing = false; 
-  else direction_facing = true;
+  if (_direction_facing) _direction_facing = false; 
+  else _direction_facing = true;
   return;
 }
 
 void TapeFollower::turnInPlaceRight(){
   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/3), 0);
   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, -(MAX_SPEED/3), 0); 
-  if (direction_facing) direction_facing = false; 
-  else direction_facing = true;
+  if (_direction_facing) _direction_facing = false; 
+  else _direction_facing = true;
   return;
 }
 
 void TapeFollower::splitDecide(){
-  switch(splitNumber){
+  switch(_splitNumber){
     case 1:
-      if(TEAM){
-        turnLeft();
-      }
-      else{
-        turnRight();
-      }
-    case 2:
-      if(TEAM){
-        turnLeft();
-        state = 6;
+      if(_collisionNumber == 0 || _stoneNumber > 1){
+        _state = 7; // go home state 
         return;
       }
       else{
-        turnRight();
-        state = 6;
-        return;
-      }
-    case 3:
-      if(collisionNumber == 0){
-        state = 7; // go home state 
-        return;
-      }
-      else{
-        if(TEAM){ // may have to travel short distance before turning, 
+        if(_TEAM){ // may have to travel short distance before turning, 
           turnInPlaceLeft();
-          splitNumber++;
-          state = 6;
+          _splitNumber++;
+          _state = 6;
           return;
         }
         else{
           turnInPlaceRight();
-          splitNumber++;
-          state = 6;
+          _splitNumber++;
+          _state = 6;
           return;
         }
       }
-    case 4: 
-      state = 7; // go home state 
+    case 2: 
+      if(_TEAM){
+        turnLeft();
+        _state = 0; 
+        return; 
+      }
+      else{
+        turnRight();
+        _state = 0; 
+        return;
+      }
+    case 3: 
+      _state = 7; // go home state 
       return;
   }
 }

@@ -30,29 +30,27 @@
   // OLED setup 
   // declare functions and interrupts, interrupt handlers
 
-int state = 0; // This variable indicates the state of the robot 
-
 void setup() {
   // tuning menu function 
   // function for setting up all pins, initiializing functions and interupts 
 
 }
-
 void loop() {
   switch (state){
-    case 0: // Follow Tape 
-    case 1: // Avoid Collision {4}
+    case 0: // Go a certain distancce without checking for tabs/splits
+      if(splitNumber == 0){
+        //goDistance(BOTTOM_DESTINATION, true, CHECKPT_A, CHECKPT_B);        
+      }
+      else{
+        //goDistance(TOP_DESTINATION, false, -1, -1);
+      }
+    case 1: // Follow Tape checking splits/tabs
+    case 2: // Avoid Collision {4}
     // move backwards set distance by rotary encoder and turn in place
-    case 2: // Split Chooser 
-    // split decisions hardcoded:
-    // split 1: go right 
-    // split 2: go right 
-    // 
-    case 3: // Collect Stone {3}
-    case 4: // Deposit Stones 
-    case 5: // Back away from edge {1 - put in interrupt handler}
-    case 6: // Go a certain distance without checking for tabs/splits
-    // distance depends on split number 
+    case 3: // Split Chooser 
+    case 4: // Collect Stone {3}
+    case 5: // Deposit Stones 
+    case 6: // Back away from edge {1 - put in interrupt handler}
     case 7: // Go home and deposit stones at certain time (1:30) {2} turn off split/tab interrupts 
   }
 }

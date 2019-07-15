@@ -8,14 +8,16 @@
 class ManageStone
 {
   public:
-    ManageStone();
+    ManageStone(int& stoneNumber, int& state, bool& direction);
     void collectStone(); //left = 1, right = 0
     void dropInStorage(); 
     Servo clawServo; 
     Servo armServo;
 
-  private:
-    int stoneNumber; 
+  private: 
+    int& _stoneNumber; 
+    int& _state;
+    bool* _direction;
     bool lastEncoderState;
     bool encoderState;
     int clawHeight; 

@@ -11,18 +11,24 @@
 class TapeFollower
 {
   public: 
-    TapeFollower();
+    TapeFollower(int& state, int& stoneNumber, int& splitNumber, bool& TEAM, bool& direction_facing, bool& direction);
     void turnInPlaceLeft();
     void turnInPlaceRight();
     void splitDecide();
     void followTape(); //polls 2 main PTs
-    void goDistance(int distance); // follows tape without checking for splits or tabs 
+    void goDistance(int distance, bool firstRun, int checkptA, int checkptB); // follows tape without checking for splits or tabs 
     void goHome(); //after split #x, drop in gauntlet , polls corner PT 
     Servo L_GauntletServo;
     Servo R_GauntletServo;
 
   private:
-    int splitNumber;
+    int& _state; 
+    int& _stoneNumber; 
+    int& _splitNumber; 
+    bool& _TEAM; 
+    bool& _direction_facing;
+    bool& _direction;
+    int collisionNumber;
     int derivative;  
     int loopCounter;
     int timeStep; 
@@ -39,7 +45,6 @@ class TapeFollower
     int lastEncoder;
     int encoder;
     int distance;
-    int getPosition(); //enum constant in order to know how to go home 
     void turnLeft();
     void turnRight();
     void stop();
