@@ -78,10 +78,10 @@ void ManageStone::moveArmToCentre(){
 
 void ManageStone::turnClaw(){
   if(_direction){
-    armServo.write(0); //0 degrees corresponds to left side
+    armServo.write(180); //180 degrees corresponds to right side
   }
   else{
-    armServo.write(180);
+    armServo.write(0);
   }
 }
 

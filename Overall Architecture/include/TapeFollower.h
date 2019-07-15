@@ -2,6 +2,9 @@
   // go left 
   // go right 
   // stop?
+
+//TODO:
+  //interrupts for collision, edge, go home, how to have global,unchanging-once-declared variables 
   
 #ifndef TapeFollower_h
 #define TapeFollower_h
@@ -11,13 +14,13 @@
 class TapeFollower
 {
   public: 
-    TapeFollower(int& state, int& stoneNumber, int& splitNumber, bool& TEAM, bool& direction_facing, bool& direction);
+    TapeFollower(int& state, int& stoneNumber, int& splitNumber, const bool& TEAM, bool& direction_facing, bool& direction);
     void turnInPlaceLeft();
     void turnInPlaceRight();
     void splitDecide();
     void followTape(); //polls 2 main PTs
     void goDistance(int distance, bool firstRun, int checkptA, int checkptB); // follows tape without checking for splits or tabs 
-    void goHome(); //after split #x, drop in gauntlet , polls corner PT 
+    void goHome(bool park); //after split #x, drop in gauntlet , polls corner PT 
     Servo L_GauntletServo;
     Servo R_GauntletServo;
 
@@ -25,7 +28,7 @@ class TapeFollower
     int& _state; 
     int& _stoneNumber; 
     int& _splitNumber; 
-    bool& _TEAM; 
+    const bool& _TEAM; 
     bool& _direction_facing;
     bool& _direction;
     int collisionNumber;
@@ -45,6 +48,7 @@ class TapeFollower
     int lastEncoder;
     int encoder;
     int distance;
+    int gauntletTapeNumber;
     void turnLeft();
     void turnRight();
     void stop();

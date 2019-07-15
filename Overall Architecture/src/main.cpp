@@ -52,6 +52,7 @@ void loop() {
     case 5: // Deposit Stones 
     case 6: // Back away from edge {1 - put in interrupt handler}
     case 7: // Go home and deposit stones at certain time (1:30) {2} turn off split/tab interrupts 
+    case 8: // park at gauntlet
   }
 }
 

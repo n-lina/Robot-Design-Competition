@@ -8,7 +8,8 @@
 Setup::Setup():
 state(0), TEAM(true), stoneNumber(0), splitNumber(0), direction_facing(true), direction(LEFT),
 KP_WHEEL (30), KD_WHEEL(9), THRESHOLD(200), SPLIT_THRESHOLD(200), TAB_THRESHOLD(200), 
-GAUNTLET_TAPE_THRESHOLD(200), EDGE_THRESHOLD(15), COLLISION_THRESHOLD(5), PILLAR_DISTANCE(3)
+GAUNTLET_TAPE_THRESHOLD(200), EDGE_THRESHOLD(15), COLLISION_THRESHOLD(5), PILLAR_DISTANCE(3), 
+GAUNTLET_TAPE_SENSOR(0)
 {}
 
 static void Setup::setup(){
@@ -16,9 +17,12 @@ static void Setup::setup(){
   // Methanos or Thanos
   switch (digitalRead(T_OR_M)){
     case HIGH: 
-      TEAM = true;
+      TEAM = true; //thanos
+      GAUNTLET_TAPE_SENSOR = 0; 
+
     case LOW:
-      TEAM = false;
+      TEAM = false; //methanos
+      GAUNTLET_TAPE_SENSOR = 0;      
   }
 
   // Instantiating Classes
@@ -63,8 +67,6 @@ static void Setup::setup(){
   COLLISION_THRESHOLD = *tuneRobot.p_COLLISION_THRESHOLD;
   PILLAR_DISTANCE = *tuneRobot.p_PILLAR_DISTANCE;
   }
-
-}
 
 
 // attach and setup interrupts / interrupt handler 

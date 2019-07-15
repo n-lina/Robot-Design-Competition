@@ -1,8 +1,8 @@
 #ifndef Constants_h
 #define Constants_h
 
-#define LEFT true
-#define RIGHT false
+#define LEFT false
+#define RIGHT true
 
 //checking if the robot has been calibrated at least once 
 #define YES_CALIBRATED 189763
@@ -40,7 +40,7 @@
 #define LEFT_BACKWARD_WHEEL_MOTOR 0
 #define RIGHT_BACKWARD_WHEEL_MOTOR 0
 #define CALIBRATE 0 //switch 
-#define T_OR_M 0 //switch, HIGH = METHANOS
+#define T_OR_M 0 //switch, HIGH = THANOS
 
 // ManageStone library
 //#define PILLAR_DISTANCE 0 // use inches 
@@ -51,7 +51,9 @@
 #define CHECKPT_B 0 //encoder clicks until 2nd split 
 #define BOTTOM_DESTINATION 0
 #define TOP_DESTINATION 0
+#define SPEED_TUNING 4
 
+// Tuning Menu 
 #define NUM_VARIABLES 10
 
 #endif
