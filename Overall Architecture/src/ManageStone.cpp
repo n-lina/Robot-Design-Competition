@@ -2,56 +2,54 @@
 #include "ManageStone.h"
 #include "Constants.h"
 
-ManageStone::ManageStone(int* stoneNumber, int* state,  bool* direction):
-  _stoneNumber(stoneNumber), _state(state), _direction(direction), lastEncoderState(0), encoderState(0), clawHeight(0), armServo(), 
-  clawServo(), motor(0)
+ManageStone::ManageStone(Robot const* robot):
+  my_PILLAR_DISTANCE(Robot::instance()->PILLAR_DISTANCE),motor(ARM_MOTOR_LEFT)
   {}
 
 void ManageStone::collectStone(){
+  Robot::instance()->stoneNumber++;
   turnClaw();
   moveArmToPillar();
-  raiseClaw();
-  clawServo.write(180); //deploy claw to get stone 
-  _stoneNumber++;
+  if(Robot::instance()->stoneNumber > 2 || Robot::instance()->collisionNumber != 0){
+    raiseClaw();
+  }
+  Robot::instance()->clawServo.write(180); //deploy claw to get stone 
 }
 void ManageStone::dropInStorage(){
   moveArmToCentre();
-  armServo.write(90);
-  lowerClaw();
-  switch(_stoneNumber){
-    case 1: 
-      armServo.write(20);
+  Robot::instance()->armServo.write(90);
+  switch(Robot::instance()->stoneNumber){
+    case 1: // 6 inches
+      Robot::instance()->armServo.write(20);
       break;
-    case 2:
-      armServo.write(40);
+    case 2: // 6 inches
+      Robot::instance()->armServo.write(40);
       break;
-    case 3:
-      armServo.write(60);
+    case 3: // 9 inches
+      pwm_start(CLAW_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+      delay(NINE_INCH_TIME); //bring down to 6 inches or w.e default height is 
+      Robot::instance()->armServo.write(60);
       break;
-    case 4: 
-      armServo.write(120);
-      break;
-    case 5: 
-      armServo.write(140);
-      break;
-    case 6: 
-      armServo.write(160);
+    case 4: // 12 inches
+      pwm_start(CLAW_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+      delay(TWELVE_INCH_TIME);
+      Robot::instance()->armServo.write(120);
       break;
   } 
-  clawServo.write(0); //open claw
-  armServo.write(90); //return to default position 
+  Robot::instance()->clawServo.write(0); //open claw
+  Robot::instance()->armServo.write(90); //return to default position 
 } 
 
 void ManageStone::moveArmToPillar(){
-  switch (_direction){
-    case LEFT: 
-      motor = ARM_MOTOR_LEFT;
-    case RIGHT: 
+  if(Robot::instance()->direction){
       motor = ARM_MOTOR_RIGHT;
+  }
+  else{
+      motor = ARM_MOTOR_LEFT;
   }
   pwm_start(motor, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   while (true){
-    if(analogRead(ARM_SONAR)<=PILLAR_DISTANCE){
+    if(analogRead(ARM_SONAR)<=my_PILLAR_DISTANCE){
       pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
       pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);   
       return; 
@@ -60,12 +58,12 @@ void ManageStone::moveArmToPillar(){
 }
 
 void ManageStone::moveArmToCentre(){
-  switch(_direction){
-    case LEFT: 
-      motor = ARM_MOTOR_RIGHT;
-    case RIGHT: 
+  if(Robot::instance()->direction){
       motor = ARM_MOTOR_LEFT;
-    } 
+  }
+  else{
+      motor = ARM_MOTOR_RIGHT;
+  } 
   pwm_start(motor, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); 
   while (true){
     if(digitalRead(ARM_HOME_SWITCH)==HIGH){ //how does the microswitch work 
@@ -77,38 +75,32 @@ void ManageStone::moveArmToCentre(){
 }
 
 void ManageStone::turnClaw(){
-  if(_direction){
-    armServo.write(180); //180 degrees corresponds to right side
+  if(Robot::instance()->direction){
+    Robot::instance()->armServo.write(180); //180 degrees corresponds to right side
   }
   else{
-    armServo.write(0);
+    Robot::instance()->armServo.write(0);
   }
 }
 
 void ManageStone::raiseClaw(){
-  pwm_start(CLAW_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  while(true){
-    if(analogRead(ARM_SONAR)>=PILLAR_DISTANCE+3){ //check that sonar doesnt become negative
-      pwm_start(CLAW_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
-      return;
+  if(Robot::instance()->collisionNumber != 0){
+    pwm_start(CLAW_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+    while(true){
+      if(analogRead(ARM_SONAR)>=my_PILLAR_DISTANCE+3){ //check that sonar doesnt become negative
+        pwm_start(CLAW_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
+        return;
+      }
     }
   }
-}
-//raising claw
-    //if there is a delay in stopping, then we dont need to go extra x distance using rotary encoder 
-    //if there is no delay in stopping, ie. it stops exactly when the sonar reading jumps, 
-    //use rotary encoder to move up a bit more.
-
-void ManageStone::lowerClaw(){
-  pwm_start(CLAW_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  while(true){
-    if(clawHeight <= 0){
-      pwm_start(CLAW_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
-      return;
-    }
+  switch(Robot::instance()->stoneNumber){
+    case 3: // 9 inches
+    pwm_start(CLAW_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+    delay(NINE_INCH_TIME);
+    break;
+    case 4: // 12 inches 
+    pwm_start(CLAW_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+    delay(TWELVE_INCH_TIME);
   }
 }
-
-//use interrupts or find better way to count height for raiseClaw() and lowerClaw() since rn 
-//with just a counter, it could miss counts if the motor is too fast :|
 

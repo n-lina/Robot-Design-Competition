@@ -12,39 +12,43 @@
 #define CLOCK_FQ 100000 
 
 //pins
-#define WHEEL_ENCODER 0
-#define ARM_SONAR 0
-#define CLAW_ENCODER 0 //input
-#define ARM_MOTOR_LEFT 0
-#define ARM_MOTOR_RIGHT 0
-#define CLAW_MOTOR_UP 0
-#define CLAW_MOTOR_DOWN 0
-#define ARM_HOME_SWITCH 0
-#define ARM_SERVO 0
-#define L_GAUNTLET_SERVO 0
-#define R_GAUNTLET_SERVO 0
-#define CLAW_SERVO 0
-#define TUNING_KNOB_A 0
-#define TUNING_KNOB_B 0
-#define TUNING_BUTTON 0
+#define WHEEL_ENCODER PA_0
+#define ARM_SONAR PA_0
+#define CLAW_ENCODER PA_0 //input
+#define ARM_MOTOR_LEFT PA_0
+#define ARM_MOTOR_RIGHT PA_0
+#define CLAW_MOTOR_UP PA_0
+#define CLAW_MOTOR_DOWN PA_0
+#define ARM_HOME_SWITCH PA_0
+#define ARM_SERVO PA_0
+#define L_GAUNTLET_SERVO PA_0
+#define R_GAUNTLET_SERVO PA_0
+#define CLAW_SERVO PA_0
+#define TUNING_KNOB_A PA_0
+#define TUNING_KNOB_B PA_0
+#define TUNING_BUTTON PA_0
 #define L_TAPE_FOLLOW PA_3
 #define R_TAPE_FOLLOW PA_4
-#define L_SPLIT 0
-#define R_SPLIT 0
-#define L_TAB 0
-#define R_TAB 0
-#define L_GAUNTLET 0
-#define R_GAUNTLET 0
+#define L_SPLIT PA_0
+#define R_SPLIT PA_0
+#define L_TAB PA_0
+#define R_TAB PA_0
+#define L_TAB_ALIGN PA_0
+#define R_TAB_ALIGN PA_0
+#define MIDDLE_TAB_ALIGN PA_0
 #define LEFT_FORWARD_WHEEL_MOTOR PA_6
 #define RIGHT_FORWARD_WHEEL_MOTOR PB_0
-#define LEFT_BACKWARD_WHEEL_MOTOR 0
-#define RIGHT_BACKWARD_WHEEL_MOTOR 0
-#define CALIBRATE 0 //switch 
-#define T_OR_M 0 //switch, HIGH = THANOS
+#define LEFT_BACKWARD_WHEEL_MOTOR PA_0
+#define RIGHT_BACKWARD_WHEEL_MOTOR PA_0
+#define CALIBRATE PA_0 //switch 
+#define T_OR_M PA_0 //switch, HIGH = THANOS
+#define L_ARM_LIMIT PA_0
+#define R_ARM_LIMIT PA_0
+
 
 // ManageStone library
-//#define PILLAR_DISTANCE 0 // use inches 
-
+#define NINE_INCH_TIME 1000 //ms
+#define TWELVE_INCH_TIME 2000 //ms
 
 // TapeFollower library
 #define CHECKPT_A 0 //encoder clicks until first split
@@ -52,9 +56,6 @@
 #define BOTTOM_DESTINATION 0
 #define TOP_DESTINATION 0
 #define SPEED_TUNING 4
-
-// Tuning Menu 
-#define NUM_VARIABLES 10
 
 #endif
 

@@ -1,4 +1,7 @@
 #include <Arduino.h>
+#include "Robot.h"
+#include "TapeFollower.h"
+#include "ManageStone.h"
 
 //#include <Constants.h>
   // pins 
@@ -30,29 +33,32 @@
   // OLED setup 
   // declare functions and interrupts, interrupt handlers
 
-void setup() {
-  // tuning menu function 
-  // function for setting up all pins, initiializing functions and interupts 
+  TapeFollower robot(Robot::instance());
+  ManageStone Robot(Robot::instance());
 
+void setup() {
+  Robot::instance()->setup();  
 }
+
 void loop() {
-  switch (state){
-    case 0: // Go a certain distancce without checking for tabs/splits
-      if(splitNumber == 0){
-        //goDistance(BOTTOM_DESTINATION, true, CHECKPT_A, CHECKPT_B);        
-      }
-      else{
-        //goDistance(TOP_DESTINATION, false, -1, -1);
-      }
-    case 1: // Follow Tape checking splits/tabs
-    case 2: // Avoid Collision {4}
+  switch (Robot::instance()->state){
+    case GO_DISTANCE: // Go a certain distancce without checking for tabs/splits
+      break;
+    case FOLLOW_TAPE: // Follow Tape checking splits/tabs
+      break;
+    case AVOID_COLLISION: // Avoid Collision {4}
     // move backwards set distance by rotary encoder and turn in place
-    case 3: // Split Chooser 
-    case 4: // Collect Stone {3}
-    case 5: // Deposit Stones 
-    case 6: // Back away from edge {1 - put in interrupt handler}
-    case 7: // Go home and deposit stones at certain time (1:30) {2} turn off split/tab interrupts 
-    case 8: // park at gauntlet
+      break; 
+    case SPLIT_CHOOSER: // Split Chooser 
+      break;
+    case COLLECT_STONE: // Collect Stone {3}
+      break;
+    case BACK_AWAY_FROM_EDGE: // Back away from edge {1 - put in interrupt handler}
+      break;
+    case GO_HOME: // Go home and deposit stones at certain time (1:30) {2} turn off collision interrupts 
+      break;
+    case PARK: // park at gauntlet
+      break;
   }
 }
 

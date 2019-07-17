@@ -10,29 +10,30 @@
 #ifndef TapeFollower_h
 #define TapeFollower_h
 
-#include <Servo.h>
+#include <Robot.h>
 
 class TapeFollower
 {
   public: 
-    TapeFollower(int& state, int& stoneNumber, int& splitNumber, const bool& TEAM, bool& direction_facing, bool& direction);
+    TapeFollower(Robot const* robot);
     void turnInPlaceLeft();
     void turnInPlaceRight();
     void splitDecide();
     void followTape(); //polls 2 main PTs
     void goDistance(int distance, bool firstRun, int checkptA, int checkptB); // follows tape without checking for splits or tabs 
     void goHome(bool park); //after split #x, drop in gauntlet , polls corner PT 
-    Servo L_GauntletServo;
-    Servo R_GauntletServo;
 
   private:
-    int& _state; 
-    int& _stoneNumber; 
-    int& _splitNumber; 
-    const bool& _TEAM; 
-    bool& _direction_facing;
-    bool& _direction;
-    int collisionNumber;
+    int my_KP_WHEEL;
+    int my_KD_WHEEL;
+    int my_THRESHOLD; 
+    int my_SPLIT_THRESHOLD;
+    int my_TAB_THRESHOLD;
+    int my_ALIGN_TAB_THRESHOLD; 
+    int my_EDGE_THRESHOLD;
+    int my_COLLISION_THRESHOLD;
+    int maxDrivingSpeed;
+    int minDrivingSpeed;
     int derivative;  
     int loopCounter;
     int timeStep; 
@@ -49,7 +50,6 @@ class TapeFollower
     int lastEncoder;
     int encoder;
     int distance;
-    int gauntletTapeNumber;
     void turnLeft();
     void turnRight();
     void stop();
