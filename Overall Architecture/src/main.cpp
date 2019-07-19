@@ -52,6 +52,7 @@ void loop() {
     case SPLIT_CHOOSER: // Split Chooser 
       break;
     case COLLECT_STONE: // Collect Stone {3}
+      Robot.collectStone();
       break;
     case BACK_AWAY_FROM_EDGE: // Back away from edge {1 - put in interrupt handler}
       break;
