@@ -11,9 +11,7 @@ TapeFollower::TapeFollower(Robot const* robot):
   my_ALIGN_TAB_THRESHOLD(Robot::instance()->ALIGN_TAB_THRESHOLD),
   my_EDGE_THRESHOLD(Robot::instance()->EDGE_THRESHOLD),
   my_COLLISION_THRESHOLD(Robot::instance()->COLLISION_THRESHOLD), 
-  maxDrivingSpeed((MAX_SPEED/SPEED_TUNING)+(5*KP_WHEEL)+(10*KD_WHEEL)),
-  minDrivingSpeed((MAX_SPEED/SPEED_TUNING)-(5*KP_WHEEL)-(10*KD_WHEEL)),
-  derivative(0), loopCounter(0), timeStep(0), position(0), lastPosition(0), 
+  derivative(0), default_speed(MAX_SPEED/SPEED_TUNING), timeStep(0), position(0), lastPosition(0), 
   PID(0), number(0), leftSensor(0), rightSensor(0), leftSplit(0), rightSplit(0), 
   leftTab(0), rightTab (0), distance(0)
   {}
@@ -45,8 +43,18 @@ void TapeFollower::followTape(){ //add encoder polling
     derivative = (position - lastPosition) / timeStep; 
     PID = (my_KP_WHEEL * position) + (my_KD_WHEEL * derivative); 
     
-    pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)-PID, 0);
-    pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)+PID, 0); 
+    if(PID>(default_speed)){
+      PID = default_speed;
+    }
+
+    else if(PID<-(default_speed)){
+      PID = -default_speed;
+    }
+
+    if(Robot::instance()->state == FOLLOW_TAPE){
+      pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)-PID, 0);
+      pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)+PID, 0); 
+    }
 
     if(lastPosition != position){
       number++;
@@ -56,37 +64,38 @@ void TapeFollower::followTape(){ //add encoder polling
       } 
     }
     lastPosition = position; 
-    loopCounter++;
-    if(loopCounter%10 == 0 && Robot::instance()->state ==FOLLOW_TAPE){
-      leftSensor = analogRead(L_TAPE_FOLLOW) >= my_THRESHOLD;
-      rightSensor = analogRead(R_TAPE_FOLLOW) >= my_THRESHOLD;
+
+    if(digitalRead(ARM_HOME_SWITCH)==HIGH){
+      pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
+      pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
+    }
+
+    if(Robot::instance()->state == FOLLOW_TAPE){
       leftSplit = analogRead(L_SPLIT)>= my_SPLIT_THRESHOLD;
       rightSplit = analogRead(R_SPLIT)>= my_SPLIT_THRESHOLD;
       leftTab = analogRead(L_TAB)>= my_TAB_THRESHOLD;
       rightTab = analogRead(R_TAB)>= my_TAB_THRESHOLD;
 
-      if((leftSplit || rightSplit) && (leftSensor && rightSensor) && (!leftTab && !rightTab)){
+      if((leftSplit || rightSplit) && (leftSensor || rightSensor) && (!leftTab && !rightTab)){
         Robot::instance()->splitNumber++;
         Robot::instance()->state = SPLIT_CHOOSER;
         return;
       }
-      else if((leftSplit && leftTab) && (leftSensor && rightSensor) && (!rightSplit && !rightTab)){
+      else if((leftSplit && leftTab) && (!rightSplit && !rightTab)){
+        alignLeftTab();
         Robot::instance()->direction = LEFT; 
-        //move some distance with rotary encoder 
-        stop();
         Robot::instance()->state = COLLECT_STONE; 
         return; 
       }
-      else if((rightSplit && rightTab) && (leftSensor && rightSensor) && (!leftSplit && !leftTab)){
+      else if((rightSplit && rightTab) && (!leftSplit && !leftTab)){
+        alignRightTab();
         Robot::instance()->direction = RIGHT; 
-        //move some distance with rotary encoder 
-        stop();
         Robot::instance()->state = COLLECT_STONE;
         return;
       }
-      loopCounter = 0;
     }
   }
+  return;
 }
 
 void TapeFollower::stop(){
@@ -96,15 +105,21 @@ void TapeFollower::stop(){
 }
 
 void TapeFollower::turnLeft(){
-  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, maxDrivingSpeed,0);
-  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, minDrivingSpeed,0);
+  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0);
+  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 0);
   return;
 }
 
 void TapeFollower::turnRight(){
-  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, maxDrivingSpeed,0);
-  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, minDrivingSpeed,0);
+  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0);
+  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 0);
   return;
+}
+
+void TapeFollower::goStraight(){
+  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0);
+  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0);
+  return; 
 }
 
 void TapeFollower::goDistance(int set_distance, bool firstRun, int checkptA, int checkptB){ //distance = number of rotary encoder clicks
@@ -223,6 +238,7 @@ void TapeFollower::splitDecide(){
   }
 }
 
+//still have to poll tabs bc sometimes it turns into the tab, if tab, turn opp direction 
 void TapeFollower::goHome(bool park){ //how to make a timed interrupt for 1 min 30 s, time to go home?
   if(Robot::instance()->direction_facing){ 
     if(Robot::instance()->direction){
@@ -267,8 +283,13 @@ void TapeFollower::goHome(bool park){ //how to make a timed interrupt for 1 min 
       } 
     }
     lastPosition = position; 
-    loopCounter++;
-    if(loopCounter%10 == 0 && Robot::instance()->state == GO_HOME){
+
+    if(digitalRead(ARM_HOME_SWITCH)==HIGH){
+      pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
+      pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
+    }
+
+    if(Robot::instance()->state == GO_HOME){
       if(analogRead(leftSplit) >= SPLIT_THRESHOLD){
         turnRight();
         delay(2000);
@@ -281,8 +302,8 @@ void TapeFollower::goHome(bool park){ //how to make a timed interrupt for 1 min 
       }
       if(park){
         Robot::instance()->state == PARK;
+        return;
       }
-      loopCounter = 0;
     }
   }
 }

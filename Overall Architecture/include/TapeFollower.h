@@ -21,7 +21,7 @@ class TapeFollower
     void splitDecide();
     void followTape(); //polls 2 main PTs
     void goDistance(int distance, bool firstRun, int checkptA, int checkptB); // follows tape without checking for splits or tabs 
-    void goHome(bool park); //after split #x, drop in gauntlet , polls corner PT 
+    void goHome(bool park); //TODO
 
   private:
     int my_KP_WHEEL;
@@ -32,10 +32,8 @@ class TapeFollower
     int my_ALIGN_TAB_THRESHOLD; 
     int my_EDGE_THRESHOLD;
     int my_COLLISION_THRESHOLD;
-    int maxDrivingSpeed;
-    int minDrivingSpeed;
     int derivative;  
-    int loopCounter;
+    int default_speed;
     int timeStep; 
     int position; 
     int lastPosition; 
@@ -53,6 +51,9 @@ class TapeFollower
     void turnLeft();
     void turnRight();
     void stop();
+    void goStraight();
+    void alignLeftTab(); //TODO
+    void alignRightTab(); //TODO
 };
 
 #endif

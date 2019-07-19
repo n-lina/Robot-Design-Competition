@@ -43,7 +43,6 @@
 #define CALIBRATE PA_0 //switch 
 #define T_OR_M PA_0 //switch, HIGH = THANOS
 #define ARM_LIMIT PA_0
-#define ARM_LIMIT PA_0
 #define NO_STONE PA_0
 
 
