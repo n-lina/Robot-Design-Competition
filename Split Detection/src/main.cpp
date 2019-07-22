@@ -13,18 +13,18 @@
 //#define ALIGN_LEFT_TAB PA_5 //pin 
 //#define ALIGN_RIGHT_TAB PA_4 //pin
 #define L_MOTOR_FORWARD PB_1
-//#define L_MOTOR_BACKWARD PA_2
+//#define L_MOTOR_BACKWARD PB_0
 #define R_MOTOR_FORWARD PA_6
-//#define R_MOTOR_BACKWARD PB_1
-#define KP 125 // PID proportion constant // 205 is  too high 
-#define KD 10 // PID derivative constant 
+//#define R_MOTOR_BACKWARD PA_7
+#define KP 162 // PID proportion constant // 205 is  too high 
+#define KD 12 // PID derivative constant 
 #define MAX_SPEED 1024 // max number the Arduino PWM takes 
 #define CLOCK_FQ 100000 //For pwm_start function
 #define THRESHOLD 200 // Threshold for being on or off the line
 #define SPLIT_THRESHOLD 200
 #define TAB_THRESHOLD 200
-#define SPEED_TUNING 1.5
-#define TIME 100
+#define SPEED_TUNING 1.2
+#define TIME 50
  
 #define GO true
 //#define SENSORS true
@@ -43,18 +43,21 @@ bool rightSplit;
 bool leftTab; 
 bool rightTab;
 int loopCounter =0;
+int splitNumber =0;
 int default_speed = MAX_SPEED/SPEED_TUNING;
 
- void alignLeftTab();
- void alignRightTab();
- void turnLeft();
- void turnRight();
- void stop();
+void alignLeftTab();
+void alignRightTab();
+void turnLeft();
+void turnRight();
+void stop();
+void goStraight();
+void turnLeftSoft();
+void turnRightSoft();
 
 void setup()
 {
  Serial.begin(9600);
- Serial.println("hello");
  pinMode(PHOTO_0, INPUT_PULLUP);
  pinMode(PHOTO_1, INPUT_PULLUP);
  pinMode(L_SPLIT, INPUT_PULLUP);
@@ -104,8 +107,8 @@ void loop()
    PID = -default_speed;
  }
 
- pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed+PID, 0); 
- pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed-PID, 0);
+ //pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed+PID, 0); 
+ //pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed-PID, 0);
 
  if(lastPosition != position){
    number++;
@@ -115,30 +118,33 @@ void loop()
    }
  }
  lastPosition = position;
-
- leftSplit = analogRead(L_SPLIT) >= SPLIT_THRESHOLD;
- rightSplit = analogRead(R_SPLIT) >= SPLIT_THRESHOLD;
- leftTab =  analogRead(L_TAB)>=TAB_THRESHOLD;
- rightTab = analogRead(R_TAB)>=TAB_THRESHOLD;
-
- if((leftSplit || rightSplit) && (!leftTab && !rightTab) && (leftSensor || rightSensor)){
-  stop();
-  delay(3000);
+ 
+   leftSplit = analogRead(L_SPLIT) >= SPLIT_THRESHOLD;
+   rightSplit = analogRead(R_SPLIT) >= SPLIT_THRESHOLD;
+   leftTab =  analogRead(L_TAB)>=TAB_THRESHOLD;
+   rightTab = analogRead(R_TAB)>=TAB_THRESHOLD;
+   
+   if((leftSplit || rightSplit) && (!leftTab && !rightTab) && (leftSensor || rightSensor)){
+    splitNumber++;
+    switch(splitNumber){
+      case 1:
+        turnRight();
+        break;
+      case 2:
+        turnLeftSoft();
+        delay(1000);
+        splitNumber = 0;
+        break;
+    }
   }
 
- else if((leftSplit && leftTab) && (!rightSplit && !rightTab)){
-  stop(); 
-  delay(1000);
-  turnLeft();
-  delay(1000);
- }
+  else if((leftSplit && leftTab) && (!rightSplit && !rightTab) && (rightSensor || leftSensor)){
+    alignLeftTab();
+  }
 
- else if((rightSplit && rightTab) && (!leftSplit && !leftTab)){
-  stop();
-  delay(1000);
-  turnRight(); 
-  delay(1000);
- }
+  else if((rightSplit && rightTab) && (!leftSplit && !leftTab) && (rightSensor || leftSensor)){
+    alignRightTab();
+  }  
 }
 
 
@@ -154,6 +160,17 @@ void turnRight(){
   return;
 }
 
+void turnRightSoft(){
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0); //turn right
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 450, 0); 
+  return;
+}
+
+void turnLeftSoft(){
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 450, 0); //turn right
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0); 
+  return;
+}
 
 void stop(){
   pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0); 
@@ -166,8 +183,6 @@ void goStraight(){
   pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0);
   return;
 }
-
-
 
 void alignLeftTab(){
   turnLeft();

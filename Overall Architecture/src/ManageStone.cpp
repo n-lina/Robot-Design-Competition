@@ -3,29 +3,34 @@
 #include "Constants.h"
 
 ManageStone::ManageStone(Robot const* robot):
-  my_PILLAR_DISTANCE(Robot::instance()->PILLAR_DISTANCE)
+  my_PILLAR_DISTANCE(Robot::instance()->PILLAR_DISTANCE), my_TEAM(Robot::instance()->TEAM)
   {}
 
 void ManageStone::collectStone(){
   Robot::instance()->stoneNumber++;
-  turnClaw();
-  moveArmToPillar();
-  // if(Robot::instance()->stoneNumber > 2 || Robot::instance()->collisionNumber >1){
-  //   raiseClaw();
-  // }
   switch(Robot::instance()->stoneNumber){
-    case 1: case 2:
-    //TODO
+    case 1:// 6 inches
+    moveArmToPillar();
     break;
-    case 3:
-    //TODO
+    case 2: // 6 inches 
+    dropInStorage();
+    turnClaw();
+    moveArmToPillar(); //dropInStorage sets correct height, dont need to move claw up 
     break;
-    case 4:
-    //TODO
+    case 3: // 9 inches
+    dropInStorage();
+    moveArmToPillar(); //dropInStorage sets correct height, dont need to move claw up 
+    break;
+    case 4: // 12 inches 
+    dropInStorage(); // dropping 3rd stone in storage 
+    turnClaw();
+    moveArmToPillar();
+    Robot::instance()->stoneNumber++;
+    dropInStorage(); // dropping 4th stone - no need to translate back to the middle 
     break;
   }
   Robot::instance()->clawServo.write(180); //deploy claw to get stone 
-  if(digitalRead(NO_STONE) == LOW){ //there is a stone
+  if(digitalRead(NO_STONE) == LOW && Robot::instance()->stoneNumber<5){ //there is a stone
     if(Robot::instance()->direction){
       pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
       return;
@@ -35,28 +40,43 @@ void ManageStone::collectStone(){
       return;
     } 
   }
-  else{ //no stone 
+  else{ //no stone or all stones deposited already
     return; //dont move arm to centre
   }
 }
 
 void ManageStone::dropInStorage(){
   switch(Robot::instance()->stoneNumber){
-    case 1: // 6 inches
-      Robot::instance()->armServo.write(20);
+    case 2: // incoming 6 inches // stone 1
+      if(my_TEAM){
+        Robot::instance()->armServo.write(160); //lower right
+      }
+      else{
+        Robot::instance()->armServo.write(20); //lower left
+      }
       break;
-    case 2: // 6 inches
-      Robot::instance()->armServo.write(40);
+    case 3: // incoming 6 inches // stone 2
+      pwm_start(CLAW_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+      delay(THREE_INCHES); // outgoing 9 inches 
+      if(my_TEAM){
+        Robot::instance()->armServo.write(140); //middle right
+      }
+      else{
+        Robot::instance()->armServo.write(40); //middle left
+      }
       break;
-    case 3: // 9 inches
-      pwm_start(CLAW_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-      delay(NINE_INCH_TIME); //bring down to 6 inches or w.e default height is 
-      Robot::instance()->armServo.write(60);
+    case 4: // incoming 9 inches // stone 3
+      pwm_start(CLAW_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+      delay(THREE_INCHES); // outgoing 12 inches
+      Robot::instance()->armServo.write(60); //upper left
       break;
-    case 4: // 12 inches
-      pwm_start(CLAW_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-      delay(TWELVE_INCH_TIME);
-      Robot::instance()->armServo.write(120);
+    case 5: // 12 inches //stone 4
+      if(my_TEAM){
+        Robot::instance()->armServo.write(40); //middle left
+      }
+      else{
+        Robot::instance()->armServo.write(140); //middle right 
+      }
       break;
   } 
   Robot::instance()->clawServo.write(0); //open claw

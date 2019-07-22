@@ -15,9 +15,9 @@
 #define THRESHOLD 200 
 #define TUNING 1.5
 
-#define GO true
+//#define GO true
 //#define SENSORS true
-//#define MOTORS true
+#define MOTORS true
 
 #ifdef GO
 int derivative; 

@@ -13,7 +13,7 @@ class ManageStone
 
   private: 
     int my_PILLAR_DISTANCE;
-    int my_collisionNumber;
+    bool my_TEAM;
     PinName motor;
     void moveArmToPillar();
     void moveArmToCentre();

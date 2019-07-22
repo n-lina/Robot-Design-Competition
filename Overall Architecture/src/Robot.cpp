@@ -8,11 +8,13 @@ Robot* Robot::m_pInstance = NULL;
 Robot::Robot(): 
 state(0), TEAM(true), stoneNumber(0), collisionNumber(0), splitNumber(0),  direction_facing(true), direction(true),
 armServo(), clawServo(), L_GauntletServo(), R_GauntletServo(), 
+KP_WHEEL(162), KD_WHEEL(12), THRESHOLD(200), SPLIT_THRESHOLD(200), TAB_THRESHOLD(200), ALIGN_TAB_THRESHOLD(200), 
+COLLISION_THRESHOLD(5), PILLAR_DISTANCE(4), 
 CV_Addresses{(int*) 0x0801FFF3, (int*) 0x0801FFF7, (int*) 0x0801FFFB, (int*) 0x0801FFEF, (int*) 0x0801FFDB, 
-(int*) 0x0801FFEB, (int*) 0x0801FFE7, (int*) 0x0801FFE3, (int*)0x0801FFDF, (int*) 0x0801FFD7},
-CV_Values{30, 9, 200, 200, 200, 200, 15, 5, 3, YES_CALIBRATED},
-labels{"KP Wheel", "KD Wheel", "On-Tape Threshold", "Split Threshold", "Tab Threshold", "Alignment Tab Threshold", 
-"Edge Threshold", "Collision Threshold", "Pillar Distance"},
+(int*) 0x0801FFEB, (int*) 0x0801FFE7, (int*)0x0801FFDF, (int*) 0x0801FFD7},
+CV_Values{162, 12, 200, 200, 200, 200, 5, 4, YES_CALIBRATED},
+labels{"KP Wheel", "KD Wheel", "On-Tape Threshold", "Split Threshold", "Tab Threshold", "Alignment Tab Threshold",
+ "Collision Threshold (Inches)", "Pillar Distance (Inches)"},
 value(0), lastEncoderValue(0), encoderValue(0),
 display(Adafruit_SSD1306(-1))
 {
@@ -38,7 +40,7 @@ void Robot::setup(){
   RIGHT_BACKWARD_WHEEL_MOTOR};
   // input_pullup or output
 
-  PinName inputPins [17] = {ARM_SONAR, CLAW_ENCODER, ARM_HOME_SWITCH, TUNING_KNOB_A, TUNING_KNOB_B, TUNING_BUTTON,
+  PinName inputPins [18] = {L_WHEEL_ENCODER, R_WHEEL_ENCODER, ARM_SONAR, ARM_HOME_SWITCH, TUNING_KNOB_A, TUNING_KNOB_B, TUNING_BUTTON,
   L_TAPE_FOLLOW, R_TAPE_FOLLOW, L_SPLIT, R_SPLIT, L_TAB, R_TAB, L_TAB_ALIGN, MIDDLE_TAB_ALIGN, R_TAB_ALIGN, CALIBRATE, T_OR_M};
   
   Servo servos [4] = {armServo, clawServo, L_GauntletServo, R_GauntletServo};
@@ -54,7 +56,7 @@ void Robot::setup(){
       pwm_start(outputPins[i], CLOCK_FQ, MAX_SPEED, 0, 1);      
     }
   }
-  for (volatile int j=12; j<17; j++){
+  for (volatile int j=12; j<18; j++){
     pinMode(inputPins[j], INPUT_PULLUP);
   }
 
@@ -108,7 +110,6 @@ void Robot::adjustVariables(){
   SPLIT_THRESHOLD = *CV_Addresses[SPLIT_THRESHOLD];
   TAB_THRESHOLD = *CV_Addresses[TAB_THRESHOLD];
   ALIGN_TAB_THRESHOLD = *CV_Addresses[ALIGN_TAB_THRESHOLD];
-  EDGE_THRESHOLD = *CV_Addresses[EDGE_THRESHOLD];
   COLLISION_THRESHOLD = *CV_Addresses[COLLISION_THRESHOLD];
   PILLAR_DISTANCE =*CV_Addresses[PILLAR_DISTANCE];
   return;
