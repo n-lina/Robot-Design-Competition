@@ -19,6 +19,7 @@ class ManageStone
     void moveArmToCentre();
     void turnClaw();
     void raiseClaw();
+    int readSonar();
 };
 
 #endif

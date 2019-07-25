@@ -21,7 +21,7 @@ class TapeFollower
     void splitDecide();
     void followTape(); //polls 2 main PTs
     void goDistance(int distance, bool firstRun, int checkptA, int checkptB); // follows tape without checking for splits or tabs 
-    void goHome(bool park); //TODO
+    void goHome(); //only call from between first tabs and 2nd split
     void stop();
 
   private:
@@ -32,6 +32,7 @@ class TapeFollower
     int my_TAB_THRESHOLD;
     int my_ALIGN_TAB_THRESHOLD; 
     int my_COLLISION_THRESHOLD;
+    bool my_TEAM;
     int derivative;  
     int default_speed;
     int timeStep; 
@@ -49,6 +50,7 @@ class TapeFollower
     int encoder;
     int distance;
     bool pressed;
+    bool homeSplit;
     void turnLeft();
     void turnRight();
     void goStraight();

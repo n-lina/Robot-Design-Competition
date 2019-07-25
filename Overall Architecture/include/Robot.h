@@ -35,7 +35,7 @@ enum Calibration_Values {
 class Robot{
 public:
    static Robot* instance(); 
-   void setup();
+   //void setup();
    int state; 
    bool TEAM; //true = thanos, false = methanos 
    int stoneNumber; 

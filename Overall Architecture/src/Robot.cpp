@@ -26,42 +26,43 @@ Robot* Robot::instance(){
    return m_pInstance;
 }
 
-void Robot::setup(){
-  switch (digitalRead(T_OR_M)){
-    case HIGH: 
-      TEAM = true; //thanos
+// void Robot::setup(){
+//   switch (digitalRead(T_OR_M)){
+//     case HIGH: 
+//       TEAM = true; //thanos
 
-    case LOW:
-      TEAM = false; //methanos
-  }
+//     case LOW:
+//       TEAM = false; //methanos
+//   }
     
-  PinName outputPins [12] ={ARM_SERVO, ARM_MOTOR_LEFT, ARM_MOTOR_RIGHT, CLAW_SERVO, CLAW_MOTOR_UP, CLAW_MOTOR_DOWN, 
-  L_GAUNTLET_SERVO, LEFT_FORWARD_WHEEL_MOTOR, RIGHT_FORWARD_WHEEL_MOTOR, R_GAUNTLET_SERVO, LEFT_BACKWARD_WHEEL_MOTOR, 
-  RIGHT_BACKWARD_WHEEL_MOTOR};
-  // input_pullup or output
+//   int outputPins [13] ={ARM_SERVO, ARM_MOTOR_LEFT, ARM_MOTOR_RIGHT, CLAW_SERVO, CLAW_MOTOR_UP, CLAW_MOTOR_DOWN, 
+//   L_GAUNTLET_SERVO, LEFT_FORWARD_WHEEL_MOTOR, RIGHT_FORWARD_WHEEL_MOTOR, R_GAUNTLET_SERVO, LEFT_BACKWARD_WHEEL_MOTOR, 
+//   RIGHT_BACKWARD_WHEEL_MOTOR, ARM_SONAR_ECHO};
+//   // input_pullup or output
 
-  PinName inputPins [18] = {L_WHEEL_ENCODER, R_WHEEL_ENCODER, ARM_SONAR, ARM_HOME_SWITCH, TUNING_KNOB_A, TUNING_KNOB_B, TUNING_BUTTON,
-  L_TAPE_FOLLOW, R_TAPE_FOLLOW, L_SPLIT, R_SPLIT, L_TAB, R_TAB, L_TAB_ALIGN, MIDDLE_TAB_ALIGN, R_TAB_ALIGN, CALIBRATE, T_OR_M};
+//   int inputPins [18] = {L_WHEEL_ENCODER, R_WHEEL_ENCODER, ARM_SONAR_ECHO, ARM_HOME_SWITCH, TUNING_KNOB_A, TUNING_KNOB_B, TUNING_BUTTON,
+//   L_TAPE_FOLLOW, R_TAPE_FOLLOW, L_SPLIT, R_SPLIT, L_TAB, R_TAB, L_TAB_ALIGN, MIDDLE_TAB_ALIGN, R_TAB_ALIGN, CALIBRATE, T_OR_M};
   
-  Servo servos [4] = {armServo, clawServo, L_GauntletServo, R_GauntletServo};
+//   Servo servos [4] = {armServo, clawServo, L_GauntletServo, R_GauntletServo};
   
-  // Setting up pins
-  for (volatile int i=0; i<12; i++){
-    pinMode(outputPins[i], OUTPUT);
-    pinMode(inputPins[i], INPUT_PULLUP);
-    if((i%3)==0){
-      servos[i/3].attach(outputPins[i]);
-    }
-    else{
-      pwm_start(outputPins[i], CLOCK_FQ, MAX_SPEED, 0, 1);      
-    }
-  }
-  for (volatile int j=12; j<18; j++){
-    pinMode(inputPins[j], INPUT_PULLUP);
-  }
+//   // Setting up pins
+//   for (volatile int i=0; i<12; i++){
+//     pinMode(outputPins[i], OUTPUT);
+//     pinMode(inputPins[i], INPUT_PULLUP);
+//     if((i%3)==0){
+//       servos[i/3].attach(outputPins[i]);
+//     }
+//     else{
+//       pwm_start(outputPins[i], CLOCK_FQ, MAX_SPEED, 0, 1);      
+//     }
+//   }
+//   pinMode(outputPins[13], OUTPUT); //ARM_SONAR_TRIGGER
+//   for (volatile int j=12; j<18; j++){
+//     pinMode(inputPins[j], INPUT_PULLUP); //ARM_SONAR_ECHO needs INPUT not INPUT_PULLUP
+//   }
 
-  adjustVariables();
-}
+//   adjustVariables();
+// }
 
 void Robot::toggleMenu(){
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
