@@ -17,117 +17,16 @@ void ManageStone::collectStone(){
   moveArmToPillar();
   Robot::instance()->clawServo.write(180); //deploy claw to get stone 
   dropInStorage(); 
-  //do we need to move arm home? 
-
-  //__________________________COMP CODE______________________
-  //Robot::instance()->stoneNumber++;
-  // switch(Robot::instance()->stoneNumber){
-  //   case 1:// 6 inches
-  //   moveArmToPillar(); 
-  //   break;
-  //   case 2: // 6 inches 
-  //   dropInStorage();
-  //   turnClaw();
-  //   moveArmToPillar(); //dropInStorage sets correct height, dont need to move claw up 
-  //   break;
-  //   case 3: // 9 inches
-  //   dropInStorage();
-  //   moveArmToPillar(); //dropInStorage sets correct height, dont need to move claw up 
-  //   break;
-  //   case 4: // 12 inches 
-  //   dropInStorage(); // dropping 3rd stone in storage 
-  //   turnClaw();
-  //   moveArmToPillar();
-  //   Robot::instance()->stoneNumber++;
-  //   dropInStorage(); // dropping 4th stone - no need to translate back to the middle 
-  //   Robot::instance()->state = GO_HOME;
-  //   break;
-  // }
-  // moveArmToPillar();
-  // Robot::instance()->clawServo.write(180); //deploy claw to get stone 
-  // if(digitalRead(NO_STONE) == LOW && Robot::instance()->stoneNumber<5){ //there is a stone
-  //   if(Robot::instance()->direction){
-  //     pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  //     return;
-  //   }
-  //   else{
-  //     pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  //     return;
-  //   } 
-  // }
-  // else{ //no stone or all stones deposited already
-  //   return; //dont move arm to centre
-  // }
+  //do we need to move arm home?
+  Robot::instance()->state=GO_HOME;
+  return;
 }
 
 void ManageStone::dropInStorage(){
-  // switch(Robot::instance()->stoneNumber){
-  //   case 2: // incoming 6 inches // stone 1
-  //     if(my_TEAM){
-  //       Robot::instance()->armServo.write(160); //lower right
-  //     }
-  //     else{
-  //       Robot::instance()->armServo.write(20); //lower left
-  //     }
-  //     break;
-  //   case 3: // incoming 6 inches // stone 2
-  //     pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  //     delay(THREE_INCHES); // outgoing 9 inches 
-  //     if(my_TEAM){
-  //       Robot::instance()->armServo.write(140); //middle right
-  //     }
-  //     else{
-  //       Robot::instance()->armServo.write(40); //middle left
-  //     }
-  //     break;
-  //   case 4: // incoming 9 inches // stone 3
-  //     pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  //     delay(THREE_INCHES); // outgoing 12 inches
-  //     Robot::instance()->armServo.write(60); //upper left
-  //     break;
-  //   case 5: // 12 inches //stone 4
-  //     if(my_TEAM){
-  //       Robot::instance()->armServo.write(40); //middle left
-  //     }
-  //     else{
-  //       Robot::instance()->armServo.write(140); //middle right 
-  //     }
-  //     break;
-  // } 
   switch(Robot::instance()->stoneNumber){
-    case 1: //12 in
-      //top left
-      break;
-    case 2: //12 in
-      //top right
-      pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-      delay(THREE_INCHES);
-      break;
-    case 3: //9 in 
-      //middle left //check if it depends on team or not ie. can middle be accessed at 9in for both sides
-      pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-      delay(THREE_INCHES);
-      break;      
-    case 4: //6 in
-      if(my_TEAM){
-        //bottom left 
-      }
-      else{
-        //bottom right 
-      }
-      break;
-    case 5: //6 in  
-      pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-      delay(THREE_INCHES);
-      //middle right 
-      break;
-    case 6: //9 in
-      if(my_TEAM){
-        //bottom right 
-      }
-      else{
-        //bottom left 
-      } 
+    case 1: 
+      Robot::instance()->armServo.write(30); //middle left or right 
+      //check if middle can be accessed by either side 
   }
   Robot::instance()->clawServo.write(0); //open claw
   if(my_TEAM){
@@ -136,7 +35,8 @@ void ManageStone::dropInStorage(){
   else{
     Robot::instance()->armServo.write(180);
   }
-} 
+  return;
+}
 
 void ManageStone::moveArmToPillar(){
   if(Robot::instance()->direction){
