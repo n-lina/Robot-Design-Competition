@@ -16,10 +16,18 @@ void ManageStone::collectStone(){
   Robot::instance()->stoneNumber++;
   moveArmToPillar();
   Robot::instance()->clawServo.write(180); //deploy claw to get stone 
+  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  delay(2000);
   dropInStorage(); 
-  //do we need to move arm home?
-  Robot::instance()->state=GO_HOME;
-  return;
+  if(Robot::instance()->direction){
+    pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+    while(true){
+      if(multi(0,1,0)==HIGH){
+        pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
+        return;
+      }
+    }
+  }
 }
 
 void ManageStone::dropInStorage(){
@@ -30,10 +38,10 @@ void ManageStone::dropInStorage(){
   }
   Robot::instance()->clawServo.write(0); //open claw
   if(my_TEAM){
-    Robot::instance()->armServo.write(0); //default side 
+    Robot::instance()->armServo.write(180); //default side 
   }
   else{
-    Robot::instance()->armServo.write(180);
+    Robot::instance()->armServo.write(0);
   }
   return;
 }

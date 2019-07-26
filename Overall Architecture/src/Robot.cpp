@@ -7,14 +7,14 @@ Robot* Robot::m_pInstance = NULL;
 
 Robot::Robot(): 
 state(FOLLOW_TAPE), TEAM(true), stoneNumber(0), collisionNumber(0), splitNumber(0),  direction_facing(true), direction(true),
+KP_WHEEL(KP_WHEEL_), KD_WHEEL(KD_WHEEL_), THRESHOLD(THRESHOLD_), SPLIT_THRESHOLD(THRESHOLD_), 
+TAB_THRESHOLD(TAB_THRESHOLD_), PILLAR_DISTANCE(PILLAR_DISTANCE_), 
 armServo(), clawServo(), L_GauntletServo(), R_GauntletServo(), 
 CV_Addresses{(int*) 0x0801FFF3, (int*) 0x0801FFF7, (int*) 0x0801FFFB, (int*) 0x0801FFEF, (int*) 0x0801FFDB, 
 (int*)0x0801FFDF, (int*) 0x0801FFD7},
 CV_Values{162, 12, 200, 200, 200, 4, YES_CALIBRATED},
 labels{"KP Wheel", "KD Wheel", "On-Tape Threshold", "Split Threshold", "Tab Threshold",
 "Pillar Distance (Cm)"},
-KP_WHEEL(KP_WHEEL_), KD_WHEEL(KD_WHEEL_), THRESHOLD(THRESHOLD_), SPLIT_THRESHOLD(THRESHOLD_), 
-TAB_THRESHOLD(TAB_THRESHOLD_), PILLAR_DISTANCE(PILLAR_DISTANCE_), 
 value(0), lastEncoderValue(0), encoderValue(0),
 display(Adafruit_SSD1306(-1))
 {

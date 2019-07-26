@@ -22,7 +22,7 @@
 #define ARM_MOTOR_UP PA_8
 #define ARM_MOTOR_DOWN PA_10
 #define ARM_SERVO PB3
-#define CLAW_SERVO PA4
+#define CLAW_SERVO PB4
 #define GAUNTLET_SERVO PA15
 #define TUNING_KNOB PA_11
 #define L_TAB PA_0
@@ -62,7 +62,7 @@
 #define THRESHOLD_ 300 
 #define SPLIT_THRESHOLD_ 480 
 #define TAB_THRESHOLD_ 200
-#define PILLAR_DISTANCE_ 7 //cm  
+#define PILLAR_DISTANCE_ 10 //cm  
 
 #endif
 

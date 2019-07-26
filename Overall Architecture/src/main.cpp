@@ -8,8 +8,8 @@
 //#include <Setup.h>
   // declare functions and interrupts, interrupt handlers
 
-#define ALL_TOGETHER true
-//#define COLLECT_STONE_X true //change X to be what stoneNumber u want, check the direction
+//#define ALL_TOGETHER true
+#define COLLECT_STONE_X true //change X to be what stoneNumber u want, check the direction
 // test no stone, choose stoneNumber 1,2, or 3 
 //#define COLLECT_STONE_SONAR true
 //#define GO_HOME
@@ -51,31 +51,16 @@ void loop() {
 #endif
 
 #ifdef COLLECT_STONE_X
-TapeFollower robot(Robot::instance());
 ManageStone Robot(Robot::instance());
 
 void setup() {
- pinMode(ARM_SONAR_TRIGGER, OUTPUT);
- pinMode(ARM_SONAR_ECHO, INPUT_PULLUP);
- pinMode(ARM_HOME_SWITCH, INPUT_PULLUP);
- //pinMode(ARM_SERVO, OUTPUT);
- pinMode(CLAW_SERVO, OUTPUT);
- pinMode(ARM_MOTOR_LEFT, OUTPUT);
- pinMode(ARM_MOTOR_RIGHT, OUTPUT);
- pinMode(ARM_MOTOR_UP, OUTPUT);
- pinMode(ARM_MOTOR_DOWN, OUTPUT);
- pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
- pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1);  
- pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 1);
- pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 1);  
- //Serial.begin(9600);
+  Serial.begin(9600);
+  Robot::instance()->setup();
+  Robot::instance()->direction = LEFT;
+  Robot.collectStone();
 }
 
 void loop (){
-  Robot::instance()->stoneNumber = 1;
-  Robot::instance()->direction = RIGHT;
-  Robot.collectStone();
-  return;
 }
 #endif
 
