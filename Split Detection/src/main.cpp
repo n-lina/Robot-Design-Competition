@@ -2,7 +2,10 @@
 #include <Arduino.h>
 
 
-//make KP and KD adjustable by potentiometer? 
+//TRY:
+// slower
+// pwm_start every other loop
+// split/tab thresholds 
 
 #define L_TAB PA_0
 #define L_SPLIT PA_1 //2
@@ -20,11 +23,10 @@
 #define KD 11 // PID derivative constant 
 #define MAX_SPEED 1024 // max number the Arduino PWM takes 
 #define CLOCK_FQ 100000 //For pwm_start function
-#define THRESHOLD 250 // Threshold for being on or off the line
-#define SPLIT_THRESHOLD 450
-#define TAB_THRESHOLD 300
+#define THRESHOLD 300 // Threshold for being on or off the line
+#define SPLIT_THRESHOLD 480
+#define TAB_THRESHOLD 200
 #define SPEED_TUNING 1.2
-#define TIME 300
 #define TURN_DELAY_TIME 300
 #define SOFT_TURN_DELAY_TIME 180
 
@@ -49,8 +51,6 @@ int loopCounter =0;
 int splitNumber =0;
 int default_speed = MAX_SPEED/SPEED_TUNING;
 
-void alignLeftTab();
-void alignRightTab();
 void turnLeft();
 void turnRight();
 void stop();
@@ -125,6 +125,8 @@ void loop(){
  }
  lastPosition = position;
  
+ leftSensor = analogRead(PHOTO_0) >= THRESHOLD;
+ rightSensor = analogRead(PHOTO_1) >= THRESHOLD;
  leftSplit = analogRead(L_SPLIT) >= SPLIT_THRESHOLD;
  rightSplit = analogRead(R_SPLIT) >= SPLIT_THRESHOLD;
  leftTab =  analogRead(L_TAB)>=TAB_THRESHOLD;
@@ -214,53 +216,6 @@ void goStraight(){
   pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0);
   return;
 }
-
-void alignLeftTab(){
-  stop();
-  delay(500);
-  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 250, 0); 
-  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 1000, 0); 
-  delay(230);
-  stop();
-  delay(4000);
-  turnRight();  
-  return;
-  /*
-  while(true){
-    if(analogRead(ALIGN_LEFT_TAB) >= THRESHOLD){
-      delay(100);
-      stop();
-      delay(100);
-      return;
-    }
-  }
-  */
-}
-
-void alignRightTab(){
-  turnRight();
-  delay(TIME);
-  turnLeft();
-  delay(TIME);
-  goStraight();
-  delay(TIME);
-  stop();
-  delay(3000);
-  turnLeft();
-  return;
-  
-  /*
-  while(true){
-    if(analogRead(ALIGN_RIGHT_TAB) >= THRESHOLD){
-      delay(100);
-      stop();
-      delay(100);
-      return;
-    }
-  }
-  */
-}
-
 #endif
 
 #ifdef SENSORS

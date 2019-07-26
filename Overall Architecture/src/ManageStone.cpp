@@ -46,7 +46,7 @@ void ManageStone::moveArmToPillar(){
       pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   }
   while (true){
-    if(readSonar()<=my_PILLAR_DISTANCE || digitalRead(ARM_LIMIT) == HIGH){
+    if(readSonar()<=my_PILLAR_DISTANCE || multi(0,0,1) == HIGH){ //multi(0,0,1) = limit switch
       pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
       pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);   
       return; 
@@ -56,10 +56,18 @@ void ManageStone::moveArmToPillar(){
 
 void ManageStone::turnClaw(){
   if(Robot::instance()->direction){
+    Robot::instance()->L_GauntletServo.write(180);
+    Robot::instance()->R_GauntletServo.write(180);
     Robot::instance()->armServo.write(180); //180 degrees corresponds to right side
+    Robot::instance()->L_GauntletServo.write(0);
+    Robot::instance()->R_GauntletServo.write(0);
   }
   else{
+    Robot::instance()->L_GauntletServo.write(180);
+    Robot::instance()->R_GauntletServo.write(180);
     Robot::instance()->armServo.write(0);
+    Robot::instance()->L_GauntletServo.write(0);
+    Robot::instance()->R_GauntletServo.write(0);
   }
 }
 
@@ -82,5 +90,12 @@ int ManageStone::readSonar(){ //inches
   delayMicroseconds(10);
   digitalWrite(ARM_SONAR_TRIGGER, LOW);
   return pulseIn(ARM_SONAR_ECHO, HIGH)*(0.034/2);
+}
+
+bool ManageStone::multi(bool C, bool B, bool A) {
+  digitalWrite(MULTIPLEX_A, A);
+  digitalWrite(MULTIPLEX_B, B);
+  digitalWrite(MULTIPLEX_C, C); 
+  return digitalRead(MULTIPLEX_OUT);
 }
 

@@ -16,13 +16,12 @@ class TapeFollower
 {
   public: 
     TapeFollower(Robot const* robot);
-    void turnInPlaceLeft();
-    void turnInPlaceRight();
     void splitDecide();
     void followTape(); //polls 2 main PTs
     void goDistance(int distance, bool firstRun, int checkptA, int checkptB); // follows tape without checking for splits or tabs 
     void goHome(); //only call from between first tabs and 2nd split
-    void stop();
+    void park();
+    void avoidCollision();
 
   private:
     int my_KP_WHEEL;
@@ -30,8 +29,6 @@ class TapeFollower
     int my_THRESHOLD; 
     int my_SPLIT_THRESHOLD;
     int my_TAB_THRESHOLD;
-    int my_ALIGN_TAB_THRESHOLD; 
-    int my_COLLISION_THRESHOLD;
     bool my_TEAM;
     int derivative;  
     int default_speed;
@@ -51,13 +48,14 @@ class TapeFollower
     int distance;
     bool pressed;
     bool homeSplit;
+    void stop();
     void turnLeft();
     void turnRight();
     void goStraight();
-    void alignLeftTab(); //TODO
-    void alignRightTab(); //TODO
     void turnLeftSoft();
     void turnRightSoft();
+    void turnInPlaceLeft();
+    void turnInPlaceRight();
 };
 
 #endif

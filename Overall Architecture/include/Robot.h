@@ -13,7 +13,6 @@ enum RobotStates {
    AVOID_COLLISION,
    SPLIT_CHOOSER,
    COLLECT_STONE, 
-   DEPOSIT_STONE_IN_STORAGE,
    GO_HOME,
    PARK,
    NUM_STATES,
@@ -25,8 +24,6 @@ enum Calibration_Values {
   THRESHOLD,
   SPLIT_THRESHOLD,
   TAB_THRESHOLD,
-  ALIGN_TAB_THRESHOLD,
-  COLLISION_THRESHOLD,
   PILLAR_DISTANCE,
   CALIBRATED_MAGIC,
   NUM_VARIABLES
@@ -35,7 +32,7 @@ enum Calibration_Values {
 class Robot{
 public:
    static Robot* instance(); 
-   //void setup();
+   void setup();
    int state; 
    bool TEAM; //true = thanos, false = methanos 
    int stoneNumber; 
@@ -48,8 +45,6 @@ public:
    int THRESHOLD; 
    int SPLIT_THRESHOLD; 
    int TAB_THRESHOLD; 
-   int ALIGN_TAB_THRESHOLD; 
-   int COLLISION_THRESHOLD;
    int PILLAR_DISTANCE; 
    Servo armServo; 
    Servo clawServo; 
@@ -63,6 +58,7 @@ private:
    static Robot* m_pInstance;
    void toggleMenu();
    void adjustVariables();
+   bool multi(bool C, bool B, bool A);
    int* CV_Addresses [NUM_VARIABLES];
    int CV_Values [NUM_VARIABLES];
    String labels [NUM_VARIABLES-1];
@@ -72,52 +68,4 @@ private:
    Adafruit_SSD1306 display;
 };
 
-/*
-
-------Robot.cpp-------------
-
-#include "Robot.h"
-// Global static pointer used to ensure a single instance of the class.
-Robot* Robot::m_pInstance = NULL; 
- 
-// This function is called to create an instance of the class.
-    Calling the constructor publicly is not allowed. The constructor
-    is private and is only called by this Instance function.
-
-   
-Robot* Robot::i(){
-   if (!m_pInstance)   // Only allow one instance of class to be generated.
-      m_pInstance = new Robot;
-   return m_pInstance;
-}
-
-Robot::Robot() : 
-   lastEncoderValue(0), encoderValue(0), value(0),
-    labels {"KP Tape Following","KD Tape Following","Line Following Threshold",
-    "Split Detected Threshold","Gauntlet Tape Threshold","Edge Threshold", "Collision Threshold"},
-    CV_Addresses {((int*) 0x0801FFF3), ((int*) 0x0801FFF7)}
-{
-}
-
------------main.cpp------------------
-#include "Robot.h"
-
-setup(){
-  Robot::i()->CV[CV_KPWHEEL];
-}
-}
-
------------ ThresholdMenu.cpp --------
-
-[...]
-
-value = *(Robot::i()->CV_Addresses[i]);
-
-[...]
-
-*(Robot::i()->CV[i]) = value;
-
--------------------------------------
-
-*/
 #endif

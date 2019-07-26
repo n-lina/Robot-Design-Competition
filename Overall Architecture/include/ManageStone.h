@@ -20,6 +20,7 @@ class ManageStone
     void turnClaw();
     void raiseClaw();
     int readSonar();
+    bool multi(bool C, bool B, bool A);
 };
 
 #endif

@@ -6,15 +6,15 @@
 Robot* Robot::m_pInstance = NULL; 
 
 Robot::Robot(): 
-state(0), TEAM(true), stoneNumber(0), collisionNumber(0), splitNumber(0),  direction_facing(true), direction(true),
+state(FOLLOW_TAPE), TEAM(true), stoneNumber(0), collisionNumber(0), splitNumber(0),  direction_facing(true), direction(true),
 armServo(), clawServo(), L_GauntletServo(), R_GauntletServo(), 
-KP_WHEEL(162), KD_WHEEL(12), THRESHOLD(200), SPLIT_THRESHOLD(200), TAB_THRESHOLD(200), ALIGN_TAB_THRESHOLD(200), 
-COLLISION_THRESHOLD(5), PILLAR_DISTANCE(4), 
 CV_Addresses{(int*) 0x0801FFF3, (int*) 0x0801FFF7, (int*) 0x0801FFFB, (int*) 0x0801FFEF, (int*) 0x0801FFDB, 
-(int*) 0x0801FFEB, (int*) 0x0801FFE7, (int*)0x0801FFDF, (int*) 0x0801FFD7},
-CV_Values{162, 12, 200, 200, 200, 200, 5, 4, YES_CALIBRATED},
-labels{"KP Wheel", "KD Wheel", "On-Tape Threshold", "Split Threshold", "Tab Threshold", "Alignment Tab Threshold",
- "Collision Threshold (Inches)", "Pillar Distance (Inches)"},
+(int*)0x0801FFDF, (int*) 0x0801FFD7},
+CV_Values{162, 12, 200, 200, 200, 4, YES_CALIBRATED},
+labels{"KP Wheel", "KD Wheel", "On-Tape Threshold", "Split Threshold", "Tab Threshold",
+"Pillar Distance (Cm)"},
+KP_WHEEL(KP_WHEEL_), KD_WHEEL(KD_WHEEL_), THRESHOLD(THRESHOLD_), SPLIT_THRESHOLD(THRESHOLD_), 
+TAB_THRESHOLD(TAB_THRESHOLD_), PILLAR_DISTANCE(PILLAR_DISTANCE_), 
 value(0), lastEncoderValue(0), encoderValue(0),
 display(Adafruit_SSD1306(-1))
 {
@@ -26,43 +26,70 @@ Robot* Robot::instance(){
    return m_pInstance;
 }
 
-// void Robot::setup(){
-//   switch (digitalRead(T_OR_M)){
-//     case HIGH: 
-//       TEAM = true; //thanos
-
-//     case LOW:
-//       TEAM = false; //methanos
-//   }
-    
-//   int outputPins [13] ={ARM_SERVO, ARM_MOTOR_LEFT, ARM_MOTOR_RIGHT, CLAW_SERVO, CLAW_MOTOR_UP, CLAW_MOTOR_DOWN, 
-//   L_GAUNTLET_SERVO, LEFT_FORWARD_WHEEL_MOTOR, RIGHT_FORWARD_WHEEL_MOTOR, R_GAUNTLET_SERVO, LEFT_BACKWARD_WHEEL_MOTOR, 
-//   RIGHT_BACKWARD_WHEEL_MOTOR, ARM_SONAR_ECHO};
-//   // input_pullup or output
-
-//   int inputPins [18] = {L_WHEEL_ENCODER, R_WHEEL_ENCODER, ARM_SONAR_ECHO, ARM_HOME_SWITCH, TUNING_KNOB_A, TUNING_KNOB_B, TUNING_BUTTON,
-//   L_TAPE_FOLLOW, R_TAPE_FOLLOW, L_SPLIT, R_SPLIT, L_TAB, R_TAB, L_TAB_ALIGN, MIDDLE_TAB_ALIGN, R_TAB_ALIGN, CALIBRATE, T_OR_M};
+void Robot::setup(){    
   
-//   Servo servos [4] = {armServo, clawServo, L_GauntletServo, R_GauntletServo};
-  
-//   // Setting up pins
-//   for (volatile int i=0; i<12; i++){
-//     pinMode(outputPins[i], OUTPUT);
-//     pinMode(inputPins[i], INPUT_PULLUP);
-//     if((i%3)==0){
-//       servos[i/3].attach(outputPins[i]);
-//     }
-//     else{
-//       pwm_start(outputPins[i], CLOCK_FQ, MAX_SPEED, 0, 1);      
-//     }
-//   }
-//   pinMode(outputPins[13], OUTPUT); //ARM_SONAR_TRIGGER
-//   for (volatile int j=12; j<18; j++){
-//     pinMode(inputPins[j], INPUT_PULLUP); //ARM_SONAR_ECHO needs INPUT not INPUT_PULLUP
-//   }
+  // Setting up pins
+  pinMode(L_WHEEL_ENCODER, INPUT_PULLUP); //check if input or input pullup
+  pinMode(R_WHEEL_ENCODER, INPUT_PULLUP);
+  pinMode(ARM_SONAR_ECHO, INPUT); 
+  pinMode(TUNING_KNOB, INPUT_PULLUP);
+  pinMode(L_TAB, INPUT_PULLUP);
+  pinMode(L_SPLIT, INPUT_PULLUP);
+  pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
+  pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
+  pinMode(R_SPLIT, INPUT_PULLUP);
+  pinMode(R_TAB, INPUT_PULLUP);
+  pinMode(CALIBRATE, INPUT_PULLUP);
+  pinMode(T_OR_M, INPUT_PULLUP);
+  pinMode(MULTIPLEX_OUT, INPUT_PULLUP);
+  pinMode(COLLISION, INPUT_PULLUP);
+/////////////////////////////////////
+  pinMode(ARM_SONAR_TRIGGER, OUTPUT);
+  pinMode(ARM_MOTOR_LEFT, OUTPUT);
+  pinMode(ARM_MOTOR_RIGHT, OUTPUT);
+  pinMode(ARM_MOTOR_UP, OUTPUT);
+  pinMode(ARM_MOTOR_DOWN, OUTPUT);
+  pinMode(ARM_SERVO, OUTPUT);
+  pinMode(CLAW_SERVO, OUTPUT);
+  pinMode(GAUNTLET_SERVO, OUTPUT);
+  pinMode(LEFT_FORWARD_WHEEL_MOTOR, OUTPUT);
+  pinMode(RIGHT_FORWARD_WHEEL_MOTOR, OUTPUT);
+  pinMode(LEFT_BACKWARD_WHEEL_MOTOR, OUTPUT);
+  pinMode(RIGHT_BACKWARD_WHEEL_MOTOR, OUTPUT);
+  pinMode(MULTIPLEX_A, OUTPUT);
+  pinMode(MULTIPLEX_B, OUTPUT);
+  pinMode(MULTIPLEX_C, OUTPUT);
 
-//   adjustVariables();
-// }
+  // pwm_start init motors
+  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+  pwm_start(LEFT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+  pwm_start(RIGHT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+  pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
+  pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1);
+  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 1);
+  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 1);
+
+  // Attaching servos 
+  armServo.attach(ARM_SERVO);
+  clawServo.attach(CLAW_SERVO);
+  L_GauntletServo.attach(GAUNTLET_SERVO);
+  R_GauntletServo.attach(GAUNTLET_SERVO);
+
+  // declaring interrupts
+
+  // team 
+  switch (digitalRead(T_OR_M)){
+    case HIGH: 
+      TEAM = true; //thanos
+      direction = LEFT;
+    case LOW:
+      TEAM = false; //methanos
+      direction = RIGHT;
+  }
+  
+  //adjustVariables();
+}
 
 void Robot::toggleMenu(){
     display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
@@ -76,15 +103,17 @@ void Robot::toggleMenu(){
 
       value = *CV_Addresses[i];
 
-      while(digitalRead(TUNING_BUTTON)==LOW){ //while button not pressed 
-        encoderValue = digitalRead(TUNING_KNOB_A);
+      while(!multi(1,0,1)){ //while tuning button not pressed 
+      //TODO
+        encoderValue = digitalRead(TUNING_KNOB);
         if(encoderValue != lastEncoderValue){
-          if(digitalRead(TUNING_KNOB_B) != encoderValue){
+          if(digitalRead(TUNING_KNOB) != encoderValue){
             value ++;
           }
           else{
             value --;
           }
+      ////
         display.print(String(value));
         display.display();
         lastEncoderValue = encoderValue;
@@ -110,10 +139,15 @@ void Robot::adjustVariables(){
   THRESHOLD = *CV_Addresses[THRESHOLD];
   SPLIT_THRESHOLD = *CV_Addresses[SPLIT_THRESHOLD];
   TAB_THRESHOLD = *CV_Addresses[TAB_THRESHOLD];
-  ALIGN_TAB_THRESHOLD = *CV_Addresses[ALIGN_TAB_THRESHOLD];
-  COLLISION_THRESHOLD = *CV_Addresses[COLLISION_THRESHOLD];
   PILLAR_DISTANCE =*CV_Addresses[PILLAR_DISTANCE];
   return;
+}
+
+bool Robot::multi(bool C, bool B, bool A) {
+  digitalWrite(MULTIPLEX_A, A);
+  digitalWrite(MULTIPLEX_B, B);
+  digitalWrite(MULTIPLEX_C, C); 
+  return digitalRead(MULTIPLEX_OUT);
 }
 
 
