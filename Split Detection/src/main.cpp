@@ -15,8 +15,6 @@
 #define PHOTO_1 PA_3
 #define R_SPLIT PA_4
 #define R_TAB PA_5
-//#define ALIGN_LEFT_TAB PA_5 //pin 
-//#define ALIGN_RIGHT_TAB PA_4 //pin
 #define L_MOTOR_FORWARD PB_6
 #define L_MOTOR_BACKWARD PB_7
 #define R_MOTOR_FORWARD PB_8
@@ -29,8 +27,6 @@
 #define TAB_THRESHOLD 400
 #define SPEED_TUNING 1.8
 #define TURN_DELAY_TIME 200
-//#define SPLIT PB10
-//#define TAB PB11
 #define CLAW_UP PA_8
 #define CLAW_DOWN PA_10
 #define ARM_LEFT PB_0
@@ -48,11 +44,8 @@
 #define ANGLE_START 70 
 #define ANGLE_FINISH 140
 
-//#define GO true //not hardcoded
-//#define SENSORS true
-#define MOTORS true
+#define GO true //not hardcoded
 //#define STONE true 
-//#define TURN_IN_PLACE true
 
 #ifdef GO
 bool THANOS = false; 
@@ -306,70 +299,6 @@ void dropGauntlet(){
 
 #endif
 
-#ifdef SENSORS
-
-void setup(){
-pinMode(L_SPLIT,INPUT_PULLUP);
-pinMode(R_SPLIT,INPUT_PULLUP);
-pinMode(PHOTO_0,INPUT_PULLUP);
-pinMode(PHOTO_1,INPUT_PULLUP);
-pinMode(L_MOTOR_FORWARD, OUTPUT);
-pinMode(R_MOTOR_FORWARD, OUTPUT);
-pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 1);
-pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 1); 
-Serial.begin(9600);
-}
-
-void loop(){
-  Serial.println("Left Tab // " + String(analogRead(L_SPLIT)));
-  Serial.println("Left Photo // " + String(analogRead(PHOTO_0)));
-  Serial.println("Right Photo // " + String(analogRead(PHOTO_1)));
-  Serial.println("Right Tab // " + String(analogRead(R_SPLIT)));
-  Serial.println("___________________");
-  delay(2000);
-}
-
-#endif
-
-#ifdef MOTORS 
-
-void stop();
-
-void setup(){
-pinMode(L_MOTOR_FORWARD, OUTPUT);
-pinMode(L_MOTOR_BACKWARD, OUTPUT);
-pinMode(R_MOTOR_FORWARD, OUTPUT);
-pinMode(R_MOTOR_BACKWARD, OUTPUT);
-pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 0, 1);
-pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 1); 
-pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 1);
-pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 0, 1); 
-Serial.begin(9600);
-  pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  delay(3000);
-  stop();
-}
-
-void loop(){
-  // pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  // pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  // delay(2000);
-  // stop();
-  // delay(2000);
-  // pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  // pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  // delay(2000);
-  // stop();
-  // delay(2000);
-}
-
-void stop(){
-  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);
-  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);
-}
-#endif
-
 #ifdef STONE
 
 Servo clawServo; 
@@ -459,55 +388,5 @@ bool multi(bool C, bool B, bool A) {
 
 #endif
 
-#ifdef TURN_IN_PLACE
-void turnInPlaceLeft();
-void turnInPlaceRight();
-void stop();
-
-void setup(){
-  pinMode(L_MOTOR_FORWARD, OUTPUT);
-  pinMode(R_MOTOR_FORWARD, OUTPUT);
-  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 1);
-  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 1); 
-  pinMode(L_MOTOR_BACKWARD, OUTPUT);
-  pinMode(R_MOTOR_BACKWARD, OUTPUT);
-  pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 0, 1);
-  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 0, 1); 
-}
-
-void loop(){
-  turnInPlaceLeft();
-  delay(500);
-  stop();
-  delay(3000);
-}
-
-void turnInPlaceLeft(){
-  pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  delay(TURN_DELAY_TIME);
-  while(true){
-    if(analogRead(PHOTO_0) >= THRESHOLD || analogRead(PHOTO_1) >= THRESHOLD){
-      return;
-    }
-  }
-}
-
-void turnInPlaceRight(){
-  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  delay(TURN_DELAY_TIME);
-  while(true){
-    if(analogRead(PHOTO_0) >= THRESHOLD || analogRead(PHOTO_1) >= THRESHOLD){
-      return;
-    }
-  }
-}
-
-void stop(){
-  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 0, 0); 
-  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);  
-}
-#endif
 
 
