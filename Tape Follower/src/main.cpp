@@ -471,22 +471,28 @@ void stop(){
 
 
 void turnInPlaceLeft(){
-  pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 800, 0); 
-  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 800, 0); 
+  pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
   delay(TURN_DELAY_TIME);
   while(true){
     if(analogRead(PHOTO_0) >= THRESHOLD || analogRead(PHOTO_1) >= THRESHOLD){
+      stop();
+      delay(50);
+      turnRight();
       return;
     }
   }
 }
 
 void turnInPlaceRight(){
-  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 800, 0); 
-  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 800, 0); 
+  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
   delay(TURN_DELAY_TIME);
   while(true){
     if(analogRead(PHOTO_0) >= THRESHOLD || analogRead(PHOTO_1) >= THRESHOLD){
+      stop();
+      delay(50);
+      turnLeft();
       return;
     }
   }
@@ -565,22 +571,28 @@ void loop(){
 }
 
 void turnInPlaceLeft(){
-  pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 700, 0); 
-  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 700, 0); 
+  pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
   delay(TURN_DELAY_TIME);
   while(true){
     if(analogRead(PHOTO_0) >= THRESHOLD || analogRead(PHOTO_1) >= THRESHOLD){
+      stop();
+      delay(50);
+      turnRight();
       return;
     }
   }
 }
 
 void turnInPlaceRight(){
-  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 700, 0); 
-  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 700, 0); 
+  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
   delay(TURN_DELAY_TIME);
   while(true){
     if(analogRead(PHOTO_0) >= THRESHOLD || analogRead(PHOTO_1) >= THRESHOLD){
+      stop();
+      delay(50);
+      turnLeft();
       return;
     }
   }

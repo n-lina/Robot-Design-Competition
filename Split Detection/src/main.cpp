@@ -57,10 +57,10 @@ int PID;
 int number;
 bool leftSensor;
 bool rightSensor;
-bool leftTab; 
-bool rightTab;
-bool leftSplit; 
-bool rightSplit;
+bool leftDecide; 
+bool rightDecide;
+bool leftAlign; 
+bool rightAlign;
 bool pressed = false;
 int loopCounter =0;
 int splitNumber =0;
@@ -74,6 +74,7 @@ void stop();
 void collectStone();
 bool multi(bool C, bool B, bool A);
 void dropGauntlet();
+void alignPillar();
 
 Servo armServo; 
 Servo clawServo; 
@@ -121,10 +122,10 @@ void setup()
 void loop(){
   leftSensor = analogRead(PHOTO_0) >= THRESHOLD;
   rightSensor = analogRead(PHOTO_1) >= THRESHOLD;
-  leftSplit =  analogRead(L_SPLIT)>=TAB_THRESHOLD;
-  rightSplit = analogRead(R_SPLIT)>=TAB_THRESHOLD;
+  leftDecide =  analogRead(L_SPLIT)>=TAB_THRESHOLD;
+  rightDecide = analogRead(R_SPLIT)>=TAB_THRESHOLD;
   
-  if((leftSplit || rightSplit) && (rightSensor || leftSensor)){
+  if((leftDecide || rightDecide) && (rightSensor || leftSensor)){
     splitNumber++;
     switch(splitNumber){
       case 1: case 2:

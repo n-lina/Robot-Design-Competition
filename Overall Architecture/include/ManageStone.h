@@ -16,9 +16,9 @@ class ManageStone
     bool my_TEAM;
     PinName motor;
     void moveArmToPillar();
-    void moveArmToCentre();
+    //void moveArmToCentre();
     void turnClaw();
-    void raiseClaw();
+    //void raiseClaw();
     int readSonar();
     bool multi(bool C, bool B, bool A);
 };

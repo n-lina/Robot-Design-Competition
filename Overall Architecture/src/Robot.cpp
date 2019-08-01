@@ -6,16 +6,14 @@
 Robot* Robot::m_pInstance = NULL; 
 
 Robot::Robot(): 
-state(FOLLOW_TAPE), TEAM(true), stoneNumber(0), collisionNumber(0), splitNumber(0),  direction_facing(true), direction(true),
-KP_WHEEL(KP_WHEEL_), KD_WHEEL(KD_WHEEL_), THRESHOLD(THRESHOLD_), SPLIT_THRESHOLD(THRESHOLD_), 
-TAB_THRESHOLD(TAB_THRESHOLD_), PILLAR_DISTANCE(PILLAR_DISTANCE_), 
-armServo(), clawServo(), L_GauntletServo(), R_GauntletServo(), 
+state(FOLLOW_TAPE), TEAM(true), stoneNumber(0), collisionNumber(0), splitNumber(0), 
+direction_facing(true), direction(true), armServo(), clawServo(), L_GauntletServo(), R_GauntletServo(), 
 CV_Addresses{(int*) 0x0801FFF3, (int*) 0x0801FFF7, (int*) 0x0801FFFB, (int*) 0x0801FFEF, (int*) 0x0801FFDB, 
 (int*)0x0801FFDF, (int*) 0x0801FFD7},
 CV_Values{162, 12, 200, 200, 200, 4, YES_CALIBRATED},
-labels{"KP Wheel", "KD Wheel", "On-Tape Threshold", "Split Threshold", "Tab Threshold",
+labels{"KP Wheel", "KD Wheel", "On-Tape Threshold", "Decide Threshold", "Align Threshold",
 "Pillar Distance (Cm)"},
-value(0), lastEncoderValue(0), encoderValue(0),
+value(0), lastEncoderValue(0), encoderValue(0), increment(1),
 display(Adafruit_SSD1306(-1))
 {
 }
@@ -29,22 +27,23 @@ Robot* Robot::instance(){
 void Robot::setup(){    
   
   // Setting up pins
-  pinMode(L_WHEEL_ENCODER, INPUT_PULLUP); //check if input or input pullup
-  pinMode(R_WHEEL_ENCODER, INPUT_PULLUP);
-  pinMode(ARM_SONAR_ECHO, INPUT); 
+  pinMode(L_ENCODER_A, INPUT_PULLUP); //check if input or input pullup
+  pinMode(L_ENCODER_B, INPUT_PULLUP);
+  pinMode(R_ENCODER_A, INPUT_PULLUP);
+  pinMode(R_ENCODER_B, INPUT_PULLUP);
+  pinMode(SONAR_ECHO, INPUT); 
   pinMode(TUNING_KNOB, INPUT_PULLUP);
-  pinMode(L_TAB, INPUT_PULLUP);
-  pinMode(L_SPLIT, INPUT_PULLUP);
+  pinMode(L_DECIDE, INPUT_PULLUP);
+  pinMode(L_ALIGN, INPUT_PULLUP);
   pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
   pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
-  pinMode(R_SPLIT, INPUT_PULLUP);
-  pinMode(R_TAB, INPUT_PULLUP);
-  pinMode(CALIBRATE, INPUT_PULLUP);
+  pinMode(R_DECIDE, INPUT_PULLUP);
+  pinMode(R_ALIGN, INPUT_PULLUP);
   pinMode(T_OR_M, INPUT_PULLUP);
   pinMode(MULTIPLEX_OUT, INPUT_PULLUP);
   pinMode(COLLISION, INPUT_PULLUP);
 /////////////////////////////////////
-  pinMode(ARM_SONAR_TRIGGER, OUTPUT);
+  pinMode(SONAR_TRIG, OUTPUT);
   pinMode(ARM_MOTOR_LEFT, OUTPUT);
   pinMode(ARM_MOTOR_RIGHT, OUTPUT);
   pinMode(ARM_MOTOR_UP, OUTPUT);
@@ -78,48 +77,55 @@ void Robot::setup(){
 
   // declaring interrupts
 
-  // team 
+  // Team 
   switch (digitalRead(T_OR_M)){
     case HIGH: 
       TEAM = true; //thanos
       direction = LEFT;
+      break;
     case LOW:
       TEAM = false; //methanos
       direction = RIGHT;
+      break;
   }
   
-  //adjustVariables();
+  adjustVariables();
 }
 
 void Robot::toggleMenu(){
-    display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
     
-    for(volatile int i=0; i<NUM_VARIABLES-1; i++){
-      display.clearDisplay();
-      display.setCursor(0,0);
-      display.print(labels[i]);
-      display.display();
-      display.setCursor(0,15);
+  for(volatile int i=0; i<NUM_VARIABLES-1; i++){
+    display.clearDisplay();
+    display.setCursor(0,0);
+    display.print(labels[i]);
+    display.display();
+    display.setCursor(0,15);
 
-      value = *CV_Addresses[i];
+    value = *CV_Addresses[i];
 
-      while(!multi(1,0,1)){ //while tuning button not pressed 
-      //TODO
-        encoderValue = digitalRead(TUNING_KNOB);
-        if(encoderValue != lastEncoderValue){
-          if(digitalRead(TUNING_KNOB) != encoderValue){
-            value ++;
-          }
-          else{
-            value --;
-          }
-      ////
+    while(true){ 
+      if(multi(1,0,1) && (pulseIn(MULTIPLEX_OUT, HIGH) < 1000)){ //if tuning button pressed quickly
+        break; 
+      }
+      else if(multi(1,0,1) && (pulseIn(MULTIPLEX_OUT, HIGH) >= 1000)){ 
+      //if tuning button pressed long - change directions
+        if(increment == -1){
+          increment = 1;
+        }
+        else{
+          increment= -1;
+        }
+      }
+      encoderValue = digitalRead(TUNING_KNOB);
+      if(encoderValue != lastEncoderValue){
+        value = value + increment; 
         display.print(String(value));
         display.display();
         lastEncoderValue = encoderValue;
       }
     }
-    *CV_Addresses[i] = value;         
+  *CV_Addresses[i] = value;         
   }
   return;
 }
@@ -131,14 +137,14 @@ void Robot::adjustVariables(){
       *CV_Addresses[i] = CV_Values[i];
     }
   }
-  if(digitalRead(CALIBRATE)==HIGH){
+  if(multi(1,0,1) && (pulseIn(MULTIPLEX_OUT, HIGH) >= 5000)){
     toggleMenu();
   }
   KP_WHEEL = *CV_Addresses[KP_WHEEL];
   KD_WHEEL = *CV_Addresses[KD_WHEEL];
   THRESHOLD = *CV_Addresses[THRESHOLD];
-  SPLIT_THRESHOLD = *CV_Addresses[SPLIT_THRESHOLD];
-  TAB_THRESHOLD = *CV_Addresses[TAB_THRESHOLD];
+  DECIDE_THRESHOLD = *CV_Addresses[DECIDE_THRESHOLD];
+  ALIGN_THRESHOLD = *CV_Addresses[ALIGN_THRESHOLD];
   PILLAR_DISTANCE =*CV_Addresses[PILLAR_DISTANCE];
   return;
 }

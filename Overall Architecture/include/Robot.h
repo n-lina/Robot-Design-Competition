@@ -8,7 +8,7 @@
 using namespace std;
 
 enum RobotStates {
-   GO_DISTANCE,
+   //GO_DISTANCE,
    FOLLOW_TAPE,
    AVOID_COLLISION,
    SPLIT_CHOOSER,
@@ -22,8 +22,8 @@ enum Calibration_Values {
   KP_WHEEL,
   KD_WHEEL,
   THRESHOLD,
-  SPLIT_THRESHOLD,
-  TAB_THRESHOLD,
+  DECIDE_THRESHOLD,
+  ALIGN_THRESHOLD,
   PILLAR_DISTANCE,
   CALIBRATED_MAGIC,
   NUM_VARIABLES
@@ -43,11 +43,11 @@ public:
    int KP_WHEEL; 
    int KD_WHEEL; 
    int THRESHOLD; 
-   int SPLIT_THRESHOLD; 
-   int TAB_THRESHOLD; 
+   int DECIDE_THRESHOLD; 
+   int ALIGN_THRESHOLD; 
    int PILLAR_DISTANCE; 
-   Servo armServo; 
-   Servo clawServo; 
+   Servo armServo; // 0 = left; 180 = right
+   Servo clawServo; // 0 = open; 180 = closed
    Servo L_GauntletServo;
    Servo R_GauntletServo;
 
@@ -65,6 +65,7 @@ private:
    volatile int value; 
    bool lastEncoderValue;
    bool encoderValue;
+   int increment;
    Adafruit_SSD1306 display;
 };
 

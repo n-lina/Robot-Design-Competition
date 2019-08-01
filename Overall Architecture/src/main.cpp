@@ -5,14 +5,11 @@
 #include "Constants.h"
 
 
-//#include <Setup.h>
-  // declare functions and interrupts, interrupt handlers
-
-//#define ALL_TOGETHER true
-#define COLLECT_STONE_X true //change X to be what stoneNumber u want, check the direction
+#define ALL_TOGETHER true
+//#define COLLECT_STONE_X true //change X to be what stoneNumber u want, check the direction
 // test no stone, choose stoneNumber 1,2, or 3 
 //#define COLLECT_STONE_SONAR true
-//#define GO_HOME
+//#define GO_HOME true 
 //#define MULTIPLEX
 
 #ifdef ALL_TOGETHER 
@@ -26,9 +23,9 @@ void setup() {
 
 void loop() {
   switch (Robot::instance()->state){
-    case GO_DISTANCE: // Go a certain distance without checking for tabs/splits
-      //TODO
-      break;
+    // case GO_DISTANCE: // Go a certain distance without checking for tabs/splits
+    //   //TODO
+    //   break;
     case FOLLOW_TAPE: // Follow Tape checking splits/tabs
       robot.followTape();
       break;
@@ -46,6 +43,7 @@ void loop() {
       break;
     case PARK: // park at gauntlet
       robot.park();
+      break;
   }
 }
 #endif
@@ -68,17 +66,11 @@ void loop (){
 TapeFollower robot(Robot::instance());
 
 void setup() {
- pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
- pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
- pinMode(LEFT_FORWARD_WHEEL_MOTOR, OUTPUT);
- pinMode(RIGHT_FORWARD_WHEEL_MOTOR, OUTPUT);
- pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
- pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);   
- Serial.begin(9600);
- robot.goHome(true);
+  Robot::instance()->setup();
 }
 
 void loop() {
+  robot.goHome(true);
 }
 #endif
 
@@ -111,3 +103,4 @@ bool multi(bool C, bool B, bool A) {
 }
 
 #endif 
+

@@ -12,36 +12,52 @@ ManageStone::ManageStone(Robot const* robot):
 //no translating after that, only moving up from 6->9 after stone 2, 9->12 after stone 3
 //dropInStorage right after picking up the stone except for 1st stone 
 
-void ManageStone::collectStone(){
+void ManageStone::collectStone(){ // dropInStorage moves claw to correct height + 2cm to not hit the stone.
   Robot::instance()->stoneNumber++;
-  moveArmToPillar();
-  Robot::instance()->clawServo.write(180); //deploy claw to get stone 
-  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  delay(2000);
-  dropInStorage(); 
-  if(Robot::instance()->direction){
-    pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-    while(true){
-      if(multi(0,1,0)==HIGH){
-        pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
-        return;
-      }
-    }
+  Robot::instance()->clawServo.write(0); // opening claw 
+  if(my_TEAM){ // thanos
+    Robot::instance()->armServo.write(180); //moving it to correct side TODO: team
   }
+  else{ // methanos
+    Robot::instance()->armServo.write(0);
+  }
+  // pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); //TODO: team
+  // while(true){
+  //   if(multi(1,0,0)==HIGH){
+  //     pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
+  //     pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
+  //     break;
+  //   }
+  // }
+  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  delay(1500);
+  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
+  Robot::instance()->clawServo.write(180); //deploying claw
+  delay(1000); // waiting for it to grasp
+  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); // lifting stone out of the hole 
+  delay(3500);
+  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
+  dropInStorage();
+  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); // returning to height b4 lifting stone 
+  delay(3500);
+  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
+  dropInStorage();
+  Robot::instance()->state = GO_HOME;
+  return;
 }
 
 void ManageStone::dropInStorage(){
   switch(Robot::instance()->stoneNumber){
     case 1: 
-      Robot::instance()->armServo.write(30); //middle left or right 
+      Robot::instance()->armServo.write(90); //middle left or right 
       //check if middle can be accessed by either side 
   }
   Robot::instance()->clawServo.write(0); //open claw
-  if(my_TEAM){
-    Robot::instance()->armServo.write(180); //default side 
+  if(my_TEAM){ //thanos
+    Robot::instance()->armServo.write(0); //default side opposite of whats expected due to our strategy
   }
-  else{
-    Robot::instance()->armServo.write(0);
+  else{ //methanos
+    Robot::instance()->armServo.write(180);
   }
   return;
 }
@@ -54,7 +70,7 @@ void ManageStone::moveArmToPillar(){
       pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   }
   while (true){
-    if(readSonar()<=my_PILLAR_DISTANCE || multi(0,0,1) == HIGH){ //multi(0,0,1) = limit switch
+    if(readSonar()<=my_PILLAR_DISTANCE || multi(1,0,0) == HIGH){ //multi(1,0,0) = limit switch
       pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
       pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);   
       return; 
@@ -79,25 +95,25 @@ void ManageStone::turnClaw(){
   }
 }
 
-void ManageStone::raiseClaw(){ //backup function using sonar 
-  if(Robot::instance()->collisionNumber != 0){
-    pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-    while(true){
-      if(readSonar()>=my_PILLAR_DISTANCE+3){ //check that sonar doesnt become negative
-        pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
-        return;
-      }
-    }
-  }
-}
+// void ManageStone::raiseClaw(){ //backup function using sonar 
+//   if(Robot::instance()->collisionNumber != 0){
+//     pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+//     while(true){
+//       if(readSonar()>=my_PILLAR_DISTANCE+3){ //check that sonar doesnt become negative
+//         pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
+//         return;
+//       }
+//     }
+//   }
+// }
 
-int ManageStone::readSonar(){ //inches
-  digitalWrite(ARM_SONAR_TRIGGER, LOW);
+int ManageStone::readSonar(){ //cm
+  digitalWrite(SONAR_TRIG, LOW);
   delayMicroseconds(2);
-  digitalWrite(ARM_SONAR_TRIGGER, HIGH);
+  digitalWrite(SONAR_TRIG, HIGH);
   delayMicroseconds(10);
-  digitalWrite(ARM_SONAR_TRIGGER, LOW);
-  return pulseIn(ARM_SONAR_ECHO, HIGH)*(0.034/2);
+  digitalWrite(SONAR_TRIG, LOW);
+  return pulseIn(SONAR_ECHO, HIGH)*(0.034/2);
 }
 
 bool ManageStone::multi(bool C, bool B, bool A) {
