@@ -28,82 +28,85 @@ Robot* Robot::instance(){
 void Robot::setup(){    
   
   // Setting up pins
-  pinMode(L_ENCODER_A, INPUT_PULLUP); //check if input or input pullup
-  pinMode(L_ENCODER_B, INPUT_PULLUP);
-  pinMode(R_ENCODER_A, INPUT_PULLUP);
-  pinMode(R_ENCODER_B, INPUT_PULLUP);
-  pinMode(SONAR_ECHO, INPUT); 
-  pinMode(TUNING_KNOB, INPUT_PULLUP);
-  pinMode(L_DECIDE, INPUT_PULLUP);
-  pinMode(L_ALIGN, INPUT_PULLUP);
-  pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
-  pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
-  pinMode(R_DECIDE, INPUT_PULLUP);
-  pinMode(R_ALIGN, INPUT_PULLUP);
-  pinMode(T_OR_M, INPUT_PULLUP);
-  pinMode(MULTIPLEX_OUT, INPUT_PULLUP);
-  pinMode(COLLISION, INPUT_PULLUP);
-/////////////////////////////////////
-  pinMode(SONAR_TRIG, OUTPUT);
-  pinMode(ARM_MOTOR_LEFT, OUTPUT);
-  pinMode(ARM_MOTOR_RIGHT, OUTPUT);
-  pinMode(ARM_MOTOR_UP, OUTPUT);
-  pinMode(ARM_MOTOR_DOWN, OUTPUT);
-  pinMode(ARM_SERVO, OUTPUT);
-  pinMode(CLAW_SERVO, OUTPUT);
-  pinMode(GAUNTLET_SERVO, OUTPUT);
-  pinMode(LEFT_FORWARD_WHEEL_MOTOR, OUTPUT);
-  pinMode(RIGHT_FORWARD_WHEEL_MOTOR, OUTPUT);
-  pinMode(LEFT_BACKWARD_WHEEL_MOTOR, OUTPUT);
-  pinMode(RIGHT_BACKWARD_WHEEL_MOTOR, OUTPUT);
-  pinMode(MULTIPLEX_A, OUTPUT);
-  pinMode(MULTIPLEX_B, OUTPUT);
-  pinMode(MULTIPLEX_C, OUTPUT);
+//   pinMode(L_ENCODER_A, INPUT_PULLUP); //check if input or input pullup
+//   pinMode(L_ENCODER_B, INPUT_PULLUP);
+//   pinMode(R_ENCODER_A, INPUT_PULLUP);
+//   pinMode(R_ENCODER_B, INPUT_PULLUP);
+//   pinMode(SONAR_ECHO, INPUT); 
+//   pinMode(TUNING_KNOB, INPUT_PULLUP);
+//   pinMode(L_DECIDE, INPUT_PULLUP);
+//   pinMode(L_ALIGN, INPUT_PULLUP);
+//   pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
+//   pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
+//   pinMode(R_DECIDE, INPUT_PULLUP);
+//   pinMode(R_ALIGN, INPUT_PULLUP);
+//   pinMode(T_OR_M, INPUT_PULLUP);
+//   pinMode(MULTIPLEX_OUT, INPUT_PULLUP);
+//   pinMode(COLLISION, INPUT_PULLUP);
+// /////////////////////////////////////
+//   pinMode(SONAR_TRIG, OUTPUT);
+//   pinMode(ARM_MOTOR_LEFT, OUTPUT);
+//   pinMode(ARM_MOTOR_RIGHT, OUTPUT);
+//   pinMode(ARM_MOTOR_UP, OUTPUT);
+//   pinMode(ARM_MOTOR_DOWN, OUTPUT);
+//   pinMode(ARM_SERVO, OUTPUT);
+//   pinMode(CLAW_SERVO, OUTPUT);
+//   pinMode(GAUNTLET_SERVO, OUTPUT);
+//   pinMode(LEFT_FORWARD_WHEEL_MOTOR, OUTPUT);
+//   pinMode(RIGHT_FORWARD_WHEEL_MOTOR, OUTPUT);
+//   pinMode(LEFT_BACKWARD_WHEEL_MOTOR, OUTPUT);
+//   pinMode(RIGHT_BACKWARD_WHEEL_MOTOR, OUTPUT);
+//   pinMode(MULTIPLEX_A, OUTPUT);
+//   pinMode(MULTIPLEX_B, OUTPUT);
+//   pinMode(MULTIPLEX_C, OUTPUT);
 
-  // pwm_start init motors
-  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
-  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
-  pwm_start(LEFT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
-  pwm_start(RIGHT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
-  pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
-  pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1);
-  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 1);
-  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // // pwm_start init motors
+  // pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // pwm_start(LEFT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // pwm_start(RIGHT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 1);
 
-  // Attaching servos 
-  armServo.attach(ARM_SERVO);
-  clawServo.attach(CLAW_SERVO);
-  L_GauntletServo.attach(GAUNTLET_SERVO);
-  R_GauntletServo.attach(GAUNTLET_SERVO);
+  // // Attaching servos 
+  // armServo.attach(ARM_SERVO);
+  // clawServo.attach(CLAW_SERVO);
+  // L_GauntletServo.attach(GAUNTLET_SERVO);
+  // R_GauntletServo.attach(GAUNTLET_SERVO);
 
-  // declaring interrupts
+  // // declaring interrupts
 
-  // Creating stack for splits/tabs and Junction objects
-  Junction gauntletSplit(NOT_AVAIL, NOT_AVAIL, GAUNTLET_SPLIT);
-  Junction pathSplit(NOT_AVAIL, NOT_AVAIL, PATH_SPLIT);
-  Junction twelveInch_M(LARGE, 12, PILLAR_ONE);
-  Junction nineInch_M(LARGE, 9, PILLAR_TWO);
-  Junction sixInch_M(LARGE, 6, PILLAR_THREE);
-  Junction sixInch_T(SMALL, 6, PILLAR_FOUR);
-  Junction nineInch_T(LARGE, 9, PILLAR_FIVE);
-  Junction twelveInch_T(LARGE, 12, PILLAR_SIX);
+  // // Creating stack for splits/tabs and Junction objects
+  // Junction gauntletSplit(NOT_AVAIL, NOT_AVAIL, GAUNTLET_SPLIT);
+  // Junction pathSplit(NOT_AVAIL, NOT_AVAIL, PATH_SPLIT);
+  // Junction twelveInch_M(LARGE, 12, PILLAR_ONE);
+  // Junction nineInch_M(LARGE, 9, PILLAR_TWO);
+  // Junction sixInch_M(LARGE, 6, PILLAR_THREE);
+  // Junction sixInch_T(SMALL, 6, PILLAR_FOUR);
+  // Junction nineInch_T(LARGE, 9, PILLAR_FIVE);
+  // Junction twelveInch_T(LARGE, 12, PILLAR_SIX);
 
-  //Junction map 
+  // //Junction map 
 
-  // Team 
-  switch (digitalRead(T_OR_M)){
-    case HIGH: 
-      TEAM = true; //thanos
-      direction = LEFT;
-      break;
-    case LOW:
-      TEAM = false; //methanos
-      direction = RIGHT;
-      break;
-  }
+  // // Team 
+  // switch (digitalRead(T_OR_M)){
+  //   case HIGH: 
+  //     TEAM = true; //thanos
+  //     direction = LEFT;
+  //     break;
+  //   case LOW:
+  //     TEAM = false; //methanos
+  //     direction = RIGHT;
+  //     break;
+  // }
 
   // Calibrating / assigning values 
-  adjustVariables();
+  pinMode(TUNING_BUTTON, INPUT_PULLUP);
+  pinMode(TUNING_KNOB_A, INPUT_PULLUP);
+  pinMode(TUNING_KNOB_B, INPUT_PULLUP);
+  //adjustVariables();
 }
 
 void Robot::toggleMenu(){
@@ -144,9 +147,9 @@ void Robot::adjustVariables(){
       *CV_Addresses[i] = CV_Values[i];
     }
   }
-  if(digitalRead(CALIBRATE)==HIGH){
+  //if(digitalRead(CALIBRATE)==HIGH){
     toggleMenu();
-  }
+  //}
   KP_WHEEL = *CV_Addresses[KP_WHEEL];
   KD_WHEEL = *CV_Addresses[KD_WHEEL];
   THRESHOLD = *CV_Addresses[THRESHOLD];

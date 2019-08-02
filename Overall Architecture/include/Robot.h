@@ -48,6 +48,7 @@ class Robot {
 public:
    static Robot* instance(); 
    void setup();
+   void adjustVariables();
    int state; 
    bool TEAM; //true = thanos, false = methanos 
    int stoneNumber; 
@@ -67,6 +68,7 @@ public:
    Servo clawServo; // 0 = open; 180 = closed
    Servo L_GauntletServo;
    Servo R_GauntletServo;
+   Adafruit_SSD1306 display;
 
 private:
    Robot();  // Private so that it can  not be called
@@ -74,7 +76,6 @@ private:
    Robot& operator=(Robot const& bot){}; // assignment operator is private
    static Robot* m_pInstance;
    void toggleMenu();
-   void adjustVariables();
    bool multi(bool C, bool B, bool A);
    int* CV_Addresses [NUM_VARIABLES];
    int CV_Values [NUM_VARIABLES];
@@ -83,7 +84,7 @@ private:
    bool lastEncoderValue;
    bool encoderValue;
    int increment;
-   Adafruit_SSD1306 display;
+   //Adafruit_SSD1306 display;
 };
 
 class Junction  {
