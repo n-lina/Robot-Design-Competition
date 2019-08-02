@@ -3,6 +3,11 @@
 
 #define LEFT false
 #define RIGHT true
+#define SPLIT false
+#define TAB true 
+#define SMALL false 
+#define LARGE true
+#define NOT_AVAIL -1
 
 //checking if the robot has been calibrated at least once 
 #define YES_CALIBRATED 189763
@@ -43,6 +48,10 @@
 #define COLLISION PB2
 #define SONAR_ECHO PA12
 #define SONAR_TRIG PA11
+#define CALIBRATE PA0
+#define TUNING_KNOB_A PA0
+#define TUNING_KNOB_B PA0
+#define TUNING_BUTTON PA0
 // ARM_HOME_LIMIT multi(0,1,0)
 // ARM_SIDES_LIMIT multi(1,0,0)
 // ARM_TOP_BOTTOM_LIMIT multi(0,0,1)

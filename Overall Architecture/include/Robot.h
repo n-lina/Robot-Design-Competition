@@ -29,7 +29,22 @@ enum Calibration_Values {
   NUM_VARIABLES
 };
 
-class Robot{
+enum Splits {
+   GAUNTLET_SPLIT = 1,
+   PATH_SPLIT,
+   NUM_SPLITS
+};
+
+enum Pillars {
+   PILLAR_ONE = 1,
+   PILLAR_TWO, 
+   PILLAR_THREE, 
+   PILLAR_FOUR,
+   PILLAR_FIVE,
+   PILLAR_SIX
+};
+
+class Robot {
 public:
    static Robot* instance(); 
    void setup();
@@ -40,6 +55,8 @@ public:
    int splitNumber;
    bool direction_facing; //true = forwards, false = backwards
    bool direction; // true = right, left = false 
+   // Junction firstRun [];
+   // Junction secondRun [];
    int KP_WHEEL; 
    int KD_WHEEL; 
    int THRESHOLD; 
@@ -67,6 +84,14 @@ private:
    bool encoderValue;
    int increment;
    Adafruit_SSD1306 display;
+};
+
+class Junction  {
+public:
+  Junction(bool distanceToPillar, int setHeight, int junctionNumber);
+  bool distance; 
+  int height; 
+  int number; 
 };
 
 #endif

@@ -9,18 +9,18 @@
 // split/tab thresholds 
 // tune kp/kd
 
-#define L_TAB PA_0
-#define L_SPLIT PA_1
-#define PHOTO_0 PA_2
-#define PHOTO_1 PA_3
-#define R_SPLIT PA_4
-#define R_TAB PA_5
+#define R_ALIGN PA_0
+#define R_DECIDE PA_1
+#define PHOTO_1 PA_2
+#define PHOTO_0 PA_3
+#define L_DECIDE PA_4
+#define L_ALIGN PA_5
 #define L_MOTOR_FORWARD PB_6
 #define L_MOTOR_BACKWARD PB_7
 #define R_MOTOR_FORWARD PB_8
 #define R_MOTOR_BACKWARD PB_9
-#define KP 95 // PID proportion constant // 205 is  too high 
-#define KD 12 // PID derivative constant 
+#define KP 98 // PID proportion constant // 205 is  too high 
+#define KD 13 // PID derivative constant 
 #define MAX_SPEED 1024 // max number the Arduino PWM takes 
 #define CLOCK_FQ 100000 //For pwm_start function
 #define THRESHOLD 200 // Threshold for being on or off the line
@@ -85,8 +85,8 @@ void setup()
  Serial.begin(9600);
  pinMode(PHOTO_0, INPUT_PULLUP);
  pinMode(PHOTO_1, INPUT_PULLUP);
- pinMode(L_SPLIT, INPUT_PULLUP);
- pinMode(R_SPLIT, INPUT_PULLUP);
+ pinMode(L_DECIDE, INPUT_PULLUP);
+ pinMode(R_DECIDE, INPUT_PULLUP);
   pinMode(CLAW_UP, OUTPUT);
   pinMode(CLAW_DOWN, OUTPUT);
   pinMode(ARM_LEFT, OUTPUT);

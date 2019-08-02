@@ -25,11 +25,11 @@ void TapeFollower::followTape(){ //add encoder polling
       return;
     }
 
-    if(!pressed && multi(1,0,0)==HIGH){
-    pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
-    pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
-    pressed = true;
-    }
+    // if(!pressed && multi(1,0,0)==HIGH){
+    // pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
+    // pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
+    // pressed = true;
+    // }
 
     leftTapeFollow = analogRead(L_TAPE_FOLLOW)>=my_THRESHOLD;
     rightTapeFollow = analogRead(R_TAPE_FOLLOW)>=my_THRESHOLD;
@@ -248,26 +248,36 @@ void TapeFollower::turnInPlaceRight(){
 void TapeFollower::splitDecide(){ //TODO
   if(my_TEAM){ // thanos
     switch(Robot::instance()->splitNumber){
-      case 1: case 2: // when it detects a junction in followTape(), it already stops
+      case 1: case 2: case 7: // when it detects a junction in followTape(), it already stops
         turnLeft(); 
         Robot::instance()->state = FOLLOW_TAPE;
         return;
-      case 3:
+      case 3: case 4: case 5: case 6: case 8: 
         alignPillar();
-        Robot::instance()->state = COLLECT_STONE;
+        //Robot::instance()->state = COLLECT_STONE;
+        Robot::instance()->state = FOLLOW_TAPE;
+        return;
+      case 9: 
+        alignPillar();
+        Robot::instance()->state = GO_HOME;
         return;
     }
   }
   else{ // methanos
     switch(Robot::instance()->splitNumber){
-      case 1: case 2:
+      case 1: case 2: case 7:
         turnRight();
         Robot::instance()->state = FOLLOW_TAPE;
         return;
-      case 3: 
+      case 3: case 4: case 5: case 6: case 8: 
         alignPillar();
-        Robot::instance()->state = COLLECT_STONE;
-        return;        
+        //Robot::instance()->state = COLLECT_STONE;
+        Robot::instance()->state = FOLLOW_TAPE;
+        return;      
+      case 9: 
+        alignPillar();
+        Robot::instance()->state = GO_HOME;
+        return;
     }
   }
 }
@@ -291,14 +301,16 @@ void TapeFollower::goHome(){ //how to make a timed interrupt for 1 min 30 s, tim
     if((leftDecide|| rightDecide) && (leftTapeFollow || rightTapeFollow) && (debounce > DEBOUNCE)) {
       if(homeSplit){
         if(Robot::instance()->TEAM){ //thanos
-          turnRight();
-          delay(2000);
-          //TODO
+          turnInPlaceLeft();
+          pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 600, 0);
+          pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 600, 0);
+          delay(1000);
         }
         else{
-          turnLeft();
-          delay(2000);
-          //TODO
+          turnInPlaceRight();
+          pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 600, 0);
+          pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 600, 0);
+          delay(1000);
         }  
         dropGauntlet();
         pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 500, 0);

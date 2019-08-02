@@ -7,7 +7,8 @@ Robot* Robot::m_pInstance = NULL;
 
 Robot::Robot(): 
 state(FOLLOW_TAPE), TEAM(true), stoneNumber(0), collisionNumber(0), splitNumber(0), 
-direction_facing(true), direction(true), armServo(), clawServo(), L_GauntletServo(), R_GauntletServo(), 
+direction_facing(true), direction(true), 
+armServo(), clawServo(), L_GauntletServo(), R_GauntletServo(), 
 CV_Addresses{(int*) 0x0801FFF3, (int*) 0x0801FFF7, (int*) 0x0801FFFB, (int*) 0x0801FFEF, (int*) 0x0801FFDB, 
 (int*)0x0801FFDF, (int*) 0x0801FFD7},
 CV_Values{162, 12, 200, 200, 200, 4, YES_CALIBRATED},
@@ -77,6 +78,19 @@ void Robot::setup(){
 
   // declaring interrupts
 
+  
+  // Creating stack for splits/tabs and Junction objects
+  Junction gauntletSplit(NOT_AVAIL, NOT_AVAIL, GAUNTLET_SPLIT);
+  Junction pathSplit(NOT_AVAIL, NOT_AVAIL, PATH_SPLIT);
+  Junction twelveInch_M(LARGE, 12, PILLAR_ONE);
+  Junction nineInch_M(LARGE, 9, PILLAR_TWO);
+  Junction sixInch_M(LARGE, 6, PILLAR_THREE);
+  Junction sixInch_T(SMALL, 6, PILLAR_FOUR);
+  Junction nineInch_T(LARGE, 9, PILLAR_FIVE);
+  Junction twelveInch_T(LARGE, 12, PILLAR_SIX);
+
+  //Junction map 
+
   // Team 
   switch (digitalRead(T_OR_M)){
     case HIGH: 
@@ -88,7 +102,8 @@ void Robot::setup(){
       direction = RIGHT;
       break;
   }
-  
+
+  // Calibrating / assigning values 
   adjustVariables();
 }
 
@@ -104,22 +119,15 @@ void Robot::toggleMenu(){
 
     value = *CV_Addresses[i];
 
-    while(true){ 
-      if(multi(1,0,1) && (pulseIn(MULTIPLEX_OUT, HIGH) < 1000)){ //if tuning button pressed quickly
-        break; 
-      }
-      else if(multi(1,0,1) && (pulseIn(MULTIPLEX_OUT, HIGH) >= 1000)){ 
-      //if tuning button pressed long - change directions
-        if(increment == -1){
-          increment = 1;
+    while(digitalRead(TUNING_BUTTON)==LOW){ // while button not pressed 
+      encoderValue = digitalRead(TUNING_KNOB_A);
+      if(encoderValue != lastEncoderValue){
+        if(digitalRead(TUNING_KNOB_B) != encoderValue){
+          value++; 
         }
         else{
-          increment= -1;
+          value--;
         }
-      }
-      encoderValue = digitalRead(TUNING_KNOB);
-      if(encoderValue != lastEncoderValue){
-        value = value + increment; 
         display.print(String(value));
         display.display();
         lastEncoderValue = encoderValue;
@@ -137,7 +145,7 @@ void Robot::adjustVariables(){
       *CV_Addresses[i] = CV_Values[i];
     }
   }
-  if(multi(1,0,1) && (pulseIn(MULTIPLEX_OUT, HIGH) >= 5000)){
+  if(digitalRead(CALIBRATE)==HIGH){
     toggleMenu();
   }
   KP_WHEEL = *CV_Addresses[KP_WHEEL];
@@ -154,6 +162,12 @@ bool Robot::multi(bool C, bool B, bool A) {
   digitalWrite(MULTIPLEX_B, B);
   digitalWrite(MULTIPLEX_C, C); 
   return digitalRead(MULTIPLEX_OUT);
+}
+
+Junction::Junction(bool distanceToPillar, int setHeight, int junctionNumber){
+  distance = distanceToPillar;
+  height = setHeight; 
+  number = junctionNumber;
 }
 
 

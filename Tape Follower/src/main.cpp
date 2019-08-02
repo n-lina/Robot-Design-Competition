@@ -2,22 +2,22 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-#define L_TAB PA_0
-#define L_SPLIT PA_1
-#define PHOTO_0 PA_2
-#define PHOTO_1 PA_3
-#define R_SPLIT PA_4
-#define R_TAB PA_5
+#define R_ALIGN PA_0
+#define R_DECIDE PA_1
+#define PHOTO_1 PA_2 //right
+#define PHOTO_0 PA_3 //left
+#define L_DECIDE PA_4
+#define L_ALIGN PA_5
 #define L_MOTOR_FORWARD PB_6
 #define L_MOTOR_BACKWARD PB_7
 #define R_MOTOR_FORWARD PB_8
 #define R_MOTOR_BACKWARD PB_9
-#define KP 101 // PID proportion constant // 205 is  too high 
-#define KD 11 // PID derivative constant 
+#define KP 145 // PID proportion constant // 205 is  too high 
+#define KD 8 // PID derivative constant 
 #define MAX_SPEED 1024 // max number the Arduino PWM takes 
 #define CLOCK_FQ 100000 //For pwm_start function
-#define THRESHOLD 200 // Threshold for being on or off the line
-#define TAB_THRESHOLD 400
+#define THRESHOLD 250 // Threshold for being on or off the line
+#define DECIDE_THRESHOLD 300
 #define SPEED_TUNING 1.8
 #define TURN_DELAY_TIME 200
 #define CLAW_UP PA_8
@@ -36,13 +36,13 @@
 #define GAUNTLET PA9
 #define ANGLE_START 70 
 #define ANGLE_FINISH 140
+#define DEBOUNCE 4
 
-//#define GO true
+#define GO true
 //#define SENSORS true
 //#define MOTORS true
-#define SPLIT_DECIDE true
+//#define SPLIT_DECIDE true
 //#define TURN_IN_PLACE true
-//#define VOLTAGE true
 
 #ifdef GO
 int derivative; 
@@ -55,41 +55,51 @@ int default_speed = MAX_SPEED/SPEED_TUNING;
 int number=0;
 bool leftSensor;
 bool rightSensor;
-bool leftTab;
-bool rightTab;
+bool leftDecide;
+bool rightDecide;
+bool leftAlign;
+bool rightAlign;
+int debounce = 0;
+int junctionNumber = 0;
 bool pressed = false;
-bool THANOS = true;
+bool THANOS = false;
 
 void turnLeft();
 void turnRight();
-void turnInPlaceLeft();
-void turnInPlaceRight();
+// void turnInPlaceLeft();
+// void turnInPlaceRight();
 void stop();
-bool multi(bool C, bool B, bool A);
+//bool multi(bool C, bool B, bool A);
+void alignPillar();
+void getPosition();
 
 void setup()
 {
  Serial.begin(9600);
+ pinMode(R_ALIGN, INPUT_PULLUP);
+ pinMode(R_DECIDE, INPUT_PULLUP);
  pinMode(PHOTO_0, INPUT_PULLUP);
  pinMode(PHOTO_1, INPUT_PULLUP);
+ pinMode(L_DECIDE, INPUT_PULLUP);
+ pinMode(L_ALIGN, INPUT_PULLUP);
  pinMode(L_MOTOR_BACKWARD, OUTPUT);
  pinMode(L_MOTOR_FORWARD, OUTPUT);
  pinMode(R_MOTOR_BACKWARD, OUTPUT);
  pinMode(R_MOTOR_FORWARD, OUTPUT);
- pinMode(ARM_LEFT, OUTPUT);
- pinMode(ARM_RIGHT, OUTPUT);
+//  pinMode(ARM_LEFT, OUTPUT);
+//  pinMode(ARM_RIGHT, OUTPUT);
  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 1);
  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 1); 
  pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 0, 1);
  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 0, 1);
- pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
- pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1);
- if(THANOS){
-   pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
- }
- else if (!THANOS){
-   pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-}
+//  pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
+//  pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1);
+//  if(THANOS){
+//    pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+//  }
+//  else if (!THANOS){
+//    pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+// }
  }
 
 
@@ -103,7 +113,7 @@ void loop(){
 //  }
 
 
-Serial.println(multi(1,0,0));
+//Serial.println(multi(1,0,0));
 // if(!pressed && multi(1,0,0) == HIGH){
 //   pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
 //   pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
@@ -112,6 +122,29 @@ Serial.println(multi(1,0,0));
 
  leftSensor = analogRead(PHOTO_0) >= THRESHOLD;
  rightSensor = analogRead(PHOTO_1) >= THRESHOLD;
+ leftDecide = analogRead(L_DECIDE) >= DECIDE_THRESHOLD;
+ rightDecide = analogRead(R_DECIDE) >= DECIDE_THRESHOLD;
+
+  // if((leftDecide || rightDecide) && (leftSensor || rightSensor) && (debounce > DEBOUNCE)){
+  //   junctionNumber++;
+  //   switch(junctionNumber){
+  //     case 1: 
+  //       pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 700, 0);
+  //       pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 700, 0);
+  //       delay(300);
+  //       turnLeft();
+  //       debounce = 0;
+  //       break;
+  //     case 2: 
+  //       stop();
+  //       turnLeft(); 
+  //     default: 
+  //       stop();
+  //       alignPillar();
+  //       debounce = 0;
+  //       break;
+  //   }
+  // }
 
  timeStep++;
 
@@ -131,7 +164,7 @@ Serial.println(multi(1,0,0));
    else { // last Position > 0 ==> left was on last 
    position = 5;
    } 
-  }
+ }
 
  // L on, R off : position = positive, want to turn LEFT 
  // R on, L off : position = negative, want to turn RIGHT 
@@ -146,9 +179,9 @@ Serial.println(multi(1,0,0));
  else if(PID<-default_speed){
    PID = -default_speed;
  }
-
- pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed+PID, 0);
- pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed-PID, 0); 
+ 
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed+PID, 0);
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed-PID, 0); 
  //input of 18 still runs
 
  if(lastPosition != position){
@@ -159,35 +192,36 @@ Serial.println(multi(1,0,0));
    }
  }
  lastPosition = position; 
+ debounce++;
 }
 
-void turnInPlaceLeft(){
-  pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  delay(TURN_DELAY_TIME);
-  while(true){
-    if(analogRead(PHOTO_0) >= THRESHOLD || analogRead(PHOTO_1) >= THRESHOLD){
-      stop();
-      delay(50);
-      turnRight();
-      return;
-    }
-  }
-}
+// void turnInPlaceLeft(){
+//   pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
+//   pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
+//   delay(TURN_DELAY_TIME);
+//   while(true){
+//     if(analogRead(PHOTO_0) >= THRESHOLD || analogRead(PHOTO_1) >= THRESHOLD){
+//       stop();
+//       delay(50);
+//       turnRight();
+//       return;
+//     }
+//   }
+// }
 
-void turnInPlaceRight(){
-  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  delay(TURN_DELAY_TIME);
-  while(true){
-    if(analogRead(PHOTO_0) >= THRESHOLD || analogRead(PHOTO_1) >= THRESHOLD){
-      stop();
-      delay(50);
-      turnLeft();
-      return;
-    }
-  }
-}
+// void turnInPlaceRight(){
+//   pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
+//   pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
+//   delay(TURN_DELAY_TIME);
+//   while(true){
+//     if(analogRead(PHOTO_0) >= THRESHOLD || analogRead(PHOTO_1) >= THRESHOLD){
+//       stop();
+//       delay(50);
+//       turnLeft();
+//       return;
+//     }
+//   }
+// }
 
 void stop(){
   pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 0, 0); 
@@ -218,11 +252,48 @@ void turnRight(){
   }
 }
 
-bool multi(bool C, bool B, bool A) {
-  digitalWrite(MULTIPLEX_A, A);
-  digitalWrite(MULTIPLEX_B, B);
-  digitalWrite(MULTIPLEX_C, C); 
-  return digitalRead(MULTIPLEX_OUT);
+// bool multi(bool C, bool B, bool A) {
+//   digitalWrite(MULTIPLEX_A, A);
+//   digitalWrite(MULTIPLEX_B, B);
+//   digitalWrite(MULTIPLEX_C, C); 
+//   return digitalRead(MULTIPLEX_OUT);
+// }
+
+void alignPillar(){
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 200, 0); //very slow
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 200, 0);
+  while(true){
+    getPosition();
+    if(analogRead(L_ALIGN) >= DECIDE_THRESHOLD || analogRead(R_ALIGN) >= DECIDE_THRESHOLD){
+      stop();
+      delay(3000);
+      return;
+    }
+  }
+  return;
+}
+
+void getPosition(){
+  leftSensor = analogRead(PHOTO_0) >= THRESHOLD;
+  rightSensor = analogRead(PHOTO_1) >= THRESHOLD;
+    if (leftSensor  && rightSensor ){
+      position = 0;
+    } 
+    else if(leftSensor  && !rightSensor ){
+      position = 1; 
+    }
+    else if(!leftSensor && rightSensor ){
+      position = -1; 
+    }
+    else{
+      if(lastPosition<0) { //right was on last 
+        position = -5; 
+      }
+      else { // last Position > 0 ==> left was on last 
+        position = 5;
+      } 
+    }
+  lastPosition = position; 
 }
 
 #endif
@@ -235,17 +306,20 @@ void setup(){
 }
 
 void loop(){
-  //Serial.println("success");
-  // Serial.println("Right // ");
-  // Serial.println(String(analogRead(PHOTO_1)));
-  // Serial.println("Left // ");
-  // Serial.println(String(analogRead(PHOTO_0)));
-  // Serial.println("Left Tab: ");
-  // Serial.println(String(analogRead(L_TAB)));
-  // Serial.println("Right Tab: ");
-  // Serial.println(String(analogRead(R_TAB)));
-  // Serial.println("________________");
-  delay(1000);
+ Serial.println("Right Align: ");
+ Serial.println(String(analogRead(R_ALIGN)));
+ Serial.println("Right Decide: ");
+ Serial.println(String(analogRead(R_DECIDE)));
+ Serial.println("Right Photo: ");
+ Serial.println(String(analogRead(PHOTO_1)));
+ Serial.println("Left Photo: ");
+ Serial.println(String(analogRead(PHOTO_0)));
+ Serial.println("Left Decide: ");
+ Serial.println(String(analogRead(L_DECIDE)));
+ Serial.println("Left Align: ");
+ Serial.println(String(analogRead(L_ALIGN)));
+ Serial.println("________________");
+ delay(2000);
 }
 #endif
 
@@ -259,22 +333,31 @@ pinMode(L_MOTOR_FORWARD, OUTPUT);
 pinMode(L_MOTOR_BACKWARD, OUTPUT);
 pinMode(R_MOTOR_FORWARD, OUTPUT);
 pinMode(R_MOTOR_BACKWARD, OUTPUT);
-pinMode(ARM_LEFT, OUTPUT);
-pinMode(ARM_RIGHT, OUTPUT);
+// pinMode(ARM_LEFT, OUTPUT);
+// pinMode(ARM_RIGHT, OUTPUT);
 pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 0, 1);
 pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 1); 
 pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 1);
 pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 0, 1); 
-pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
-pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1); 
+// pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
+// pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1); 
 Serial.begin(9600);
 }
 
 void loop(){
-  // pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0);
-  // pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0);
-  pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  //delay(2000);
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 400, 0);
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 400, 0);
+  // delay(2000);
+  // stop();
+  // delay(2000);
+  // pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0);
+  // pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0);
+  // delay(2000);
+  // stop();
+  // delay(2000);
+
+  // pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  // delay(2000);
   // pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
   // delay(1000);
   // pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
@@ -606,14 +689,3 @@ void stop(){
 }
 #endif
 
-#ifdef VOLTAGE
-void setup(){
-  Serial.begin(9600);
-  pinMode(MULTIPLEX_OUT, INPUT);
-}
-
-void loop() {
-  Serial.println(digitalRead(MULTIPLEX_OUT));
-}
-
-#endif
