@@ -11,7 +11,7 @@ TapeFollower::TapeFollower(Robot const* robot):
   my_TEAM(Robot::instance()->TEAM),
   derivative(0), default_speed(MAX_SPEED/SPEED_TUNING), timeStep(0), position(0), lastPosition(0), 
   PID(0), number(0), debounce(0), leftTapeFollow(0), rightTapeFollow(0),
-  leftDecide(0), rightDecide(0), leftAlign(0), rightAlign(0), distance(0),
+  leftDecide(0), rightDecide(0), leftAlign(0), rightAlign(0), loopCounter(0),
   pressed(false), homeSplit(false)
   {}
 
@@ -25,11 +25,11 @@ void TapeFollower::followTape(){ //add encoder polling
       return;
     }
 
-    // if(!pressed && multi(1,0,0)==HIGH){
-    // pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
-    // pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
-    // pressed = true;
-    // }
+    if(!pressed && multi(1,0,0)==HIGH){
+    pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
+    pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
+    pressed = true;
+    }
 
     leftTapeFollow = analogRead(L_TAPE_FOLLOW)>=my_THRESHOLD;
     rightTapeFollow = analogRead(R_TAPE_FOLLOW)>=my_THRESHOLD;
@@ -149,67 +149,60 @@ void TapeFollower::turnRight(){
 //   return; 
 // }
 
-// void TapeFollower::goDistance(int set_distance, bool firstRun, int checkptA, int checkptB){ //distance = number of rotary encoder clicks
-// //if rotary encoder misses clicks, make distance number smaller 
-//   while(Robot::instance()->state == GO_DISTANCE && distance <= set_distance){
-//     leftSensor = analogRead(L_TAPE_FOLLOW)>= my_THRESHOLD;
-//     rightSensor = analogRead(R_TAPE_FOLLOW)>= my_THRESHOLD;
-//     timeStep++;
+void TapeFollower::goDistance(int loopNumber){ 
+  while(Robot::instance()->state == GO_DISTANCE && loopCounter < loopNumber){
+    if(digitalRead(COLLISION)==HIGH){
+      stop();
+      Robot::instance()->collisionNumber++;
+      Robot::instance()->state = AVOID_COLLISION;
+      return;
+    }
 
-//     if (leftSensor  && rightSensor ){
-//       position = 0;
-//     } 
-//     else if(leftSensor  && !rightSensor ){
-//       position = 1; 
-//     }  
-//     else if(!leftSensor  && rightSensor ){
-//       position = -1; 
-//     }
-//     else{
-//       if(lastPosition<0) { //right was on last 
-//       position = -5; 
-//       }
-//       else { // last Position > 0 ==> left was on last 
-//       position = 5;
-//       }   
-//     } 
-//     derivative = (position - lastPosition) / timeStep; 
-//     PID = (my_KP_WHEEL * position) + (my_KD_WHEEL * derivative); 
+    if(!pressed && multi(1,0,0)==HIGH){
+      pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
+      pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
+      pressed = true;
+    }
+
+    leftTapeFollow = analogRead(L_TAPE_FOLLOW)>= my_THRESHOLD;
+    rightTapeFollow = analogRead(R_TAPE_FOLLOW)>= my_THRESHOLD;
+    timeStep++;
+
+    if (leftTapeFollow  && rightTapeFollow ){
+      position = 0;
+    } 
+    else if(leftTapeFollow  && !rightTapeFollow ){
+      position = 1; 
+    }  
+    else if(!leftTapeFollow  && rightTapeFollow ){
+      position = -1; 
+    }
+    else{
+      if(lastPosition<0) { //right was on last 
+      position = -5; 
+      }
+      else { // last Position > 0 ==> left was on last 
+      position = 5;
+      }   
+    } 
+    derivative = (position - lastPosition) / timeStep; 
+    PID = (my_KP_WHEEL * position) + (my_KD_WHEEL * derivative); 
     
-//     if(Robot::instance()->state==GO_DISTANCE){
-//       pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)-PID, 0);
-//       pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)+PID, 0); 
-//     }
+    pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)-PID, 0);
+    pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)+PID, 0); 
 
-//     encoder = digitalRead(L_WHEEL_ENCODER);
-//     if(encoder!=lastEncoder){ //maybe only test one side of rotary encoder for requiring 
-//     //less frequent sampling 
-//       distance++;    
-//     }
-
-//     if(firstRun && Robot::instance()->state==GO_DISTANCE){
-//       if(distance == checkptA || distance == checkptB){
-//         if(Robot::instance()->TEAM){
-//           turnLeft();
-//           }
-//         else{
-//           turnRight();
-//         }
-//       }
-//     }
-
-//     if(lastPosition != position){
-//       number++;
-//       if(number==2){
-//         timeStep = 0;
-//         number = 0;
-//       } 
-//     }
-//     lastPosition = position; 
-//     lastEncoder = encoder; 
-//   }
-//   return;
-// }
+    if(lastPosition != position){
+      number++;
+      if(number==2){
+        timeStep = 0;
+        number = 0;
+      } 
+    }
+    lastPosition = position; 
+    loopCounter++;
+  }
+  return;
+}
 
 void TapeFollower::turnInPlaceLeft(){
   pwm_start(LEFT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0); 

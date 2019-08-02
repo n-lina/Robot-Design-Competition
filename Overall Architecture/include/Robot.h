@@ -8,7 +8,7 @@
 using namespace std;
 
 enum RobotStates {
-   //GO_DISTANCE,
+   GO_DISTANCE,
    FOLLOW_TAPE,
    AVOID_COLLISION,
    SPLIT_CHOOSER,

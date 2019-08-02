@@ -12,12 +12,12 @@
 #define L_MOTOR_BACKWARD PB_7
 #define R_MOTOR_FORWARD PB_8
 #define R_MOTOR_BACKWARD PB_9
-#define KP 145 // PID proportion constant // 205 is  too high 
-#define KD 8 // PID derivative constant 
+#define KP 150 // PID proportion constant // 205 is  too high 
+#define KD 7  // PID derivative constant 
 #define MAX_SPEED 1024 // max number the Arduino PWM takes 
 #define CLOCK_FQ 100000 //For pwm_start function
-#define THRESHOLD 250 // Threshold for being on or off the line
-#define DECIDE_THRESHOLD 300
+#define THRESHOLD 300 // Threshold for being on or off the line
+#define DECIDE_THRESHOLD 200
 #define SPEED_TUNING 1.8
 #define TURN_DELAY_TIME 200
 #define CLAW_UP PA_8
@@ -36,7 +36,8 @@
 #define GAUNTLET PA9
 #define ANGLE_START 70 
 #define ANGLE_FINISH 140
-#define DEBOUNCE 4
+#define DEBOUNCE 10
+#define START_DETECTION 50000
 
 #define GO true
 //#define SENSORS true
@@ -61,6 +62,7 @@ bool leftAlign;
 bool rightAlign;
 int debounce = 0;
 int junctionNumber = 0;
+int loopCounter = 0;
 bool pressed = false;
 bool THANOS = false;
 
@@ -104,96 +106,136 @@ void setup()
 
 
 void loop(){
-//  leftTab = analogRead(L_TAB) >= THRESHOLD; 
-//  rightTab = analogRead(R_TAB) >= THRESHOLD; 
+  if(!pressed && loopCounter < START_DETECTION){
+  leftSensor = analogRead(PHOTO_0) >= THRESHOLD;
+  rightSensor = analogRead(PHOTO_1) >= THRESHOLD;
 
-//  if((leftTab || rightTab) && !pressed){
-//    turnInPlaceRight();
-//    pressed =  true;
-//  }
+  timeStep++;
 
-
-//Serial.println(multi(1,0,0));
-// if(!pressed && multi(1,0,0) == HIGH){
-//   pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
-//   pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
-//   pressed = true;
-// }
-
- leftSensor = analogRead(PHOTO_0) >= THRESHOLD;
- rightSensor = analogRead(PHOTO_1) >= THRESHOLD;
- leftDecide = analogRead(L_DECIDE) >= DECIDE_THRESHOLD;
- rightDecide = analogRead(R_DECIDE) >= DECIDE_THRESHOLD;
-
-  // if((leftDecide || rightDecide) && (leftSensor || rightSensor) && (debounce > DEBOUNCE)){
-  //   junctionNumber++;
-  //   switch(junctionNumber){
-  //     case 1: 
-  //       pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 700, 0);
-  //       pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 700, 0);
-  //       delay(300);
-  //       turnLeft();
-  //       debounce = 0;
-  //       break;
-  //     case 2: 
-  //       stop();
-  //       turnLeft(); 
-  //     default: 
-  //       stop();
-  //       alignPillar();
-  //       debounce = 0;
-  //       break;
-  //   }
-  // }
-
- timeStep++;
-
- if (leftSensor  && rightSensor ){
-   position = 0;
- } 
- else if(leftSensor  && !rightSensor ){
-   position = 1; 
- }
- else if(!leftSensor && rightSensor ){
-   position = -1; 
- }
- else{
-   if(lastPosition<0) { //right was on last 
-   position = -5; 
-   }
-   else { // last Position > 0 ==> left was on last 
-   position = 5;
-   } 
- }
-
+  if (leftSensor  && rightSensor ){
+    position = 0;
+  } 
+  else if(leftSensor  && !rightSensor ){
+    position = 1; 
+  }
+  else if(!leftSensor && rightSensor ){
+    position = -1; 
+  }
+  else{
+    if(lastPosition<0) { //right was on last 
+      position = -5; 
+    }
+    else { // last Position > 0 ==> left was on last 
+      position = 5;
+    } 
+  }
  // L on, R off : position = positive, want to turn LEFT 
  // R on, L off : position = negative, want to turn RIGHT 
-
   derivative = (position - lastPosition) / timeStep; 
   PID = (KP * position) + (KD * derivative); 
 
- if(PID>(default_speed)){
-   PID = default_speed;
- }
+  if(PID>(default_speed)){
+    PID = default_speed;
+  }
 
- else if(PID<-default_speed){
-   PID = -default_speed;
- }
+  else if(PID<-default_speed){
+    PID = -default_speed;
+  }
  
   pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed+PID, 0);
   pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed-PID, 0); 
  //input of 18 still runs
 
- if(lastPosition != position){
-   number++;
-   if(number==2){
-     timeStep = 0;
-     number = 0;
-   }
- }
- lastPosition = position; 
- debounce++;
+  if(lastPosition != position){
+    number++;
+    if(number==2){
+      timeStep = 0;
+      number = 0;
+    }
+  }
+  lastPosition = position; 
+  loopCounter++;
 }
+else{
+  pressed = true;
+  leftSensor = analogRead(PHOTO_0) >= THRESHOLD;
+  rightSensor = analogRead(PHOTO_1) >= THRESHOLD;
+  leftDecide = analogRead(L_DECIDE) >= DECIDE_THRESHOLD;
+  rightDecide = analogRead(R_DECIDE) >= DECIDE_THRESHOLD;
+
+  if((leftDecide || rightDecide) && (leftSensor || rightSensor) && (debounce > DEBOUNCE)){
+    junctionNumber++;
+    debounce = 0;
+    switch(junctionNumber){
+      case 1: 
+        // pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 700, 0);
+        // pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 700, 0);
+        // delay(300);
+        stop();
+        turnLeft();
+        break;
+        // stop();
+        // delay(2000);
+      case 2: 
+        stop();
+        turnLeft(); 
+        break;
+      default: 
+        stop();
+        alignPillar();
+        break;
+    }
+  }
+
+  timeStep++;
+
+  if (leftSensor  && rightSensor ){
+    position = 0;
+  } 
+  else if(leftSensor  && !rightSensor ){
+    position = 1; 
+  }
+  else if(!leftSensor && rightSensor ){
+    position = -1; 
+  }
+  else{
+    if(lastPosition<0) { //right was on last 
+      position = -5; 
+    }
+    else { // last Position > 0 ==> left was on last 
+      position = 5;
+    } 
+  }
+
+ // L on, R off : position = positive, want to turn LEFT 
+ // R on, L off : position = negative, want to turn RIGHT 
+  derivative = (position - lastPosition) / timeStep; 
+  PID = (KP * position) + (KD * derivative); 
+
+  if(PID>(default_speed)){
+    PID = default_speed;
+  }
+
+  else if(PID<-default_speed){
+    PID = -default_speed;
+  }
+ 
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed+PID, 0);
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed-PID, 0); 
+ //input of 18 still runs
+
+  if(lastPosition != position){
+    number++;
+    if(number==2){
+      timeStep = 0;
+      number = 0;
+    }
+  }
+  lastPosition = position; 
+  debounce++;
+}
+}
+//}
 
 // void turnInPlaceLeft(){
 //   pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
@@ -306,8 +348,8 @@ void setup(){
 }
 
 void loop(){
- Serial.println("Right Align: ");
- Serial.println(String(analogRead(R_ALIGN)));
+//  Serial.println("Right Align: ");
+//  Serial.println(String(analogRead(R_ALIGN)));
  Serial.println("Right Decide: ");
  Serial.println(String(analogRead(R_DECIDE)));
  Serial.println("Right Photo: ");
@@ -316,8 +358,8 @@ void loop(){
  Serial.println(String(analogRead(PHOTO_0)));
  Serial.println("Left Decide: ");
  Serial.println(String(analogRead(L_DECIDE)));
- Serial.println("Left Align: ");
- Serial.println(String(analogRead(L_ALIGN)));
+//  Serial.println("Left Align: ");
+//  Serial.println(String(analogRead(L_ALIGN)));
  Serial.println("________________");
  delay(2000);
 }
@@ -347,14 +389,14 @@ Serial.begin(9600);
 void loop(){
   pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 400, 0);
   pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 400, 0);
-  // delay(2000);
-  // stop();
-  // delay(2000);
-  // pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0);
-  // pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0);
-  // delay(2000);
-  // stop();
-  // delay(2000);
+  delay(2000);
+  stop();
+  delay(2000);
+  pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0);
+  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0);
+  delay(2000);
+  stop();
+  delay(2000);
 
   // pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   // delay(2000);

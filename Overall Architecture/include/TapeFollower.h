@@ -18,9 +18,8 @@ class TapeFollower
     TapeFollower(Robot const* robot);
     void splitDecide(); //TODO
     void followTape(); //polls 2 main PTs
-    //void goDistance(int distance, bool firstRun, int checkptA, int checkptB); 
+    void goDistance(int loopNumber); 
     // follows tape without checking for splits or tabs 
-    // STRETCH
     void goHome(); //only call from between first tabs and 2nd split
     void park();
     void avoidCollision();
@@ -48,7 +47,7 @@ class TapeFollower
     bool rightAlign;
     int lastEncoder;
     int encoder;
-    int distance;
+    int loopCounter;
     bool pressed;
     bool homeSplit;
     void stop();
