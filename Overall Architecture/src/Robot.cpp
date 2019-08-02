@@ -14,7 +14,7 @@ CV_Addresses{(int*) 0x0801FFF3, (int*) 0x0801FFF7, (int*) 0x0801FFFB, (int*) 0x0
 CV_Values{162, 12, 200, 200, 200, 4, YES_CALIBRATED},
 labels{"KP Wheel", "KD Wheel", "On-Tape Threshold", "Decide Threshold", "Align Threshold",
 "Pillar Distance (Cm)"},
-value(0), lastEncoderValue(0), encoderValue(0), increment(1),
+value(0), lastEncoderValue(0), encoderValue(0),
 display(Adafruit_SSD1306(-1))
 {
 }
@@ -28,12 +28,7 @@ Robot* Robot::instance(){
 void Robot::setup(){    
   
   // Setting up pins
-  pinMode(L_ENCODER_A, INPUT_PULLUP); //check if input or input pullup
-  pinMode(L_ENCODER_B, INPUT_PULLUP);
-  pinMode(R_ENCODER_A, INPUT_PULLUP);
-  pinMode(R_ENCODER_B, INPUT_PULLUP);
   pinMode(SONAR_ECHO, INPUT); 
-  pinMode(TUNING_KNOB, INPUT_PULLUP);
   pinMode(L_DECIDE, INPUT_PULLUP);
   pinMode(L_ALIGN, INPUT_PULLUP);
   pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
@@ -41,8 +36,13 @@ void Robot::setup(){
   pinMode(R_DECIDE, INPUT_PULLUP);
   pinMode(R_ALIGN, INPUT_PULLUP);
   pinMode(T_OR_M, INPUT_PULLUP);
-  pinMode(MULTIPLEX_OUT, INPUT_PULLUP);
+  pinMode(CALIBRATE, INPUT_PULLUP);
   pinMode(COLLISION, INPUT_PULLUP);
+  pinMode(TUNING_KNOB_A, INPUT_PULLUP);
+  pinMode(TUNING_KNOB_B, INPUT_PULLUP);
+  pinMode(TUNING_BUTTON, INPUT_PULLUP);
+  pinMode(ARM_SIDES_LIMIT, INPUT_PULLUP);
+  pinMode(ARM_TOP_BOTTOM_LIMIT, INPUT_PULLUP);
 /////////////////////////////////////
   pinMode(SONAR_TRIG, OUTPUT);
   pinMode(ARM_MOTOR_LEFT, OUTPUT);
@@ -56,9 +56,6 @@ void Robot::setup(){
   pinMode(RIGHT_FORWARD_WHEEL_MOTOR, OUTPUT);
   pinMode(LEFT_BACKWARD_WHEEL_MOTOR, OUTPUT);
   pinMode(RIGHT_BACKWARD_WHEEL_MOTOR, OUTPUT);
-  pinMode(MULTIPLEX_A, OUTPUT);
-  pinMode(MULTIPLEX_B, OUTPUT);
-  pinMode(MULTIPLEX_C, OUTPUT);
 
   // pwm_start init motors
   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);

@@ -81,8 +81,7 @@ private:
    String labels [NUM_VARIABLES-1];
    volatile int value; 
    bool lastEncoderValue;
-   bool encoderValue;
-   int increment;
+   bool encoderValue;   
    Adafruit_SSD1306 display;
 };
 
