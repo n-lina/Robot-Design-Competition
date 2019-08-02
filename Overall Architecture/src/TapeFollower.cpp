@@ -25,7 +25,7 @@ void TapeFollower::followTape(){ //add encoder polling
       return;
     }
 
-    if(!pressed && multi(1,0,0)==HIGH){
+    if(!pressed && digitalRead(ARM_SIDES_LIMIT)==HIGH){
     pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
     pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
     pressed = true;
@@ -36,7 +36,7 @@ void TapeFollower::followTape(){ //add encoder polling
     leftDecide = analogRead(L_DECIDE)>= my_DECIDE_THRESHOLD;
     rightDecide = analogRead(R_DECIDE)>= my_DECIDE_THRESHOLD;
 
-    if((leftDecide || rightDecide) && (leftTapeFollow || rightTapeFollow) && (debounce > DEBOUNCE)){
+    if((leftDecide || rightDecide) && (debounce > DEBOUNCE)){
       stop();
       debounce = 0;
       Robot::instance()->splitNumber++;
@@ -158,7 +158,7 @@ void TapeFollower::goDistance(int loopNumber){
       return;
     }
 
-    if(!pressed && multi(1,0,0)==HIGH){
+    if(!pressed && digitalRead(ARM_SIDES_LIMIT)==HIGH){
       pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
       pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
       pressed = true;
@@ -410,12 +410,6 @@ void TapeFollower::dropGauntlet(){
   delay(1000);
 }
 
-bool TapeFollower::multi(bool C, bool B, bool A) {
-  digitalWrite(MULTIPLEX_A, A);
-  digitalWrite(MULTIPLEX_B, B);
-  digitalWrite(MULTIPLEX_C, C); 
-  return digitalRead(MULTIPLEX_OUT);
-}
 
 
 

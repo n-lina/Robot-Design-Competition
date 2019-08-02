@@ -23,7 +23,7 @@ void ManageStone::collectStone(){ // dropInStorage moves claw to correct height 
   }
   // pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); //TODO: team
   // while(true){
-  //   if(multi(1,0,0)==HIGH){
+  //   if(digitalRead(ARM_SIDES_LIMIT)==HIGH){
   //     pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
   //     pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
   //     break;
@@ -70,7 +70,7 @@ void ManageStone::moveArmToPillar(){
       pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   }
   while (true){
-    if(readSonar()<=my_PILLAR_DISTANCE || multi(1,0,0) == HIGH){ //multi(1,0,0) = limit switch
+    if(readSonar()<=my_PILLAR_DISTANCE || digitalRead(ARM_SIDES_LIMIT) == HIGH){
       pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
       pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);   
       return; 
@@ -116,10 +116,5 @@ int ManageStone::readSonar(){ //cm
   return pulseIn(SONAR_ECHO, HIGH)*(0.034/2);
 }
 
-bool ManageStone::multi(bool C, bool B, bool A) {
-  digitalWrite(MULTIPLEX_A, A);
-  digitalWrite(MULTIPLEX_B, B);
-  digitalWrite(MULTIPLEX_C, C); 
-  return digitalRead(MULTIPLEX_OUT);
-}
+
 

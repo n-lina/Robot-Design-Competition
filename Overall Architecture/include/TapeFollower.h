@@ -60,7 +60,6 @@ class TapeFollower
     void turnInPlaceRight();
     void alignPillar();
     void dropGauntlet();
-    bool multi(bool C, bool B, bool A);
 };
 
 #endif

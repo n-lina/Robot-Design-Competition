@@ -78,7 +78,6 @@ void Robot::setup(){
 
   // declaring interrupts
 
-  
   // Creating stack for splits/tabs and Junction objects
   Junction gauntletSplit(NOT_AVAIL, NOT_AVAIL, GAUNTLET_SPLIT);
   Junction pathSplit(NOT_AVAIL, NOT_AVAIL, PATH_SPLIT);

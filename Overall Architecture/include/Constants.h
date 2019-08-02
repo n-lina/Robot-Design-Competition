@@ -48,17 +48,13 @@
 #define COLLISION PB2
 #define SONAR_ECHO PA12
 #define SONAR_TRIG PA11
-#define CALIBRATE PA0
+#define CALIBRATE PA0 //do we want to calibrate the robot
 #define TUNING_KNOB_A PA0
 #define TUNING_KNOB_B PA0
 #define TUNING_BUTTON PA0
-// ARM_HOME_LIMIT multi(0,1,0)
-// ARM_SIDES_LIMIT multi(1,0,0)
-// ARM_TOP_BOTTOM_LIMIT multi(0,0,1)
-// NO_STONE multi(1,1,0)
-// TUNING_BUTTON multi(1,0,1)
-// COLLISION multi()
-// TUNING_MENU/CALIBRATION YES NO multi(1,0,1);
+#define ARM_SIDES_LIMIT PA0
+#define ARM_TOP_BOTTOM_LIMIT PA0
+#define NO_STONE PA0
 
 // ManageStone library
 #define THREE_INCHES 3000 //ms since 1 in/s
@@ -67,8 +63,10 @@
 #define SPEED_TUNING 1.2
 #define TURN_DELAY_TIME 200
 #define SOFT_TURN_DELAY_TIME 180
-#define DEBOUNCE 4 // once junction detected, must be DEBOUNCE loops before next one 
+#define DEBOUNCE 5 // once junction detected, must be DEBOUNCE loops before next one 
 #define ANGLE_START 70 
 #define ANGLE_FINISH 140
+#define START_DETECTION 30000 //number of loops to run before starting junction detection 
+
 #endif
 
