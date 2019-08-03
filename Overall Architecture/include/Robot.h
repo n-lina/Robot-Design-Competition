@@ -1,6 +1,7 @@
 #ifndef Robot_h
 #define Robot_h
 
+#include <Wire.h>
 #include <Adafruit_SSD1306.h>
 #include <FreeMono12pt7b.h>
 #include <Servo.h>

@@ -3,12 +3,12 @@
 #include "TapeFollower.h"
 #include "ManageStone.h"
 #include "Constants.h"
-#include <Wire.h>
-#include <Adafruit_SSD1306.h>
-#include <FreeMono9pt7b.h>
+// #include <Wire.h>
+// #include <Adafruit_SSD1306.h>
+// #include <FreeMono9pt7b.h>
 
-#define OLED_RESET -1  // Not used
-Adafruit_SSD1306 display(OLED_RESET);
+// #define OLED_RESET -1  // Not used
+// Adafruit_SSD1306 display(OLED_RESET);
 
 #if (SSD1306_LCDHEIGHT != 64)
 #error("Height incorrect, please fix Adafruit_SSD1306.h!");
@@ -117,28 +117,38 @@ bool multi(bool C, bool B, bool A) {
 #ifdef TUNING 
 void setup(){
   Robot::instance()->setup();
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x64)
+  delay(3000);
+  Serial.begin(9600);
+  // display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x64)
   // init done
 
   // Clear the buffer.
-  display.clearDisplay();
+  // display.clearDisplay();
 
-  // Draw a test
-  display.clearDisplay();
-  display.setTextSize(1);
-  display.setTextColor(WHITE);
-  display.setCursor(0,0);
-  display.println("OLED Display 128x64");
-  display.setFont(&FreeMono9pt7b);
-  display.drawPixel(0,45,WHITE);
-  display.setCursor(4,45);
-  display.println("Welcome!");
-  display.display();
+  // // Draw a test
+  // display.clearDisplay();
+  // display.setTextSize(1);
+  // display.setTextColor(WHITE);
+  // display.setCursor(0,0);
+  // display.println("OLED Display 128x64");
+  // display.setFont(&FreeMono9pt7b);
+  // display.drawPixel(0,45,WHITE);
+  // display.setCursor(4,45);
+  // display.println("Welcome!");
+  // display.display();
+  // delay(1000);
 }
 void loop(){
-  Robot::instance()->adjustVariables();
-  Robot::instance()->display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
+  // display.clearDisplay();
+  // display.setCursor(4,45);
+  // display.println("TESTING");
+  // display.display();
+  Serial.println("Entered loop");
+  delay(1000);
+  // Robot::instance()->adjustVariables();
   Robot::instance()->display.println("hello");
   Robot::instance()->display.display();
+  delay(1000);
+  Serial.println("Exiting loop");
 }
 #endif
