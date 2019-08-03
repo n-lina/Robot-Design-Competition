@@ -1,9 +1,10 @@
 #ifndef Robot_h
 #define Robot_h
 
-#include <Adafruit_SSD1306.h>
-#include <FreeMono12pt7b.h>
+ #include <Adafruit_SSD1306.h>
+// #include <FreeMono12pt7b.h>
 #include <Servo.h>
+#include <Wire.h>
 
 using namespace std;
 
@@ -67,21 +68,24 @@ public:
    Servo clawServo; // 0 = open; 180 = closed
    Servo L_GauntletServo;
    Servo R_GauntletServo;
+   Adafruit_SSD1306 display;
+   void toggleMenu();
+   void adjustVariables();
 
 private:
    Robot();  // Private so that it can  not be called
    Robot(Robot const& bot){};  // copy constructor is private
    Robot& operator=(Robot const& bot){}; // assignment operator is private
    static Robot* m_pInstance;
-   void toggleMenu();
-   void adjustVariables();
+   // void toggleMenu();
+   // void adjustVariables();
    int* CV_Addresses [NUM_VARIABLES];
    int CV_Values [NUM_VARIABLES];
    String labels [NUM_VARIABLES-1];
    volatile int value; 
    bool lastEncoderValue;
    bool encoderValue;   
-   Adafruit_SSD1306 display;
+   // Adafruit_SSD1306 display;
 };
 
 class Junction  {

@@ -4,13 +4,18 @@
 #include "ManageStone.h"
 #include "Constants.h"
 
+#include <Adafruit_SSD1306.h>
+#include <FreeMono12pt7b.h>
+#include <Wire.h>
 
-#define ALL_TOGETHER true
+
+//#define ALL_TOGETHER true
 //#define COLLECT_STONE_X true //change X to be what stoneNumber u want, check the direction
 // test no stone, choose stoneNumber 1,2, or 3 
-//#define COLLECT_STONE_SONAR true
 //#define GO_HOME true 
-//#define MULTIPLEX
+#define TESTING
+
+Adafruit_SSD1306 display1(-1);
 
 #ifdef ALL_TOGETHER 
 TapeFollower robot(Robot::instance());
@@ -76,33 +81,27 @@ void loop() {
 }
 #endif
 
-#ifdef MULTIPLEX 
-int curr_val;
-bool multi(bool A, bool B, bool C);
-
+#ifdef TESTING
 void setup(){
   Serial.begin(9600);
-  pinMode(MULTIPLEX_A, OUTPUT);
-  pinMode(MULTIPLEX_B, OUTPUT);
-  pinMode(MULTIPLEX_C, OUTPUT);
-  pinMode(MULTIPLEX_OUT, INPUT);
+  Serial.println("setup");
+  display1.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
+  //Robot::instance()->setup();
 }
-
 void loop(){
-  //Select each pin and read value
-  curr_val = multi(1, 0, 0);
-  Serial.println(curr_val);
+  Serial.println("hello");
+  display1.clearDisplay();
+  display1.setCursor(2,2);
+  display1.println("TESTING");
+  display1.display();
+  //display1.clearDisplay();
   delay(2000);
+  // Robot::instance()->display.clearDisplay();
+  // Robot::instance()->display.setCursor(2,2);
+  // Robot::instance()->display.print("TESTING");
+  // Robot::instance()->display.display();
+  // Robot::instance()->display.setCursor(0,15);
+  // Robot::instance()->display.print("HELLO");
+  // Robot::instance()->display.display();  
 }
-
-bool multi(bool C, bool B, bool A) {
-  digitalWrite(MULTIPLEX_A, A);
-  digitalWrite(MULTIPLEX_B, B);
-  digitalWrite(MULTIPLEX_C, C);
-
-  bool multi_out = digitalRead(MULTIPLEX_OUT);  
-  return multi_out;
-}
-
-#endif 
-
+#endif

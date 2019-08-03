@@ -27,9 +27,14 @@ lastEncoderValue(0),
 encoderValue(0),
 display(Adafruit_SSD1306(-1))
 {
+  //Serial.begin(9600);
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
 }
 
 Robot* Robot::instance(){
+   Serial.println("hello");
+   bool now = m_pInstance;
+   Serial.println(now);
    if (!m_pInstance)   // Only allow one instance of class to be generated.
       m_pInstance = new Robot;
    return m_pInstance;
@@ -109,11 +114,11 @@ void Robot::setup(){
   // }
 
   // Calibrating / assigning values 
-  adjustVariables();
+  //adjustVariables();
 }
 
 void Robot::toggleMenu(){
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
+  // display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
     
   for(volatile int i=0; i<NUM_VARIABLES-1; i++){
     display.clearDisplay();
