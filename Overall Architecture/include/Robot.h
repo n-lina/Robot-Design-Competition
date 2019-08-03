@@ -75,7 +75,6 @@ private:
    static Robot* m_pInstance;
    void toggleMenu();
    void adjustVariables();
-   bool multi(bool C, bool B, bool A);
    int* CV_Addresses [NUM_VARIABLES];
    int CV_Values [NUM_VARIABLES];
    String labels [NUM_VARIABLES-1];

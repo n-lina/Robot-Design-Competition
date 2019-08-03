@@ -19,13 +19,15 @@ ManageStone Robot(Robot::instance());
 void setup() {
  Robot::instance()->setup();
  Serial.begin(9600);
+ Robot::instance()->state = GO_DISTANCE;
+ Robot::instance()->TEAM = METHANOS;
 }
 
 void loop() {
   switch (Robot::instance()->state){
-    // case GO_DISTANCE: // Go a certain distance without checking for tabs/splits
-    //   //TODO
-    //   break;
+    case GO_DISTANCE: // Go a certain distance without checking for tabs/splits
+      robot.goDistance(START_DETECTION);
+      break;
     case FOLLOW_TAPE: // Follow Tape checking splits/tabs
       robot.followTape();
       break;

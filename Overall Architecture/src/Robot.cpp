@@ -6,27 +6,36 @@
 Robot* Robot::m_pInstance = NULL; 
 
 Robot::Robot(): 
-state(FOLLOW_TAPE), TEAM(true), stoneNumber(0), collisionNumber(0), splitNumber(0), 
-direction_facing(true), direction(true), 
-armServo(), clawServo(), L_GauntletServo(), R_GauntletServo(), 
+state(GO_DISTANCE), 
+TEAM(false), 
+stoneNumber(0), 
+collisionNumber(0), 
+splitNumber(0), 
+direction_facing(true), 
+direction(true), 
+armServo(), 
+clawServo(), 
+L_GauntletServo(), 
+R_GauntletServo(), 
 CV_Addresses{(int*) 0x0801FFF3, (int*) 0x0801FFF7, (int*) 0x0801FFFB, (int*) 0x0801FFEF, (int*) 0x0801FFDB, 
 (int*)0x0801FFDF, (int*) 0x0801FFD7},
-CV_Values{162, 12, 200, 200, 200, 4, YES_CALIBRATED},
+CV_Values{140, 11, 200, 300, 300, 4, YES_CALIBRATED},
 labels{"KP Wheel", "KD Wheel", "On-Tape Threshold", "Decide Threshold", "Align Threshold",
 "Pillar Distance (Cm)"},
-value(0), lastEncoderValue(0), encoderValue(0),
+value(0), 
+lastEncoderValue(0), 
+encoderValue(0),
 display(Adafruit_SSD1306(-1))
 {
 }
 
 Robot* Robot::instance(){
-   if (!m_pInstance)   // Only allow one instance of class to be generated.
-      m_pInstance = new Robot;
-   return m_pInstance;
+  if (!m_pInstance)   // Only allow one instance of class to be generated.
+    m_pInstance = new Robot;
+  return m_pInstance;
 }
 
-void Robot::setup(){    
-  
+void Robot::setup(){     
   // Setting up pins
   pinMode(SONAR_ECHO, INPUT); 
   pinMode(L_DECIDE, INPUT_PULLUP);
@@ -76,30 +85,31 @@ void Robot::setup(){
   // declaring interrupts
 
   // Creating stack for splits/tabs and Junction objects
-  Junction gauntletSplit(NOT_AVAIL, NOT_AVAIL, GAUNTLET_SPLIT);
-  Junction pathSplit(NOT_AVAIL, NOT_AVAIL, PATH_SPLIT);
-  Junction twelveInch_M(LARGE, 12, PILLAR_ONE);
-  Junction nineInch_M(LARGE, 9, PILLAR_TWO);
-  Junction sixInch_M(LARGE, 6, PILLAR_THREE);
-  Junction sixInch_T(SMALL, 6, PILLAR_FOUR);
-  Junction nineInch_T(LARGE, 9, PILLAR_FIVE);
-  Junction twelveInch_T(LARGE, 12, PILLAR_SIX);
+  // Junction gauntletSplit(NOT_AVAIL, NOT_AVAIL, GAUNTLET_SPLIT);
+  // Junction pathSplit(NOT_AVAIL, NOT_AVAIL, PATH_SPLIT);
+  // Junction twelveInch_M(LARGE, 12, PILLAR_ONE);
+  // Junction nineInch_M(LARGE, 9, PILLAR_TWO);
+  // Junction sixInch_M(LARGE, 6, PILLAR_THREE);
+  // Junction sixInch_T(SMALL, 6, PILLAR_FOUR);
+  // Junction nineInch_T(LARGE, 9, PILLAR_FIVE);
+  // Junction twelveInch_T(LARGE, 12, PILLAR_SIX);
 
   //Junction map 
 
   // Team 
-  switch (digitalRead(T_OR_M)){
-    case HIGH: 
-      TEAM = true; //thanos
-      direction = LEFT;
-      break;
-    case LOW:
-      TEAM = false; //methanos
-      direction = RIGHT;
-      break;
-  }
+  // switch (digitalRead(T_OR_M)){
+  //   case HIGH: 
+  //     TEAM = true; //thanos
+  //     direction = LEFT;
+  //     break;
+  //   case LOW:
+  //     TEAM = false; //methanos
+  //     direction = RIGHT;
+  //     break;
+  // }
 
   // Calibrating / assigning values 
+  armServo.write(180);
   adjustVariables();
 }
 
@@ -134,7 +144,6 @@ void Robot::toggleMenu(){
   return;
 }
 
-
 void Robot::adjustVariables(){
   if(*CV_Addresses[CALIBRATED_MAGIC] != YES_CALIBRATED){
     for(volatile int i=0; i<NUM_VARIABLES; i++){
@@ -151,13 +160,6 @@ void Robot::adjustVariables(){
   ALIGN_THRESHOLD = *CV_Addresses[ALIGN_THRESHOLD];
   PILLAR_DISTANCE =*CV_Addresses[PILLAR_DISTANCE];
   return;
-}
-
-bool Robot::multi(bool C, bool B, bool A) {
-  digitalWrite(MULTIPLEX_A, A);
-  digitalWrite(MULTIPLEX_B, B);
-  digitalWrite(MULTIPLEX_C, C); 
-  return digitalRead(MULTIPLEX_OUT);
 }
 
 Junction::Junction(bool distanceToPillar, int setHeight, int junctionNumber){

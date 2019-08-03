@@ -9,21 +9,37 @@ TapeFollower::TapeFollower(Robot const* robot):
   my_DECIDE_THRESHOLD(Robot::instance()->DECIDE_THRESHOLD), 
   my_ALIGN_THRESHOLD(Robot::instance()->ALIGN_THRESHOLD),
   my_TEAM(Robot::instance()->TEAM),
-  derivative(0), default_speed(MAX_SPEED/SPEED_TUNING), timeStep(0), position(0), lastPosition(0), 
-  PID(0), number(0), debounce(0), leftTapeFollow(0), rightTapeFollow(0),
-  leftDecide(0), rightDecide(0), leftAlign(0), rightAlign(0), loopCounter(0),
-  pressed(false), homeSplit(false)
+  derivative(0), 
+  default_speed(MAX_SPEED/SPEED_TUNING), 
+  timeStep(0), 
+  position(0), 
+  lastPosition(0), 
+  PID(0), 
+  number(0), 
+  debounce(0), 
+  leftTapeFollow(0), 
+  rightTapeFollow(0),
+  leftDecide(0), 
+  rightDecide(0), 
+  leftAlign(0), 
+  rightAlign(0), 
+  loopCounter(0),
+  pressed(false), 
+  homeSplit(false)
   {}
 
 
 void TapeFollower::followTape(){ //add encoder polling
   while(Robot::instance()->state==FOLLOW_TAPE){
-    if(digitalRead(COLLISION)==HIGH){
-      stop();
-      Robot::instance()->collisionNumber++;
-      Robot::instance()->state = AVOID_COLLISION;
-      return;
-    }
+    // if(digitalRead(COLLISION)==HIGH){
+    //   stop();
+    //   Robot::instance()->collisionNumber++;
+    //   // pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
+    //   // pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
+    //   // pressed = false;
+    //   Robot::instance()->state = AVOID_COLLISION;
+    //   return;
+    // }
 
     if(!pressed && digitalRead(ARM_SIDES_LIMIT)==HIGH){
     pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
@@ -201,6 +217,7 @@ void TapeFollower::goDistance(int loopNumber){
     lastPosition = position; 
     loopCounter++;
   }
+  Robot::instance()->state = FOLLOW_TAPE;
   return;
 }
 
@@ -241,18 +258,21 @@ void TapeFollower::turnInPlaceRight(){
 void TapeFollower::splitDecide(){ //TODO
   if(my_TEAM){ // thanos
     switch(Robot::instance()->splitNumber){
-      case 1: case 2: case 7: // when it detects a junction in followTape(), it already stops
+      case 1: case 2: // when it detects a junction in followTape(), it already stops
         turnLeft(); 
         Robot::instance()->state = FOLLOW_TAPE;
         return;
-      case 3: case 4: case 5: case 6: case 8: 
-        alignPillar();
+      case 3: 
+        //alignPillar();
         //Robot::instance()->state = COLLECT_STONE;
-        Robot::instance()->state = FOLLOW_TAPE;
+        pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 700, 0);
+        pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 700, 0);
+        delay(300);
+        turnInPlaceRight();
         return;
-      case 9: 
+      case 4: 
         alignPillar();
-        Robot::instance()->state = GO_HOME;
+        Robot::instance()->state = COLLECT_STONE;
         return;
     }
   }

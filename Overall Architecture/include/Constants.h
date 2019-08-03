@@ -7,6 +7,8 @@
 #define TAB true 
 #define SMALL false 
 #define LARGE true
+#define METHANOS false 
+#define THANOS true
 #define NOT_AVAIL -1
 
 //checking if the robot has been calibrated at least once 
@@ -34,10 +36,10 @@
 #define RIGHT_FORWARD_WHEEL_MOTOR PB_8
 #define LEFT_BACKWARD_WHEEL_MOTOR PB_7
 #define RIGHT_BACKWARD_WHEEL_MOTOR PB_9
-#define ARM_MOTOR_LEFT PA_6
-#define ARM_MOTOR_RIGHT PA_7
-#define ARM_MOTOR_UP PB_0
-#define ARM_MOTOR_DOWN PB_1
+#define ARM_MOTOR_LEFT PB_1
+#define ARM_MOTOR_RIGHT PB_0
+#define ARM_MOTOR_UP PA_6
+#define ARM_MOTOR_DOWN PA_7
 // Setup
 #define T_OR_M PA14 //switch, HIGH = THANOS
 #define CALIBRATE PA13 //do we want to calibrate the robot
@@ -45,8 +47,8 @@
 #define TUNING_KNOB_B PB13
 #define TUNING_BUTTON PB3
 // Arm and claw
-#define ARM_SIDES_LIMIT PA12
-#define ARM_TOP_BOTTOM_LIMIT PA11
+#define ARM_SIDES_LIMIT PA11
+#define ARM_TOP_BOTTOM_LIMIT PA12
 #define SONAR_ECHO PB14
 #define SONAR_TRIG PB15
 
@@ -55,13 +57,13 @@
 #define THREE_INCHES 3000 //ms since 1 in/s
 
 // TapeFollower library
-#define SPEED_TUNING 1.2
+#define SPEED_TUNING 1.8
 #define TURN_DELAY_TIME 200
 #define SOFT_TURN_DELAY_TIME 180
-#define DEBOUNCE 5 // once junction detected, must be DEBOUNCE loops before next one 
+#define DEBOUNCE 1000 // once junction detected, must be DEBOUNCE loops before next one 
 #define ANGLE_START 70 
 #define ANGLE_FINISH 140
-#define START_DETECTION 30000 //number of loops to run before starting junction detection 
+#define START_DETECTION 20000 //number of loops to run before starting junction detection 
 
 #endif
 

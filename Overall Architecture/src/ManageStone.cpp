@@ -3,7 +3,8 @@
 #include "Constants.h"
 
 ManageStone::ManageStone(Robot const* robot):
-  my_PILLAR_DISTANCE(Robot::instance()->PILLAR_DISTANCE), my_TEAM(Robot::instance()->TEAM)
+  my_PILLAR_DISTANCE(Robot::instance()->PILLAR_DISTANCE), 
+  my_TEAM(Robot::instance()->TEAM)
 {}
 
 //stone 2, 3, 4,  same direction 
@@ -30,18 +31,14 @@ void ManageStone::collectStone(){ // dropInStorage moves claw to correct height 
   //   }
   // }
   pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  delay(1500);
+  delay(3500);
   pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
   Robot::instance()->clawServo.write(180); //deploying claw
-  delay(1000); // waiting for it to grasp
+  delay(900); // waiting for it to grasp
   pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); // lifting stone out of the hole 
   delay(3500);
   pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
-  dropInStorage();
-  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); // returning to height b4 lifting stone 
-  delay(3500);
-  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
-  dropInStorage();
+  //dropInStorage();
   Robot::instance()->state = GO_HOME;
   return;
 }

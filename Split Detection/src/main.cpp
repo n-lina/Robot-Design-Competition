@@ -19,33 +19,31 @@
 #define L_MOTOR_BACKWARD PB_7
 #define R_MOTOR_FORWARD PB_8
 #define R_MOTOR_BACKWARD PB_9
-#define KP 98 // PID proportion constant // 205 is  too high 
-#define KD 13 // PID derivative constant 
+#define KP 140 // PID proportion constant // 205 is  too high 
+#define KD 11 // PID derivative constant 
 #define MAX_SPEED 1024 // max number the Arduino PWM takes 
 #define CLOCK_FQ 100000 //For pwm_start function
 #define THRESHOLD 200 // Threshold for being on or off the line
-#define TAB_THRESHOLD 400
+#define DECIDE_THRESHOLD 300
 #define SPEED_TUNING 1.8
 #define TURN_DELAY_TIME 200
-#define CLAW_UP PA_8
-#define CLAW_DOWN PA_10
-#define ARM_LEFT PB_0
-#define ARM_RIGHT PB_1
-#define PILLAR_DISTANCE 10 //cm 
-#define TRIGGER PB5
-#define ECHO PB14
-#define CLAW_SERVO PB4
-#define ARM_SERVO PB3
-#define MULTIPLEX_A PA7
-#define MULTIPLEX_B PA6
-#define MULTIPLEX_C PA12
-#define MULTIPLEX_OUT PB15
-#define GAUNTLET PA9
-#define ANGLE_START 70 
-#define ANGLE_FINISH 140
+#define ARM_MOTOR_UP PA_6
+#define ARM_MOTOR_DOWN PA_7
+#define ARM_LEFT PB_1
+#define ARM_RIGHT PB_0
+// #define PILLAR_DISTANCE 10 //cm 
+// #define TRIGGER PB5
+// #define ECHO PB14
+#define ARM_SERVO PA8
+#define CLAW_SERVO PA9
+#define ARM_SIDES_LIMIT PA11
+// #define GAUNTLET PA9
+// #define ANGLE_START 70 
+// #define ANGLE_FINISH 140
 
-#define GO true //not hardcoded
+//#define GO true //not hardcoded
 //#define STONE true 
+#define SERVOS true
 
 #ifdef GO
 bool THANOS = false; 
@@ -72,8 +70,7 @@ void turnInPlaceLeft();
 void turnInPlaceRight();
 void stop();
 void collectStone();
-bool multi(bool C, bool B, bool A);
-void dropGauntlet();
+//void dropGauntlet();
 void alignPillar();
 
 Servo armServo; 
@@ -91,23 +88,19 @@ void setup()
   pinMode(CLAW_DOWN, OUTPUT);
   pinMode(ARM_LEFT, OUTPUT);
   pinMode(ARM_RIGHT, OUTPUT);
-  pinMode(TRIGGER, OUTPUT);
-  pinMode(ECHO, INPUT);
+  // pinMode(TRIGGER, OUTPUT);
+  // pinMode(ECHO, INPUT);
   pinMode(CLAW_SERVO, OUTPUT);
   pinMode(ARM_SERVO, OUTPUT);
-  pinMode(MULTIPLEX_A, OUTPUT);
-  pinMode(MULTIPLEX_B, OUTPUT);
-  pinMode(MULTIPLEX_C, OUTPUT);
-  pinMode(MULTIPLEX_OUT, INPUT);
-  pwm_start(CLAW_UP, CLOCK_FQ, MAX_SPEED, 0 , 1);
-  pwm_start(CLAW_DOWN, CLOCK_FQ, MAX_SPEED, 0 , 1);
+  pwm_start(CLAW_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0 , 1);
+  pwm_start(CLAW_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0 , 1);
   pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0 , 1);
   pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0 , 1);
   clawServo.attach(CLAW_SERVO);
   armServo.attach(ARM_SERVO); 
-  gauntletServo.attach(GAUNTLET);
-  pinMode(GAUNTLET, OUTPUT);
-  gauntletServo.attach(GAUNTLET);
+  // gauntletServo.attach(GAUNTLET);
+  // pinMode(GAUNTLET, OUTPUT);
+  // gauntletServo.attach(GAUNTLET);
  splitNumber = 0;
  gauntletServo.write(90);
  
@@ -122,8 +115,8 @@ void setup()
 void loop(){
   leftSensor = analogRead(PHOTO_0) >= THRESHOLD;
   rightSensor = analogRead(PHOTO_1) >= THRESHOLD;
-  leftDecide =  analogRead(L_SPLIT)>=TAB_THRESHOLD;
-  rightDecide = analogRead(R_SPLIT)>=TAB_THRESHOLD;
+  leftDecide =  analogRead(L_DECIDE)>=DECIDE_THRESHOLD;
+  rightDecide = analogRead(R_DECIDE)>=DECIDE_THRESHOLD;
   
   if((leftDecide || rightDecide) && (rightSensor || leftSensor)){
     splitNumber++;
@@ -254,49 +247,44 @@ void collectStone(){
   clawServo.write(90);
   armServo.write(0);
  // pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-//pwm_start(CLAW_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  while(true){
-    if(multi(1,0,0)==HIGH){
-      pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
-      pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
-      break;
-    }
-  }
-  clawServo.write(180); 
-  delay(1000);
-  pwm_start(CLAW_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+ //pwm_start(CLAW_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  // pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  // while(true){
+  //   if(digitalRead(ARM_SIDES_LIMIT)==HIGH){
+  //     pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
+  //     pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
+  //     break;
+  //   }
+  // }
+  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  delay(1500);
+  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
+  clawServo.write(180); //deploying claw
+  delay(1000); // waiting for it to grasp
+  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); // lifting stone out of the hole 
   delay(3500);
-  pwm_start(CLAW_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
-  armServo.write(90);
-  delay(1000);
-  clawServo.write(0);
-  pwm_start(CLAW_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  delay(3000);
-  pwm_start(CLAW_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
+  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
+  dropInStorage();
+  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); // returning to height b4 lifting stone 
+  delay(3500);
+  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
+  dropInStorage();
   return;
 }
 
-bool multi(bool C, bool B, bool A) {
-  digitalWrite(MULTIPLEX_A, A);
-  digitalWrite(MULTIPLEX_B, B);
-  digitalWrite(MULTIPLEX_C, C); 
-  return digitalRead(MULTIPLEX_OUT);
-}
+// void dropGauntlet(){
+//   for (int i = ANGLE_START; i <= ANGLE_FINISH; i = i + 3) {
+//     gauntletServo.write(i);
+//     delay(15);
+//   }
+//   delay(1000);
 
-void dropGauntlet(){
-  for (int i = ANGLE_START; i <= ANGLE_FINISH; i = i + 3) {
-    gauntletServo.write(i);
-    delay(15);
-  }
-  delay(1000);
-
-  for (int i = ANGLE_START; i >= ANGLE_FINISH; i = i - 3) {
-    gauntletServo.write(i);
-    delay(15);
-  }
-  delay(1000);
-}
+//   for (int i = ANGLE_START; i >= ANGLE_FINISH; i = i - 3) {
+//     gauntletServo.write(i);
+//     delay(15);
+//   }
+//   delay(1000);
+// }
 
 #endif
 
@@ -304,26 +292,21 @@ void dropGauntlet(){
 
 Servo clawServo; 
 Servo armServo; 
-void moveArmToPillar();
-int readSonar();
-bool multi(bool C, bool B, bool A);
+//void moveArmToPillar();
+//int readSonar();
 
 void setup(){
   Serial.begin(9600);
-  pinMode(CLAW_UP, OUTPUT);
-  pinMode(CLAW_DOWN, OUTPUT);
+  pinMode(ARM_MOTOR_UP, OUTPUT);
+  pinMode(ARM_MOTOR_DOWN, OUTPUT);
   pinMode(ARM_LEFT, OUTPUT);
   pinMode(ARM_RIGHT, OUTPUT);
-  pinMode(TRIGGER, OUTPUT);
-  pinMode(ECHO, INPUT);
+  // pinMode(TRIGGER, OUTPUT);
+  // pinMode(ECHO, INPUT);
   pinMode(CLAW_SERVO, OUTPUT);
   pinMode(ARM_SERVO, OUTPUT);
-  pinMode(MULTIPLEX_A, OUTPUT);
-  pinMode(MULTIPLEX_B, OUTPUT);
-  pinMode(MULTIPLEX_C, OUTPUT);
-  pinMode(MULTIPLEX_OUT, INPUT);
-  pwm_start(CLAW_UP, CLOCK_FQ, MAX_SPEED, 0 , 1);
-  pwm_start(CLAW_DOWN, CLOCK_FQ, MAX_SPEED, 0 , 1);
+  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0 , 1);
+  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0 , 1);
   pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0 , 1);
   pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0 , 1);
   clawServo.attach(CLAW_SERVO);
@@ -331,63 +314,84 @@ void setup(){
 }
 
 void loop(){
-  clawServo.write(90);
+  clawServo.write(0);
   armServo.write(0);
 // pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
 // pwm_start(CLAW_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  while(true){
-    if(multi(1,0,0)==HIGH){
-      pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
-      pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
-      break;
-    }
-  }
-  clawServo.write(180); 
-  delay(1000);
-  pwm_start(CLAW_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  // pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  // while(true){
+  //   if(multi(1,0,0)==HIGH){
+  //     pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
+  //     pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
+  //     break;
+  //   }
+  // }
+  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   delay(3500);
-  pwm_start(CLAW_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
+  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
+  clawServo.write(180); //deploying claw
+  delay(850); // waiting for it to grasp
+  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); // lifting stone out of the hole 
+  delay(3500);
+  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
   armServo.write(90);
-  delay(1000);
+  delay(500);
   clawServo.write(0);
-  pwm_start(CLAW_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   delay(3000);
-  pwm_start(CLAW_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
-  return;
+  // pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); // returning to height b4 lifting stone 
+  // delay(3500);
+  // pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
  }
 
-void moveArmToPillar(){
-  armServo.write(180);
-  pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  while (true){
-    int num = readSonar();
-    if(num<=PILLAR_DISTANCE){ //multi(0,0,1) = limit switch
-      Serial.println("sonar: " + String(num));
-      pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
-      pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);   
-      return; 
-    }
-  }
-}
+// void moveArmToPillar(){
+//   armServo.write(180);
+//   pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+//   while (true){
+//     int num = readSonar();
+//     if(num<=PILLAR_DISTANCE){ //multi(0,0,1) = limit switch
+//       pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
+//       pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);   
+//       return; 
+//     }
+//   }
+// }
 
-int readSonar(){ //inches
-  digitalWrite(TRIGGER, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIGGER, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIGGER, LOW);
-  return pulseIn(ECHO, HIGH)*(0.034/2);
-}
+// int readSonar(){ //CM
+//   digitalWrite(TRIGGER, LOW);
+//   delayMicroseconds(2);
+//   digitalWrite(TRIGGER, HIGH);
+//   delayMicroseconds(10);
+//   digitalWrite(TRIGGER, LOW);
+//   return pulseIn(ECHO, HIGH)*(0.034/2);
+// }
 
-bool multi(bool C, bool B, bool A) {
-  digitalWrite(MULTIPLEX_A, A);
-  digitalWrite(MULTIPLEX_B, B);
-  digitalWrite(MULTIPLEX_C, C); 
-  return digitalRead(MULTIPLEX_OUT);
-}
 
 #endif
 
+#ifdef SERVOS 
+  Servo armServo; 
+  Servo clawServo;
+
+  void setup(){
+    pinMode(ARM_SERVO, OUTPUT);
+    pinMode(CLAW_SERVO, OUTPUT);
+    pinMode(ARM_LEFT, OUTPUT);
+    pinMode(ARM_RIGHT, OUTPUT);
+    pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
+    pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1);
+    pinMode(ARM_MOTOR_UP, OUTPUT);
+    pinMode(ARM_MOTOR_DOWN, OUTPUT);
+    pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 1);
+    pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 1);
+    armServo.attach(ARM_SERVO);
+    clawServo.attach(CLAW_SERVO);
+  }
+  void loop(){
+    armServo.write(0); //180 is left
+    delay(1000);
+    armServo.write(180);
+    delay(1000);
+  }
+#endif
 
 
