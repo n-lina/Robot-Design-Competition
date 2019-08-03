@@ -24,11 +24,11 @@ labels{"KP Wheel", "KD Wheel", "On-Tape Threshold", "Decide Threshold", "Align T
 "Pillar Distance (Cm)"},
 value(0), 
 lastEncoderValue(0), 
-encoderValue(0),
-display(Adafruit_SSD1306(-1))
+encoderValue(0)
+//display(Adafruit_SSD1306(-1))
 {
   //Serial.begin(9600);
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
+  //display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
 }
 
 Robot* Robot::instance(){
@@ -121,11 +121,11 @@ void Robot::toggleMenu(){
   // display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
     
   for(volatile int i=0; i<NUM_VARIABLES-1; i++){
-    display.clearDisplay();
-    display.setCursor(0,0);
-    display.print(labels[i]);
-    display.display();
-    display.setCursor(0,15);
+    // display.clearDisplay();
+    // display.setCursor(0,0);
+    // display.print(labels[i]);
+    // display.display();
+    // display.setCursor(0,15);
 
     value = *CV_Addresses[i];
 
@@ -138,8 +138,8 @@ void Robot::toggleMenu(){
         else{
           value--;
         }
-        display.print(String(value));
-        display.display();
+        // display.print(String(value));
+        // display.display();
         lastEncoderValue = encoderValue;
       }
     }

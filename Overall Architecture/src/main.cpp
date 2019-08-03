@@ -15,7 +15,7 @@
 //#define GO_HOME true 
 #define TESTING
 
-Adafruit_SSD1306 display1(-1);
+Adafruit_SSD1306 display(-1);
 
 #ifdef ALL_TOGETHER 
 TapeFollower robot(Robot::instance());
@@ -84,16 +84,21 @@ void loop() {
 #ifdef TESTING
 void setup(){
   Serial.begin(9600);
-  Serial.println("setup");
-  display1.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
+  display.clearDisplay();
+  display.setCursor(2,2);
+  display.println("NEW");
+  display.display();
+  Serial.println("HIIII");
+
   //Robot::instance()->setup();
 }
 void loop(){
   Serial.println("hello");
-  display1.clearDisplay();
-  display1.setCursor(2,2);
-  display1.println("TESTING");
-  display1.display();
+  display.clearDisplay();
+  display.setCursor(2,2);
+  display.println("TESTING");
+  display.display();
   //display1.clearDisplay();
   delay(2000);
   // Robot::instance()->display.clearDisplay();

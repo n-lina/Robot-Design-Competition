@@ -68,7 +68,7 @@ public:
    Servo clawServo; // 0 = open; 180 = closed
    Servo L_GauntletServo;
    Servo R_GauntletServo;
-   Adafruit_SSD1306 display;
+   //Adafruit_SSD1306 display;
    void toggleMenu();
    void adjustVariables();
 
