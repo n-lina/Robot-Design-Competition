@@ -30,12 +30,12 @@ display(Adafruit_SSD1306(-1))
 }
 
 Robot* Robot::instance(){
-  if (!m_pInstance)   // Only allow one instance of class to be generated.
-    m_pInstance = new Robot;
-  return m_pInstance;
+   if (!m_pInstance)   // Only allow one instance of class to be generated.
+      m_pInstance = new Robot;
+   return m_pInstance;
 }
 
-void Robot::setup(){     
+void Robot::setup(){    
   // Setting up pins
   pinMode(SONAR_ECHO, INPUT); 
   pinMode(L_DECIDE, INPUT_PULLUP);
@@ -109,7 +109,6 @@ void Robot::setup(){
   // }
 
   // Calibrating / assigning values 
-  armServo.write(180);
   adjustVariables();
 }
 
