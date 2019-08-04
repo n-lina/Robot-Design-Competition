@@ -197,10 +197,14 @@ TuningMenu::TuningMenu():
 
 void TuningMenu::writeToAddress(){
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
-    
+  Serial.println("hello");
   for(volatile int i=0; i<NUM_VARIABLES-1; i++){
     display.clearDisplay();
-    display.setCursor(0,0);
+    display.setTextSize(1);
+    display.setTextColor(WHITE);
+    display.setCursor(2,2);
+    display.println("TUNING");
+    display.display();
     display.print(labels[i]);
     display.display();
     display.setCursor(0,15);
