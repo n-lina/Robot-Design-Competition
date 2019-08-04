@@ -25,104 +25,115 @@ Robot::Robot():
   value(0), lastEncoderValue(0), encoderValue(0), increment(1),
   display(Adafruit_SSD1306(-1))
 {
-  Serial.begin(9600);
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x64)
-  display.clearDisplay();
-  display.setCursor(2,2);
-  display.println("HELLOOO");
-  display.display()
 }
 
 Robot* Robot::instance(){
-  bool now = m_pInstance;
-  Serial.println(now);
    if (!m_pInstance)   // Only allow one instance of class to be generated.
       m_pInstance = new Robot;
    return m_pInstance;
 }
 
-void Robot::setup(){    
+void Robot::setup(){  
+  Serial.println("SUCCESSFUL");
+//   Serial.println("IN ROBOT"); 
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x64)
+//   // init done
+
+//   // Clear the buffer.
+  display.clearDisplay();
+
+  // Draw a test
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.println("OLED Display 128x64");
+  display.drawPixel(0,45,WHITE);
+  display.setCursor(4,45);
+  display.println("Welcome!");
+  display.display();
+  delay(1000);
   
-  // Setting up pins
-//   pinMode(L_ENCODER_A, INPUT_PULLUP); //check if input or input pullup
-//   pinMode(L_ENCODER_B, INPUT_PULLUP);
-//   pinMode(R_ENCODER_A, INPUT_PULLUP);
-//   pinMode(R_ENCODER_B, INPUT_PULLUP);
-//   pinMode(SONAR_ECHO, INPUT); 
-//   pinMode(TUNING_KNOB, INPUT_PULLUP);
-//   pinMode(L_DECIDE, INPUT_PULLUP);
-//   pinMode(L_ALIGN, INPUT_PULLUP);
-//   pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
-//   pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
-//   pinMode(R_DECIDE, INPUT_PULLUP);
-//   pinMode(R_ALIGN, INPUT_PULLUP);
-//   pinMode(T_OR_M, INPUT_PULLUP);
-//   pinMode(MULTIPLEX_OUT, INPUT_PULLUP);
-//   pinMode(COLLISION, INPUT_PULLUP);
-// /////////////////////////////////////
-//   pinMode(SONAR_TRIG, OUTPUT);
-//   pinMode(ARM_MOTOR_LEFT, OUTPUT);
-//   pinMode(ARM_MOTOR_RIGHT, OUTPUT);
-//   pinMode(ARM_MOTOR_UP, OUTPUT);
-//   pinMode(ARM_MOTOR_DOWN, OUTPUT);
-//   pinMode(ARM_SERVO, OUTPUT);
-//   pinMode(CLAW_SERVO, OUTPUT);
-//   pinMode(GAUNTLET_SERVO, OUTPUT);
-//   pinMode(LEFT_FORWARD_WHEEL_MOTOR, OUTPUT);
-//   pinMode(RIGHT_FORWARD_WHEEL_MOTOR, OUTPUT);
-//   pinMode(LEFT_BACKWARD_WHEEL_MOTOR, OUTPUT);
-//   pinMode(RIGHT_BACKWARD_WHEEL_MOTOR, OUTPUT);
-//   pinMode(MULTIPLEX_A, OUTPUT);
-//   pinMode(MULTIPLEX_B, OUTPUT);
-//   pinMode(MULTIPLEX_C, OUTPUT);
+//   // Setting up pins
+// //   pinMode(L_ENCODER_A, INPUT_PULLUP); //check if input or input pullup
+// //   pinMode(L_ENCODER_B, INPUT_PULLUP);
+// //   pinMode(R_ENCODER_A, INPUT_PULLUP);
+// //   pinMode(R_ENCODER_B, INPUT_PULLUP);
+// //   pinMode(SONAR_ECHO, INPUT); 
+// //   pinMode(TUNING_KNOB, INPUT_PULLUP);
+// //   pinMode(L_DECIDE, INPUT_PULLUP);
+// //   pinMode(L_ALIGN, INPUT_PULLUP);
+// //   pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
+// //   pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
+// //   pinMode(R_DECIDE, INPUT_PULLUP);
+// //   pinMode(R_ALIGN, INPUT_PULLUP);
+// //   pinMode(T_OR_M, INPUT_PULLUP);
+// //   pinMode(MULTIPLEX_OUT, INPUT_PULLUP);
+// //   pinMode(COLLISION, INPUT_PULLUP);
+// // /////////////////////////////////////
+// //   pinMode(SONAR_TRIG, OUTPUT);
+// //   pinMode(ARM_MOTOR_LEFT, OUTPUT);
+// //   pinMode(ARM_MOTOR_RIGHT, OUTPUT);
+// //   pinMode(ARM_MOTOR_UP, OUTPUT);
+// //   pinMode(ARM_MOTOR_DOWN, OUTPUT);
+// //   pinMode(ARM_SERVO, OUTPUT);
+// //   pinMode(CLAW_SERVO, OUTPUT);
+// //   pinMode(GAUNTLET_SERVO, OUTPUT);
+// //   pinMode(LEFT_FORWARD_WHEEL_MOTOR, OUTPUT);
+// //   pinMode(RIGHT_FORWARD_WHEEL_MOTOR, OUTPUT);
+// //   pinMode(LEFT_BACKWARD_WHEEL_MOTOR, OUTPUT);
+// //   pinMode(RIGHT_BACKWARD_WHEEL_MOTOR, OUTPUT);
+// //   pinMode(MULTIPLEX_A, OUTPUT);
+// //   pinMode(MULTIPLEX_B, OUTPUT);
+// //   pinMode(MULTIPLEX_C, OUTPUT);
 
-  // // pwm_start init motors
-  // pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
-  // pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
-  // pwm_start(LEFT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
-  // pwm_start(RIGHT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
-  // pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
-  // pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1);
-  // pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 1);
-  // pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 1);
+//   // // pwm_start init motors
+//   // pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+//   // pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+//   // pwm_start(LEFT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+//   // pwm_start(RIGHT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+//   // pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
+//   // pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1);
+//   // pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 1);
+//   // pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 1);
 
-  // // Attaching servos 
-  // armServo.attach(ARM_SERVO);
-  // clawServo.attach(CLAW_SERVO);
-  // L_GauntletServo.attach(GAUNTLET_SERVO);
-  // R_GauntletServo.attach(GAUNTLET_SERVO);
+//   // // Attaching servos 
+//   // armServo.attach(ARM_SERVO);
+//   // clawServo.attach(CLAW_SERVO);
+//   // L_GauntletServo.attach(GAUNTLET_SERVO);
+//   // R_GauntletServo.attach(GAUNTLET_SERVO);
 
-  // // declaring interrupts
+//   // // declaring interrupts
 
-  // // Creating stack for splits/tabs and Junction objects
-  // Junction gauntletSplit(NOT_AVAIL, NOT_AVAIL, GAUNTLET_SPLIT);
-  // Junction pathSplit(NOT_AVAIL, NOT_AVAIL, PATH_SPLIT);
-  // Junction twelveInch_M(LARGE, 12, PILLAR_ONE);
-  // Junction nineInch_M(LARGE, 9, PILLAR_TWO);
-  // Junction sixInch_M(LARGE, 6, PILLAR_THREE);
-  // Junction sixInch_T(SMALL, 6, PILLAR_FOUR);
-  // Junction nineInch_T(LARGE, 9, PILLAR_FIVE);
-  // Junction twelveInch_T(LARGE, 12, PILLAR_SIX);
+//   // // Creating stack for splits/tabs and Junction objects
+//   // Junction gauntletSplit(NOT_AVAIL, NOT_AVAIL, GAUNTLET_SPLIT);
+//   // Junction pathSplit(NOT_AVAIL, NOT_AVAIL, PATH_SPLIT);
+//   // Junction twelveInch_M(LARGE, 12, PILLAR_ONE);
+//   // Junction nineInch_M(LARGE, 9, PILLAR_TWO);
+//   // Junction sixInch_M(LARGE, 6, PILLAR_THREE);
+//   // Junction sixInch_T(SMALL, 6, PILLAR_FOUR);
+//   // Junction nineInch_T(LARGE, 9, PILLAR_FIVE);
+//   // Junction twelveInch_T(LARGE, 12, PILLAR_SIX);
 
-  // //Junction map 
+//   // //Junction map 
 
-  // // Team 
-  // switch (digitalRead(T_OR_M)){
-  //   case HIGH: 
-  //     TEAM = true; //thanos
-  //     direction = LEFT;
-  //     break;
-  //   case LOW:
-  //     TEAM = false; //methanos
-  //     direction = RIGHT;
-  //     break;
-  // }
+//   // // Team 
+//   // switch (digitalRead(T_OR_M)){
+//   //   case HIGH: 
+//   //     TEAM = true; //thanos
+//   //     direction = LEFT;
+//   //     break;
+//   //   case LOW:
+//   //     TEAM = false; //methanos
+//   //     direction = RIGHT;
+//   //     break;
+//   // }
 
-  // Calibrating / assigning values 
-  pinMode(TUNING_BUTTON, INPUT_PULLUP);
-  pinMode(TUNING_KNOB_A, INPUT_PULLUP);
-  pinMode(TUNING_KNOB_B, INPUT_PULLUP);
-  //adjustVariables();
+//   // Calibrating / assigning values 
+//   pinMode(TUNING_BUTTON, INPUT_PULLUP);
+//   pinMode(TUNING_KNOB_A, INPUT_PULLUP);
+//   pinMode(TUNING_KNOB_B, INPUT_PULLUP);
+//   //adjustVariables();
 }
 
 void Robot::toggleMenu(){
