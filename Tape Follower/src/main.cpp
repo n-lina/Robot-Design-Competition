@@ -12,7 +12,7 @@
 #define L_MOTOR_BACKWARD PB_7
 #define R_MOTOR_FORWARD PB_8
 #define R_MOTOR_BACKWARD PB_9
-#define ARM_SIDES_LIMIT PA12
+#define ARM_SIDES_LIMIT PA11
 #define MAX_SPEED 1024 // max number the Arduino PWM takes 
 #define CLOCK_FQ 100000 //For pwm_start function
 // #define CLAW_UP PA_8
@@ -40,8 +40,8 @@
 #define ARM_SERVO PA8
 #define CLAW_SERVO PA9
 
-#define GO true
-//#define SENSORS true
+//#define GO true
+#define SENSORS true
 //#define MOTORS true
 //#define SPLIT_DECIDE true
 //#define TURN_IN_PLACE true
@@ -441,18 +441,21 @@ void setup(){
 void loop(){
 //  Serial.println("Right Align: ");
 //  Serial.println(String(analogRead(R_ALIGN)));
- Serial.println("Right Decide: ");
- Serial.println(String(analogRead(R_DECIDE)));
- Serial.println("Right Photo: ");
- Serial.println(String(analogRead(PHOTO_1)));
- Serial.println("Left Photo: ");
- Serial.println(String(analogRead(PHOTO_0)));
- Serial.println("Left Decide: ");
- Serial.println(String(analogRead(L_DECIDE)));
+//  Serial.println("Right Decide: ");
+//  Serial.println(String(analogRead(R_DECIDE)));
+//  Serial.println("Right Photo: ");
+//  Serial.println(String(analogRead(PHOTO_1)));
+//  Serial.println("Left Photo: ");
+//  Serial.println(String(analogRead(PHOTO_0)));
+//  Serial.println("Left Decide: ");
+//  Serial.println(String(analogRead(L_DECIDE)));
 //  Serial.println("Left Align: ");
 //  Serial.println(String(analogRead(L_ALIGN)));
- Serial.println("________________");
- delay(2000);
+//  Serial.println("Right Align: ");
+//  Serial.println(String(analogRead(R_ALIGN)));
+//  Serial.println("________________");
+//  delay(2000);
+Serial.println(String(digitalRead(ARM_SIDES_LIMIT)));
 }
 #endif
 

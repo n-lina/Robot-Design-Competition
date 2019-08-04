@@ -43,7 +43,8 @@
 
 //#define GO true //not hardcoded
 //#define STONE true 
-#define SERVOS true
+//#define SERVOS true
+#define TEST true 
 
 #ifdef GO
 bool THANOS = false; 
