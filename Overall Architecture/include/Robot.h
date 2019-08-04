@@ -49,8 +49,7 @@ class Robot {
 public:
    static Robot* instance(); 
    void setup();
-   void run();
-   void adjustVariables();
+   void readFromAddress(); // no tuning, assigns defaults to variables or reads from addresses if not calibrated
    int state; 
    bool TEAM; //true = thanos, false = methanos 
    int stoneNumber; 
@@ -77,15 +76,14 @@ private:
    Robot(Robot const& bot){};  // copy constructor is private
    Robot& operator=(Robot const& bot){}; // assignment operator is private
    static Robot* m_pInstance;
-   void toggleMenu();
+  // void toggleMenu();
    int* CV_Addresses [NUM_VARIABLES];
-   int CV_Values [NUM_VARIABLES];
-   String labels [NUM_VARIABLES-1];
-   volatile int value; 
-   bool lastEncoderValue;
-   bool encoderValue;
-   int increment;
-   //Adafruit_SSD1306 display;
+   // int CV_Values [NUM_VARIABLES];
+   // String labels [NUM_VARIABLES-1];
+   // volatile int value; 
+   // bool lastEncoderValue;
+   // bool encoderValue;
+   // Adafruit_SSD1306 display;
 };
 
 class Junction  {
@@ -94,6 +92,20 @@ public:
   bool distance; 
   int height; 
   int number; 
+};
+
+class TuningMenu {
+public:
+  TuningMenu();
+  void writeToAddress();
+private:
+   int* CV_Addresses [NUM_VARIABLES];
+   int CV_Values [NUM_VARIABLES];
+   String labels [NUM_VARIABLES-1];
+   volatile int value; 
+   bool lastEncoderValue;
+   bool encoderValue;
+   Adafruit_SSD1306 display;
 };
 
 #endif

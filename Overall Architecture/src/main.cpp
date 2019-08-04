@@ -87,43 +87,10 @@ void loop() {
 #ifdef TUNING 
 void setup(){
   Serial.begin(9600);
-  // Robot::instance()->setup();
-  //delay(3000);
-
-  // display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x64)
-  // // init done
-
-  // // Clear the buffer.
-  // display.clearDisplay();
-
-  // // Draw a test
-  // display.clearDisplay();
-  // display.setTextSize(1);
-  // display.setTextColor(WHITE);
-  // display.setCursor(0,0);
-  // display.println("OLED Display 128x64");
-  // display.setFont(&FreeMono9pt7b);
-  // display.drawPixel(0,45,WHITE);
-  // display.setCursor(4,45);
-  // display.println("Welcome!");
-  // display.display();
-  // delay(1000);
 }
 void loop(){
-  Serial.println("whatttttt");
+  Serial.println("in loop");
   Robot::instance()->setup();
-  //Robot::instance()->run();
-  delay(4000);
-  // display.clearDisplay();
-  // display.setCursor(4,45);
-  // display.println("TESTING");
-  // display.display();
-  // Serial.println("Entered loop");
-  // delay(1000);
-  // // Robot::instance()->adjustVariables();
-  // // Robot::instance()->display.println("hello");
-  // // Robot::instance()->display.display();
-  // delay(1000);
-  // Serial.println("Exiting loop");
+  delay(1000);
 }
 #endif

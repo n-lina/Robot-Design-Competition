@@ -3,10 +3,19 @@
 
 #define LEFT false
 #define RIGHT true
+
 #define SPLIT false
 #define TAB true 
+
 #define SMALL false 
 #define LARGE true
+
+#define METHANOS false 
+#define THANOS true 
+
+#define CALIBRATE HIGH
+#define NO_CALIBRATE LOW
+
 #define NOT_AVAIL -1
 
 //checking if the robot has been calibrated at least once 
@@ -62,6 +71,13 @@
 #define ANGLE_START 70 
 #define ANGLE_FINISH 140
 #define START_DETECTION 30000 //number of loops to run before starting junction detection 
+
+#define _KP_WHEEL 162
+#define _KD_WHEEL 12
+#define _THRESHOLD 200
+#define _DECIDE_THRESHOLD 300
+#define _ALIGN_THRESHOLD 400
+#define _PILLAR_DISTANCE 4
 
 #endif
 
