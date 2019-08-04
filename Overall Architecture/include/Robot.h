@@ -49,6 +49,7 @@ class Robot {
 public:
    static Robot* instance(); 
    void setup();
+   void run();
    void adjustVariables();
    int state; 
    bool TEAM; //true = thanos, false = methanos 
@@ -77,7 +78,6 @@ private:
    Robot& operator=(Robot const& bot){}; // assignment operator is private
    static Robot* m_pInstance;
    void toggleMenu();
-   bool multi(bool C, bool B, bool A);
    int* CV_Addresses [NUM_VARIABLES];
    int CV_Values [NUM_VARIABLES];
    String labels [NUM_VARIABLES-1];

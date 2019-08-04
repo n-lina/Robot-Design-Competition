@@ -84,36 +84,6 @@ void loop() {
 }
 #endif
 
-#ifdef MULTIPLEX 
-int curr_val;
-bool multi(bool A, bool B, bool C);
-
-void setup(){
-  Serial.begin(9600);
-  pinMode(MULTIPLEX_A, OUTPUT);
-  pinMode(MULTIPLEX_B, OUTPUT);
-  pinMode(MULTIPLEX_C, OUTPUT);
-  pinMode(MULTIPLEX_OUT, INPUT);
-}
-
-void loop(){
-  //Select each pin and read value
-  curr_val = multi(1, 0, 0);
-  Serial.println(curr_val);
-  delay(2000);
-}
-
-bool multi(bool C, bool B, bool A) {
-  digitalWrite(MULTIPLEX_A, A);
-  digitalWrite(MULTIPLEX_B, B);
-  digitalWrite(MULTIPLEX_C, C);
-
-  bool multi_out = digitalRead(MULTIPLEX_OUT);  
-  return multi_out;
-}
-
-#endif 
-
 #ifdef TUNING 
 void setup(){
   Serial.begin(9600);
@@ -140,9 +110,9 @@ void setup(){
   // delay(1000);
 }
 void loop(){
-  Serial.println("DONE SETUP");
+  Serial.println("whatttttt");
   Robot::instance()->setup();
-
+  //Robot::instance()->run();
   delay(4000);
   // display.clearDisplay();
   // display.setCursor(4,45);
