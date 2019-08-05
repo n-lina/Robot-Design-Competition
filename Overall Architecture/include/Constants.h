@@ -13,10 +13,12 @@
 #define METHANOS false 
 #define THANOS true 
 
-#define CALIBRATE HIGH
+#define YES_CALIBRATE HIGH
 #define NO_CALIBRATE LOW
 
 #define NOT_AVAIL -1
+
+#define INCREMENT 2
 
 //checking if the robot has been calibrated at least once 
 #define YES_CALIBRATED 189763
@@ -57,8 +59,8 @@
 #define L_DECIDE PA_1
 #define L_ALIGN PA_0
 
-#define T_OR_M PA14 //switch, HIGH = THANOS
-#define CALIBRATE PA13 //do we want to calibrate the robot
+#define T_OR_M PA13 //switch, HIGH = THANOS
+#define CALIBRATE PA14 //do we want to calibrate the robot
 
 // ManageStone library
 #define THREE_INCHES 3000 //ms since 1 in/s

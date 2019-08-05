@@ -86,11 +86,21 @@ void loop() {
 
 #ifdef TUNING 
 void setup(){
-  Serial.begin(9600);
+  Serial.begin(9600);  
 }
 void loop(){
   Serial.println("in loop");
   Robot::instance()->setup();
-  delay(1000);
+  // int o = 1;
+  // Serial.println(o);
+  // int* p = (int*)0x0800FFF3;
+  // int &o = (int*)0x0800FFF3;
+  // //int* p = (int*)134283251;
+  // //*p =  0x1234;
+  // //Serial.println((unsigned int)p);
+  // Serial.println(*p);
+
+  // //Robot::instance()->setup();
+  // delay(1000);
 }
 #endif

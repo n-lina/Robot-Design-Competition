@@ -17,8 +17,10 @@ Robot::Robot():
   clawServo(), 
   L_GauntletServo(), 
   R_GauntletServo(), 
+  buttonPrevPressed(0),
   CV_Addresses{(int*) 0x0801FFF3, (int*) 0x0801FFF7, (int*) 0x0801FFFB, (int*) 0x0801FFEF, (int*) 0x0801FFDB, 
               (int*)0x0801FFDF, (int*) 0x0801FFD7}
+  //display()
 {
 }
 
@@ -28,85 +30,95 @@ Robot* Robot::instance(){
    return m_pInstance;
 }
 
-void Robot::setup(){  
+void Robot::setup(){
+  Serial.println("in setup");
   pinMode(CALIBRATE, INPUT);
 
-   if(digitalRead(CALIBRATE) == NO_CALIBRATE){
-    Serial.println("NO CALIBRATE");
-    pinMode(ARM_TOP_BOTTOM_LIMIT, INPUT);
-    pinMode(ARM_SIDES_LIMIT, INPUT);
-    pinMode(SONAR_ECHO, INPUT); 
-    pinMode(L_DECIDE, INPUT_PULLUP);
-    pinMode(L_ALIGN, INPUT_PULLUP);
-    pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
-    pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
-    pinMode(R_DECIDE, INPUT_PULLUP);
-    pinMode(R_ALIGN, INPUT_PULLUP);
-     pinMode(T_OR_M, INPUT);
-    pinMode(COLLISION, INPUT_PULLUP);
-  // /////////////////////////////////////
-    pinMode(SONAR_TRIG, OUTPUT);
-    pinMode(ARM_MOTOR_LEFT, OUTPUT);
-    pinMode(ARM_MOTOR_RIGHT, OUTPUT);
-    pinMode(ARM_MOTOR_UP, OUTPUT);
-    pinMode(ARM_MOTOR_DOWN, OUTPUT);
-    pinMode(ARM_SERVO, OUTPUT);
-    //pinMode(CLAW_SERVO, OUTPUT);
-    pinMode(GAUNTLET_SERVO, OUTPUT);
-    pinMode(LEFT_FORWARD_WHEEL_MOTOR, OUTPUT);
-    pinMode(RIGHT_FORWARD_WHEEL_MOTOR, OUTPUT);
-    pinMode(LEFT_BACKWARD_WHEEL_MOTOR, OUTPUT);
-    pinMode(RIGHT_BACKWARD_WHEEL_MOTOR, OUTPUT);
-    // pwm_start init motors
-    pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
-    pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
-    pwm_start(LEFT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
-    pwm_start(RIGHT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
-    pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
-    pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1);
-    pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 1);
-    pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 1);
+  int* p = (int*)val;
+  Serial.println((unsigned int)p);
+  delay(1000);
 
-  //   // Attaching servos 
-    armServo.attach(ARM_SERVO);
-    //clawServo.attach(CLAW_SERVO);
-    L_GauntletServo.attach(GAUNTLET_SERVO);
-    R_GauntletServo.attach(GAUNTLET_SERVO);
-  //   // declaring interrupts
 
-  //   // Creating stack for splits/tabs and Junction objects
-  //   // Junction gauntletSplit(NOT_AVAIL, NOT_AVAIL, GAUNTLET_SPLIT);
-  //   // Junction pathSplit(NOT_AVAIL, NOT_AVAIL, PATH_SPLIT);
-  //   // Junction twelveInch_M(LARGE, 12, PILLAR_ONE);
-  //   // Junction nineInch_M(LARGE, 9, PILLAR_TWO);
-  //   // Junction sixInch_M(LARGE, 6, PILLAR_THREE);
-  //   // Junction sixInch_T(SMALL, 6, PILLAR_FOUR);
-  //   // Junction nineInch_T(LARGE, 9, PILLAR_FIVE);
-  //   // Junction twelveInch_T(LARGE, 12, PILLAR_SIX);
+  // if(digitalRead(CALIBRATE) == NO_CALIBRATE){
+  //   Serial.println("NO CALIBRATE");
+  //   // pinMode(ARM_TOP_BOTTOM_LIMIT, INPUT);
+  //   // pinMode(ARM_SIDES_LIMIT, INPUT);
+  //   // pinMode(SONAR_ECHO, INPUT); 
+  //   // pinMode(L_DECIDE, INPUT_PULLUP);
+  //   // pinMode(L_ALIGN, INPUT_PULLUP);
+  //   // pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
+  //   // pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
+  //   // pinMode(R_DECIDE, INPUT_PULLUP);
+  //   // pinMode(R_ALIGN, INPUT_PULLUP);
+  //   pinMode(T_OR_M, INPUT);
+  //   // pinMode(COLLISION, INPUT_PULLUP);
+  // // /////////////////////////////////////
+  //   // pinMode(SONAR_TRIG, OUTPUT);
+  //   // pinMode(ARM_MOTOR_LEFT, OUTPUT);
+  //   // pinMode(ARM_MOTOR_RIGHT, OUTPUT);
+  //   // pinMode(ARM_MOTOR_UP, OUTPUT);
+  //   // pinMode(ARM_MOTOR_DOWN, OUTPUT);
+  //   // pinMode(ARM_SERVO, OUTPUT);
+  //   // // pinMode(CLAW_SERVO, OUTPUT);
+  // //   pinMode(GAUNTLET_SERVO, OUTPUT);
+  // //   pinMode(LEFT_FORWARD_WHEEL_MOTOR, OUTPUT);
+  // //   pinMode(RIGHT_FORWARD_WHEEL_MOTOR, OUTPUT);
+  // //   pinMode(LEFT_BACKWARD_WHEEL_MOTOR, OUTPUT);
+  // //   pinMode(RIGHT_BACKWARD_WHEEL_MOTOR, OUTPUT);
+  // //   // pwm_start init motors
+  // //   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // //   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // //   pwm_start(LEFT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // //   pwm_start(RIGHT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // //   pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // //   pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // //   pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 1);
+  // //   pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 1);
 
-  //   //Junction map 
+  // // //   // Attaching servos 
+  // //   armServo.attach(ARM_SERVO);
+  // //   //clawServo.attach(CLAW_SERVO);
+  // //   L_GauntletServo.attach(GAUNTLET_SERVO);
+  // //   R_GauntletServo.attach(GAUNTLET_SERVO);
+  // // //   // declaring interrupts
 
-    // Team 
-    if(digitalRead(T_OR_M)==HIGH){
-        TEAM = THANOS; //thanos
-        direction = LEFT;
-        Serial.println("THANOS");
-    }
-    else{
-        TEAM = METHANOS; //methanos
-        direction = RIGHT;
-        Serial.println("METHANOS");
-    }
-    readFromAddress(); // adjusting the variables without calibrating 
-  }
+  // //   // Creating stack for splits/tabs and Junction objects
+  // //   // Junction gauntletSplit(NOT_AVAIL, NOT_AVAIL, GAUNTLET_SPLIT);
+  // //   // Junction pathSplit(NOT_AVAIL, NOT_AVAIL, PATH_SPLIT);
+  // //   // Junction twelveInch_M(LARGE, 12, PILLAR_ONE);
+  // //   // Junction nineInch_M(LARGE, 9, PILLAR_TWO);
+  // //   // Junction sixInch_M(LARGE, 6, PILLAR_THREE);
+  // //   // Junction sixInch_T(SMALL, 6, PILLAR_FOUR);
+  // //   // Junction nineInch_T(LARGE, 9, PILLAR_FIVE);
+  // //   // Junction twelveInch_T(LARGE, 12, PILLAR_SIX);
 
-  else{
-    Serial.println("CALIBRATE");
-    display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x64)
+  // //   //Junction map 
+
+  //   // Team 
+  //   if(digitalRead(T_OR_M)==HIGH){
+  //       TEAM = THANOS; //thanos
+  //       direction = LEFT;
+  //       Serial.println("THANOS");
+  //   }
+  //   else{
+  //       TEAM = METHANOS; //methanos
+  //       direction = RIGHT;
+  //       Serial.println("METHANOS");
+  //   }
+  //   readFromAddress(); // adjusting the variables without calibrating 
+  // }
+
+  // else{ //Enter calibration mode
+  if(digitalRead(CALIBRATE)==HIGH){
+    // display.begin(SSD1306_SWITCHCAPVCC, 0x3C);  // initialize with the I2C addr 0x3C (for the 128x64)
+    // display.clearDisplay();
+    // display.println("Starting tuning...");
+    // display.display();
+    delay(1000);
     pinMode(TUNING_KNOB_A, INPUT);
     pinMode(TUNING_KNOB_B, INPUT);
     pinMode(TUNING_BUTTON, INPUT);
-    Serial.begin(9600);
+    //Serial.begin(9600);
 
     // display.clearDisplay();
     // display.setTextSize(1);
@@ -115,11 +127,43 @@ void Robot::setup(){
     // display.println("RUNNNING!!!");
     // display.display();
     // delay(500);
-     
-    TuningMenu tuningMenu; 
-    tuningMenu.writeToAddress();
-    readFromAddress();
+
+    readTuningMenu();
   }
+}
+
+void Robot::readTuningMenu() {
+  
+  Serial.println("in tuning menu");
+
+  TuningMenu tuningMenu;
+  volatile int i = 0;
+
+  while(digitalRead(CALIBRATE) != NO_CALIBRATE && i < NUM_VARIABLES) { // Still in calibrate mode
+    if (digitalRead(TUNING_BUTTON)) {
+
+      if (!buttonPrevPressed) {
+        buttonPrevPressed = true;
+        //tuningMenu.writeToAddress(i);
+        i++;
+      } 
+    }
+
+    else if(buttonPrevPressed) {
+      buttonPrevPressed = false;
+    }
+    Serial.println(i);
+  }
+
+  // int var = 5;
+  // int * varPtr = &var;
+  // *varPtr = 12;
+  // Serial.println(String(*varPtr));
+
+  //*CV_Addresses[CALIBRATED_MAGIC] = YES_CALIBRATED;
+  //Serial.println(String(*CV_Addresses[CALIBRATED_MAGIC]));
+
+  return;
 }
 
 //void Robot::toggleMenu(){
@@ -192,42 +236,46 @@ TuningMenu::TuningMenu():
   value(0), 
   lastEncoderValue(0),
   encoderValue(0),
-  display(Adafruit_SSD1306(-1)) 
+  display1(Adafruit_SSD1306(-1)) 
 {}
 
-void TuningMenu::writeToAddress(){
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
-  Serial.println("hello");
-  for(volatile int i=0; i<NUM_VARIABLES-1; i++){
-    display.clearDisplay();
-    display.setTextSize(1);
-    display.setTextColor(WHITE);
-    display.setCursor(2,2);
-    display.println("TUNING");
-    display.display();
-    display.print(labels[i]);
-    display.display();
-    display.setCursor(0,15);
+void TuningMenu::writeToAddress(int i){
+  display1.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
+  Serial.println("in tuning menu");
 
-    value = *CV_Addresses[i];
+  display1.clearDisplay();
+  display1.setTextSize(1);
+  display1.setTextColor(WHITE);
+  display1.setCursor(2,2);
+  display1.println("TUNING");
+  display1.display();
+  display1.print(labels[i]);
+  display1.display();
+  display1.setCursor(0,15);
 
-    while(digitalRead(TUNING_BUTTON)==LOW){ // while button not pressed 
-      encoderValue = digitalRead(TUNING_KNOB_A);
-      if(encoderValue != lastEncoderValue){
-        if(digitalRead(TUNING_KNOB_B) != encoderValue){
-          value++; 
+  value = *CV_Addresses[i];
+
+  while(digitalRead(TUNING_BUTTON)==LOW){ // while button not pressed 
+    encoderValue = digitalRead(TUNING_KNOB_B);
+    if(encoderValue != lastEncoderValue){
+      lastEncoderValue = encoderValue;
+
+      if(!encoderValue) { // Only run loop if encoderValue is triggered to be LOW
+
+        if(digitalRead(TUNING_KNOB_A) == encoderValue){
+          value = value + INCREMENT; 
         }
+
         else{
-          value--;
+          value = value - INCREMENT;
         }
-        display.print(String(value));
-        display.display();
-        lastEncoderValue = encoderValue;
+
+        display1.print(String(value));
+        display1.display();
       }
     }
-  *CV_Addresses[i] = value;         
   }
-  *CV_Addresses[NUM_VARIABLES] = YES_CALIBRATED;
+  *CV_Addresses[i] = value;         
   return;
 }
 

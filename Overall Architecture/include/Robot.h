@@ -48,10 +48,12 @@ enum Pillars {
 class Robot {
 public:
    static Robot* instance(); 
+   const int val = 10;
    void setup();
    void readFromAddress(); // no tuning, assigns defaults to variables or reads from addresses if not calibrated
    int state; 
    bool TEAM; //true = thanos, false = methanos 
+   bool buttonPrevPressed;
    int stoneNumber; 
    int collisionNumber;
    int splitNumber;
@@ -72,10 +74,11 @@ public:
    Adafruit_SSD1306 display;
 
 private:
-   Robot();  // Private so that it can  not be called
+   Robot();  // Private so that it can not be called
    Robot(Robot const& bot){};  // copy constructor is private
    Robot& operator=(Robot const& bot){}; // assignment operator is private
    static Robot* m_pInstance;
+   void readTuningMenu();
   // void toggleMenu();
    int* CV_Addresses [NUM_VARIABLES];
    // int CV_Values [NUM_VARIABLES];
@@ -83,7 +86,7 @@ private:
    // volatile int value; 
    // bool lastEncoderValue;
    // bool encoderValue;
-   // Adafruit_SSD1306 display;
+   //Adafruit_SSD1306 display;
 };
 
 class Junction  {
@@ -97,7 +100,7 @@ public:
 class TuningMenu {
 public:
   TuningMenu();
-  void writeToAddress();
+  void writeToAddress(int i);
 private:
    int* CV_Addresses [NUM_VARIABLES];
    int CV_Values [NUM_VARIABLES];
@@ -105,7 +108,7 @@ private:
    volatile int value; 
    bool lastEncoderValue;
    bool encoderValue;
-   Adafruit_SSD1306 display;
+   Adafruit_SSD1306 display1;
 };
 
 #endif
