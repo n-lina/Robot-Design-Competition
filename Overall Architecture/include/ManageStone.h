@@ -16,7 +16,7 @@ class ManageStone
     // PinName motor;
     // void moveArmToPillar();
     //void moveArmToCentre();
-    void turnClaw();
+    // void turnClaw();
     //void raiseClaw();
     // int readSonar();
 };

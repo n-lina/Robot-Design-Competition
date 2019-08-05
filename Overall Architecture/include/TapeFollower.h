@@ -23,6 +23,7 @@ class TapeFollower
     void goHome(); //only call from between first tabs and 2nd split
     void park();
     void avoidCollision();
+    void alignPillar();
 
   private:
     bool my_TEAM;
@@ -48,12 +49,11 @@ class TapeFollower
     void stop();
     void turnLeft();
     void turnRight();
-    //void goStraight();
-    //void turnLeftSoft();
-    //void turnRightSoft();
     void turnInPlaceLeft();
     void turnInPlaceRight();
-    void alignPillar();
+    void turnRightAfterPillar();
+    void alignPillarSixTHANOS();
+    void getPosition();
     void dropGauntlet();
 };
 

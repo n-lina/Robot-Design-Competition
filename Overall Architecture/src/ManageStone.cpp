@@ -6,43 +6,31 @@ ManageStone::ManageStone(Robot const* robot):
 my_TEAM(Robot::instance()->TEAM)
 {}
 
-//stone 2, 3, 4,  same direction 
-//stone 1 diff direction
-//only translate all the way after picking up 1st stone, 
-//no translating after that, only moving up from 6->9 after stone 2, 9->12 after stone 3
-//dropInStorage right after picking up the stone except for 1st stone 
-
 void ManageStone::collectStone(){ // dropInStorage moves claw to correct height + 2cm to not hit the stone.
   Robot::instance()->stoneNumber++;
   Robot::instance()->clawServo.write(0); // opening claw 
-  if(my_TEAM){ // thanos
-    Robot::instance()->armServo.write(180); //moving it to correct side TODO: team
+  if(Robot::instance()->direction == LEFT){ 
+    Robot::instance()->armServo.write(180); 
   }
-  else{ // methanos
+  else{ 
     Robot::instance()->armServo.write(0);
   }
-  // pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); //TODO: team
-  // while(true){
-  //   if(digitalRead(ARM_SIDES_LIMIT)==HIGH){
-  //     pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
-  //     pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
-  //     break;
-  //   }
-  // }
+  Robot::instance()->clawServo.write(0);
+  Robot::instance()->armServo.write(0);
   pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  delay(1500);
+  delay(3500);
   pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
   Robot::instance()->clawServo.write(180); //deploying claw
-  delay(1000); // waiting for it to grasp
+  delay(850); // waiting for it to grasp
   pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); // lifting stone out of the hole 
   delay(3500);
-  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
+  // pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
+  // Robot::instance()->armServo.write(180);
+  // delay(500);
+  // clawServo.write(0);
   dropInStorage();
-  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); // returning to height b4 lifting stone 
-  delay(3500);
-  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
-  dropInStorage();
-  Robot::instance()->state = GO_HOME;
+  // Robot::instance()->state = GO_HOME;
+  Robot::instance()->state = FOLLOW_TAPE;
   return;
 }
 
@@ -50,13 +38,14 @@ void ManageStone::dropInStorage(){
   switch(Robot::instance()->stoneNumber){
     case 1: 
       Robot::instance()->armServo.write(90); //middle left or right 
+      delay(600);
       //check if middle can be accessed by either side 
   }
   Robot::instance()->clawServo.write(0); //open claw
-  if(my_TEAM){ //thanos
-    Robot::instance()->armServo.write(0); //default side opposite of whats expected due to our strategy
+  if(Robot::instance()->direction == LEFT){ 
+    Robot::instance()->armServo.write(0); //default side facing inside of robot
   }
-  else{ //methanos
+  else{ 
     Robot::instance()->armServo.write(180);
   }
   return;
@@ -78,22 +67,22 @@ void ManageStone::dropInStorage(){
 //   }
 // }
 
-void ManageStone::turnClaw(){
-  if(Robot::instance()->direction){
-    Robot::instance()->L_GauntletServo.write(180);
-    Robot::instance()->R_GauntletServo.write(180);
-    Robot::instance()->armServo.write(180); //180 degrees corresponds to right side
-    Robot::instance()->L_GauntletServo.write(0);
-    Robot::instance()->R_GauntletServo.write(0);
-  }
-  else{
-    Robot::instance()->L_GauntletServo.write(180);
-    Robot::instance()->R_GauntletServo.write(180);
-    Robot::instance()->armServo.write(0);
-    Robot::instance()->L_GauntletServo.write(0);
-    Robot::instance()->R_GauntletServo.write(0);
-  }
-}
+// void ManageStone::turnClaw(){
+//   if(Robot::instance()->direction){
+//     Robot::instance()->L_GauntletServo.write(180);
+//     Robot::instance()->R_GauntletServo.write(180);
+//     Robot::instance()->armServo.write(180); 
+//     Robot::instance()->L_GauntletServo.write(0);
+//     Robot::instance()->R_GauntletServo.write(0);
+//   }
+//   else{
+//     Robot::instance()->L_GauntletServo.write(180);
+//     Robot::instance()->R_GauntletServo.write(180);
+//     Robot::instance()->armServo.write(0);
+//     Robot::instance()->L_GauntletServo.write(0);
+//     Robot::instance()->R_GauntletServo.write(0);
+//   }
+// }
 
 // void ManageStone::raiseClaw(){ //backup function using sonar 
 //   if(Robot::instance()->collisionNumber != 0){

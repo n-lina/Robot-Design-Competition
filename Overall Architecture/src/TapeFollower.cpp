@@ -126,23 +126,6 @@ void TapeFollower::turnRight(){
   }
 }
 
-// void TapeFollower::turnRightSoft(){
-//   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 100, 0); //turn right
-//   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 550, 0); 
-//   delay(SOFT_TURN_DELAY_TIME);
-//   while(true){
-//     if(analogRead(L_TAPE_FOLLOW) >= THRESHOLD || analogRead(R_TAPE_FOLLOW) >= THRESHOLD){
-//       return;
-//     }
-//   }
-// }
-
-// void TapeFollower::goStraight(){
-//   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0);
-//   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0);
-//   delay(500);
-//   return; 
-// }
 
 void TapeFollower::goDistance(int loopNumber){ 
   while(Robot::instance()->state == GO_DISTANCE && loopCounter < loopNumber){
@@ -200,9 +183,9 @@ void TapeFollower::goDistance(int loopNumber){
 }
 
 void TapeFollower::turnInPlaceLeft(){
-  pwm_start(LEFT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  delay(TURN_DELAY_TIME);
+  pwm_start(LEFT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 500, 0); 
+  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 500, 0); 
+  delay(TURN_IN_PLACE_DELAY_TIME);
   while(true){
     if(analogRead(L_TAPE_FOLLOW) >= _THRESHOLD || analogRead(R_TAPE_FOLLOW) >= _THRESHOLD){
       stop();
@@ -217,9 +200,9 @@ void TapeFollower::turnInPlaceLeft(){
 }
 
 void TapeFollower::turnInPlaceRight(){
-  pwm_start(RIGHT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  delay(TURN_DELAY_TIME);
+  pwm_start(RIGHT_BACKWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 500, 0); 
+  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 500, 0); 
+  delay(TURN_IN_PLACE_DELAY_TIME);
   while(true){
     if(analogRead(L_TAPE_FOLLOW) >= _THRESHOLD || analogRead(R_TAPE_FOLLOW) >= _THRESHOLD){
       stop();
@@ -271,7 +254,7 @@ void TapeFollower::splitDecide(){ //TODO
 }
 
 //only call between 2nd split and 1st tabs 
-void TapeFollower::goHome(){ //how to make a timed interrupt for 1 min 30 s, time to go home?
+void TapeFollower::goHome(){ //TODO 
   if(Robot::instance()->direction_facing){ 
     if(Robot::instance()->direction){
       turnInPlaceLeft(); //facing forward and tabs to the right
@@ -363,7 +346,7 @@ void TapeFollower::park(){
   return;
 }
 
-void TapeFollower::avoidCollision(){
+void TapeFollower::avoidCollision(){ //TODO
   if(Robot::instance()->direction){
     turnInPlaceLeft(); //facing forward and tabs to the right
   }
@@ -374,22 +357,81 @@ void TapeFollower::avoidCollision(){
 }
 
 void TapeFollower::alignPillar(){
+  stop();
   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 100, 0); //very slow
   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 100, 0);
   while(true){
+    getPosition();
     if(analogRead(L_ALIGN) >= _ALIGN_THRESHOLD){
       stop();
       Robot::instance()->direction = LEFT;
+      Robot::instance()->state = COLLECT_STONE; 
       return;
     }
     else if(analogRead(R_ALIGN)>= _ALIGN_THRESHOLD){
       stop();
       Robot::instance()->direction = RIGHT;
+      Robot::instance()->state = COLLECT_STONE; 
       return;
     }
   }
   return;
 }
+
+void TapeFollower::turnRightAfterPillar(){ //when there is a right turn coming out of a pillar 
+  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 200, 0); 
+  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 700, 0); 
+  delay(TURN_DELAY_TIME);
+  while(true){
+    if(analogRead(L_TAPE_FOLLOW) >= _ALIGN_THRESHOLD || analogRead(R_TAPE_FOLLOW) >= _ALIGN_THRESHOLD){
+      return;
+    }
+  }
+}
+
+void TapeFollower::alignPillarSixTHANOS(){
+  pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 350, 0); //very slow
+  pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 160, 0);
+  while(true){
+    getPosition();
+    if(analogRead(L_ALIGN) >= _ALIGN_THRESHOLD){
+      stop();
+      Robot::instance()->direction = LEFT;
+      Robot::instance()->state = COLLECT_STONE; 
+      return;
+    }
+    else if(analogRead(R_ALIGN)>= _ALIGN_THRESHOLD){
+      stop();
+      Robot::instance()->direction = RIGHT;
+      Robot::instance()->state = COLLECT_STONE; 
+      return;
+    }
+  }
+  return;
+}
+
+void TapeFollower::getPosition(){ // to return to tape after aligning with pillar 
+  leftTapeFollow = analogRead(L_TAPE_FOLLOW) >= _THRESHOLD;
+  rightTapeFollow = analogRead(R_TAPE_FOLLOW) >= _THRESHOLD;
+    if (leftTapeFollow  && rightTapeFollow ){
+      position = 0;
+    } 
+    else if(leftTapeFollow  && !rightTapeFollow ){
+      position = 1; 
+    }
+    else if(!leftTapeFollow && rightTapeFollow ){
+      position = -1; 
+    }
+    else{
+      if(lastPosition<0) { //right was on last 
+        position = -5; 
+      }
+      else { // last Position > 0 ==> left was on last 
+        position = 5;
+      } 
+    }
+  lastPosition = position; 
+} 
 
 void TapeFollower::dropGauntlet(){
   for (int i = ANGLE_START; i <= ANGLE_FINISH; i = i + 3) {

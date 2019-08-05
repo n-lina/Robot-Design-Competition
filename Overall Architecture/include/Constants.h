@@ -66,10 +66,10 @@
 #define THREE_INCHES 3000 //ms since 1 in/s
 
 // TapeFollower library
-#define SPEED_TUNING 1.2
-#define TURN_DELAY_TIME 200
-#define SOFT_TURN_DELAY_TIME 180
-#define DEBOUNCE 5 // once junction detected, must be DEBOUNCE loops before next one 
+#define SPEED_TUNING 1.8
+#define TURN_DELAY_TIME 200 
+#define TURN_IN_PLACE_DELAY_TIME 400 // to ensure 180 degree turn 
+#define DEBOUNCE 1000 // once junction detected, must be DEBOUNCE loops before next one 
 #define ANGLE_START 70 
 #define ANGLE_FINISH 140
 #define START_DETECTION 30000 //number of loops to run before starting junction detection 
@@ -79,7 +79,6 @@
 #define _THRESHOLD 200
 #define _DECIDE_THRESHOLD 300
 #define _ALIGN_THRESHOLD 400
-#define _PILLAR_DISTANCE 4
 
 #endif
 
