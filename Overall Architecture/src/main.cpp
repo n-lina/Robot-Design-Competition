@@ -32,15 +32,17 @@ void setup() {
 }
 
 void loop() {
-  Serial.println("in loop");
   Robot::instance()->setup();
-  Serial.println(String(Robot::instance()->state));
+  //Serial.println(String(Robot::instance()->state));
   switch (Robot::instance()->state){
     case GO_DISTANCE: // Go a certain distance without checking for tabs/splits
-      robot.goDistance(10);
+      Serial.println("in case 0");
+      robot.goDistance(1000);
       break;
     case FOLLOW_TAPE: // Follow Tape checking splits/tabs
       //robot.followTape();
+      Serial.println("in case 1");
+      Robot::instance()->state = 0;
       break;
     case AVOID_COLLISION: // Avoid Collision {4}
       robot.avoidCollision();

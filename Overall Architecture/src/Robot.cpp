@@ -27,7 +27,6 @@ Robot* Robot::instance(){
 }
 
 void Robot::setup(){
-  Serial.println("in setup");
   pinMode(ARM_TOP_BOTTOM_LIMIT, INPUT);
   pinMode(ARM_SIDES_LIMIT, INPUT);
   pinMode(L_DECIDE, INPUT_PULLUP);

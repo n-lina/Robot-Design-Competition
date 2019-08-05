@@ -153,14 +153,14 @@ void TapeFollower::turnRight(){
 }
 
 void TapeFollower::goDistance(int loopNumber){ 
-  while(Robot::instance()->state == GO_DISTANCE && loopCounter < loopNumber){
-    if(!pressed && digitalRead(ARM_SIDES_LIMIT)==HIGH){
-      // digitalWrite(DEMULTIPLEX_ARM_H, HIGH);
-      // pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, 0, 0);
-      // digitalWrite(DEMULTIPLEX_ARM_H, LOW);
-      // pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, 0, 0);
-      pressed = true;
-    }
+  while(loopCounter < loopNumber){
+    // if(!pressed && digitalRead(ARM_SIDES_LIMIT)==HIGH){
+    //   digitalWrite(DEMULTIPLEX_ARM_H, HIGH);
+    //   pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, 0, 0);
+    //   digitalWrite(DEMULTIPLEX_ARM_H, LOW);
+    //   pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, 0, 0);
+    //   pressed = true;
+    // }
 
     // leftTapeFollow = analogRead(L_TAPE_FOLLOW)>= _THRESHOLD;
     // rightTapeFollow = analogRead(R_TAPE_FOLLOW)>= _THRESHOLD;
@@ -200,7 +200,7 @@ void TapeFollower::goDistance(int loopNumber){
     }
     lastPosition = position; 
     loopCounter++;
-    Serial.println(loopCounter);
+    Serial.println(String(loopCounter));
   }
   Serial.println("done goDistance");
   Robot::instance()->state = FOLLOW_TAPE; 
