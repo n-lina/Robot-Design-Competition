@@ -1,10 +1,14 @@
 #ifndef Robot_h
 #define Robot_h
 
-#include <Wire.h>
-#include <Adafruit_SSD1306.h>
-#include <FreeMono12pt7b.h>
+// #include <Wire.h>
+// #include <Adafruit_SSD1306.h>
+// #include <FreeMono12pt7b.h>
 #include <Servo.h>
+#include <stack>
+#include <vector>
+//#include "Junction.h"
+
 
 using namespace std;
 
@@ -44,11 +48,9 @@ public:
    bool buttonPrevPressed;
    int stoneNumber; 
    int collisionNumber;
-   int splitNumber;
+   int junctionNumber;
    bool direction_facing; //true = forwards, false = backwards
    bool direction; // true = right, left = false 
-   // Junction firstRun [];
-   // Junction secondRun [];
    Servo armServo; // 0 = left; 180 = right
    Servo clawServo; // 0 = open; 180 = closed
    Servo L_GauntletServo;
@@ -61,12 +63,5 @@ private:
    static Robot* m_pInstance;
 };
 
-class Junction  {
-public:
-  Junction(bool distanceToPillar, int setHeight, int junctionNumber);
-  bool distance; 
-  int height; 
-  int number; 
-};
 
 #endif

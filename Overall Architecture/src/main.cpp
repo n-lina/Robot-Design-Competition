@@ -14,8 +14,8 @@ Adafruit_SSD1306 display(OLED_RESET);
 #error("Height incorrect, please fix Adafruit_SSD1306.h!");
 #endif
 
-#define TUNING true
-//#define ALL_TOGETHER true
+//#define TUNING true
+#define ALL_TOGETHER true
 //#define COLLECT_STONE_X true //change X to be what stoneNumber u want, check the direction
 // test no stone, choose stoneNumber 1,2, or 3 
 //#define COLLECT_STONE_SONAR true
@@ -32,15 +32,18 @@ void setup() {
 }
 
 void loop() {
+  Serial.println("in loop");
+  Robot::instance()->setup();
+  Serial.println(String(Robot::instance()->state));
   switch (Robot::instance()->state){
-    // case GO_DISTANCE: // Go a certain distance without checking for tabs/splits
-    //   //TODO
-    //   break;
+    case GO_DISTANCE: // Go a certain distance without checking for tabs/splits
+      robot.goDistance(10);
+      break;
     case FOLLOW_TAPE: // Follow Tape checking splits/tabs
-      robot.followTape();
+      //robot.followTape();
       break;
     case AVOID_COLLISION: // Avoid Collision {4}
-      //TODO // no more collision sonar 
+      robot.avoidCollision();
       break; 
     case SPLIT_CHOOSER: // Split Chooser 
       robot.splitDecide();
@@ -55,6 +58,7 @@ void loop() {
       robot.park();
       break;
   }
+  delay(1000);
 }
 #endif
 

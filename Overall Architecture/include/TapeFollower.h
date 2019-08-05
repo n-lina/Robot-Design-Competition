@@ -11,19 +11,19 @@
 #define TapeFollower_h
 
 #include <Robot.h>
+#include <stack>
 
 class TapeFollower
 {
   public: 
     TapeFollower(Robot const* robot);
-    void splitDecide(); //TODO
-    void followTape(); //polls 2 main PTs
+    void splitDecide(); 
+    void followTape(); 
     void goDistance(int loopNumber); 
     // follows tape without checking for splits or tabs 
-    void goHome(); //only call from between first tabs and 2nd split
+    void goHome(); 
     void park();
     void avoidCollision();
-    void alignPillar();
 
   private:
     bool my_TEAM;
@@ -45,7 +45,6 @@ class TapeFollower
     int encoder;
     int loopCounter;
     bool pressed;
-    bool homeSplit;
     void stop();
     void turnLeft();
     void turnRight();
@@ -55,6 +54,12 @@ class TapeFollower
     void alignPillarSixTHANOS();
     void getPosition();
     void dropGauntlet();
+    void alignPillar();
+    std::stack<bool> my_path;
+   // std::vector<Junction> topPath;
+   // std::vector<Junction> bottomPath;
+    bool topPath [4];
+    bool bottomPath [6];
 };
 
 #endif

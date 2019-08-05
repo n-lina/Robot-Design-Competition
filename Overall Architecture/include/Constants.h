@@ -13,44 +13,38 @@
 #define METHANOS false 
 #define THANOS true 
 
-#define YES_CALIBRATE HIGH
-#define NO_CALIBRATE LOW
+#define BACKWARDS false
+#define FORWARDS true
 
-#define NOT_AVAIL -1
-
-#define INCREMENT 2
-
-//checking if the robot has been calibrated at least once 
-#define YES_CALIBRATED 189763
+#define TAB true
+#define SPLIT false
 
 //pwm_start
 #define MAX_SPEED 1024 
 #define CLOCK_FQ 100000 
 
 //pins
-#define TUNING_KNOB_A PB12
-#define TUNING_KNOB_B PB13
-#define SONAR_TRIG PB14
-#define SONAR_ECHO PB15
+#define MULTIPLEX_A PB12 
+#define MULTIPLEX_B PB13
+#define DEMULTIPLEX_ARM_H PB14 
+#define DEMULTIPLEX_ARM_V PB15
+#define DEMULTIPLEX_R_WHEEL PB5
+#define DEMULTIPLEX_L_WHEEL PB4
 
-#define ARM_SERVO PA8
-#define CLAW_SERVO PA9
-#define GAUNTLET_SERVO PA10
+#define ARM_SERVO PA7
+#define CLAW_SERVO PB0
+#define GAUNTLET_SERVO PB1
 
 #define ARM_TOP_BOTTOM_LIMIT PA11
 #define ARM_SIDES_LIMIT PA12
 #define COLLISION PA15
 #define TUNING_BUTTON PB3
 
-#define LEFT_FORWARD_WHEEL_MOTOR PB_6
-#define RIGHT_FORWARD_WHEEL_MOTOR PB_8
-#define LEFT_BACKWARD_WHEEL_MOTOR PB_7
-#define RIGHT_BACKWARD_WHEEL_MOTOR PB_9
+#define LEFT_WHEEL PB_8
+#define RIGHT_WHEEL PB_9
 
-#define ARM_MOTOR_LEFT PB_1
-#define ARM_MOTOR_RIGHT PB_0
-#define ARM_MOTOR_DOWN PA_7
-#define ARM_MOTOR_UP PA_6
+#define ARM_MOTOR_H PA_8
+#define ARM_MOTOR_V PA_10
 
 #define R_ALIGN PA_5
 #define R_DECIDE PA_4
@@ -60,7 +54,6 @@
 #define L_ALIGN PA_0
 
 #define T_OR_M PA13 //switch, HIGH = THANOS
-#define CALIBRATE PA14 //do we want to calibrate the robot
 
 // ManageStone library
 #define THREE_INCHES 3000 //ms since 1 in/s

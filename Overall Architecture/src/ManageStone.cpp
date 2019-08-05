@@ -17,12 +17,14 @@ void ManageStone::collectStone(){ // dropInStorage moves claw to correct height 
   }
   Robot::instance()->clawServo.write(0);
   Robot::instance()->armServo.write(0);
-  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  digitalWrite(DEMULTIPLEX_ARM_V, LOW);
+  pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   delay(3500);
-  pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
+  pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, 0, 0);
   Robot::instance()->clawServo.write(180); //deploying claw
   delay(850); // waiting for it to grasp
-  pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); // lifting stone out of the hole 
+  digitalWrite(DEMULTIPLEX_ARM_V, HIGH);
+  pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); // lifting stone out of the hole 
   delay(3500);
   // pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
   // Robot::instance()->armServo.write(180);
