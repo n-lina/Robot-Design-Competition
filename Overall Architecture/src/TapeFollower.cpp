@@ -3,11 +3,6 @@
 #include "TapeFollower.h"
 
 TapeFollower::TapeFollower(Robot const* robot):
-  my_KP_WHEEL(Robot::instance()->KP_WHEEL), 
-  my_KD_WHEEL(Robot::instance()->KD_WHEEL), 
-  my_THRESHOLD(Robot::instance()->THRESHOLD),
-  my_DECIDE_THRESHOLD(Robot::instance()->DECIDE_THRESHOLD), 
-  my_ALIGN_THRESHOLD(Robot::instance()->ALIGN_THRESHOLD),
   my_TEAM(Robot::instance()->TEAM),
   derivative(0), default_speed(MAX_SPEED/SPEED_TUNING), timeStep(0), position(0), lastPosition(0), 
   PID(0), number(0), debounce(0), leftTapeFollow(0), rightTapeFollow(0),
@@ -31,10 +26,10 @@ void TapeFollower::followTape(){ //add encoder polling
     pressed = true;
     }
 
-    leftTapeFollow = analogRead(L_TAPE_FOLLOW)>=my_THRESHOLD;
-    rightTapeFollow = analogRead(R_TAPE_FOLLOW)>=my_THRESHOLD;
-    leftDecide = analogRead(L_DECIDE)>= my_DECIDE_THRESHOLD;
-    rightDecide = analogRead(R_DECIDE)>= my_DECIDE_THRESHOLD;
+    leftTapeFollow = analogRead(L_TAPE_FOLLOW)>=_THRESHOLD;
+    rightTapeFollow = analogRead(R_TAPE_FOLLOW)>=_THRESHOLD;
+    leftDecide = analogRead(L_DECIDE)>= _DECIDE_THRESHOLD;
+    rightDecide = analogRead(R_DECIDE)>=_DECIDE_THRESHOLD;
 
     if((leftDecide || rightDecide) && (debounce > DEBOUNCE)){
       stop();
@@ -64,7 +59,7 @@ void TapeFollower::followTape(){ //add encoder polling
       }   
     }
     derivative = (position - lastPosition) / timeStep; 
-    PID = (my_KP_WHEEL * position) + (my_KD_WHEEL * derivative); 
+    PID = (_KP_WHEEL * position) + (_KD_WHEEL * derivative); 
     
     if(PID>default_speed){
       PID = default_speed;
@@ -103,7 +98,7 @@ void TapeFollower::turnLeft(){
   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 700, 0); 
   delay(TURN_DELAY_TIME);
   while(true){
-    if(analogRead(L_TAPE_FOLLOW) >= THRESHOLD || analogRead(R_TAPE_FOLLOW) >= THRESHOLD){
+    if(analogRead(L_TAPE_FOLLOW) >= _THRESHOLD || analogRead(R_TAPE_FOLLOW) >= _THRESHOLD){
       return;
     }
   }
@@ -125,7 +120,7 @@ void TapeFollower::turnRight(){
   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 700, 0); 
   delay(TURN_DELAY_TIME);
   while(true){
-    if(analogRead(L_TAPE_FOLLOW) >= THRESHOLD || analogRead(R_TAPE_FOLLOW) >= THRESHOLD){
+    if(analogRead(L_TAPE_FOLLOW) >= _THRESHOLD || analogRead(R_TAPE_FOLLOW) >= _THRESHOLD){
       return;
     }
   }
@@ -164,8 +159,8 @@ void TapeFollower::goDistance(int loopNumber){
       pressed = true;
     }
 
-    leftTapeFollow = analogRead(L_TAPE_FOLLOW)>= my_THRESHOLD;
-    rightTapeFollow = analogRead(R_TAPE_FOLLOW)>= my_THRESHOLD;
+    leftTapeFollow = analogRead(L_TAPE_FOLLOW)>= _THRESHOLD;
+    rightTapeFollow = analogRead(R_TAPE_FOLLOW)>= _THRESHOLD;
     timeStep++;
 
     if (leftTapeFollow  && rightTapeFollow ){
@@ -186,7 +181,7 @@ void TapeFollower::goDistance(int loopNumber){
       }   
     } 
     derivative = (position - lastPosition) / timeStep; 
-    PID = (my_KP_WHEEL * position) + (my_KD_WHEEL * derivative); 
+    PID = (_KP_WHEEL * position) + (_KD_WHEEL * derivative); 
     
     pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)-PID, 0);
     pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)+PID, 0); 
@@ -209,7 +204,7 @@ void TapeFollower::turnInPlaceLeft(){
   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0); 
   delay(TURN_DELAY_TIME);
   while(true){
-    if(analogRead(L_TAPE_FOLLOW) >= THRESHOLD || analogRead(R_TAPE_FOLLOW) >= THRESHOLD){
+    if(analogRead(L_TAPE_FOLLOW) >= _THRESHOLD || analogRead(R_TAPE_FOLLOW) >= _THRESHOLD){
       stop();
       delay(50);
       turnRight();
@@ -226,7 +221,7 @@ void TapeFollower::turnInPlaceRight(){
   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 900, 0); 
   delay(TURN_DELAY_TIME);
   while(true){
-    if(analogRead(L_TAPE_FOLLOW) >= THRESHOLD || analogRead(R_TAPE_FOLLOW) >= THRESHOLD){
+    if(analogRead(L_TAPE_FOLLOW) >= _THRESHOLD || analogRead(R_TAPE_FOLLOW) >= _THRESHOLD){
       stop();
       delay(50);
       turnLeft();
@@ -286,10 +281,10 @@ void TapeFollower::goHome(){ //how to make a timed interrupt for 1 min 30 s, tim
     }
   }
   while(Robot::instance()->state==GO_HOME){ 
-    leftTapeFollow = analogRead(L_TAPE_FOLLOW) >= my_THRESHOLD;
-    rightTapeFollow = analogRead(R_TAPE_FOLLOW) >= my_THRESHOLD;
-    leftDecide = analogRead(L_DECIDE) >= my_DECIDE_THRESHOLD;
-    rightDecide = analogRead(R_DECIDE) >= my_DECIDE_THRESHOLD;
+    leftTapeFollow = analogRead(L_TAPE_FOLLOW) >= _THRESHOLD;
+    rightTapeFollow = analogRead(R_TAPE_FOLLOW) >= _THRESHOLD;
+    leftDecide = analogRead(L_DECIDE) >= _DECIDE_THRESHOLD;
+    rightDecide = analogRead(R_DECIDE) >= _DECIDE_THRESHOLD;
 
     if((leftDecide|| rightDecide) && (leftTapeFollow || rightTapeFollow) && (debounce > DEBOUNCE)) {
       if(homeSplit){
@@ -337,7 +332,7 @@ void TapeFollower::goHome(){ //how to make a timed interrupt for 1 min 30 s, tim
       }   
     }
     derivative = (position - lastPosition) / timeStep; 
-    PID = (my_KP_WHEEL * position) + (my_KD_WHEEL * derivative); 
+    PID = (_KP_WHEEL * position) + (_KD_WHEEL * derivative); 
   
     pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)+PID, 0);
     pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)-PID, 0); 
@@ -382,12 +377,12 @@ void TapeFollower::alignPillar(){
   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 100, 0); //very slow
   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 100, 0);
   while(true){
-    if(analogRead(L_ALIGN) >= my_ALIGN_THRESHOLD){
+    if(analogRead(L_ALIGN) >= _ALIGN_THRESHOLD){
       stop();
       Robot::instance()->direction = LEFT;
       return;
     }
-    else if(analogRead(R_ALIGN)>= my_ALIGN_THRESHOLD){
+    else if(analogRead(R_ALIGN)>= _ALIGN_THRESHOLD){
       stop();
       Robot::instance()->direction = RIGHT;
       return;

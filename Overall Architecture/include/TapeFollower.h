@@ -25,11 +25,6 @@ class TapeFollower
     void avoidCollision();
 
   private:
-    int my_KP_WHEEL;
-    int my_KD_WHEEL;
-    int my_THRESHOLD; 
-    int my_DECIDE_THRESHOLD;
-    int my_ALIGN_THRESHOLD;
     bool my_TEAM;
     int derivative;  
     int default_speed;

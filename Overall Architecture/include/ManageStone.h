@@ -12,14 +12,13 @@ class ManageStone
     void dropInStorage(); 
 
   private: 
-    int my_PILLAR_DISTANCE;
     bool my_TEAM;
-    PinName motor;
-    void moveArmToPillar();
+    // PinName motor;
+    // void moveArmToPillar();
     //void moveArmToCentre();
     void turnClaw();
     //void raiseClaw();
-    int readSonar();
+    // int readSonar();
 };
 
 #endif

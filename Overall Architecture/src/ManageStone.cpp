@@ -3,7 +3,7 @@
 #include "Constants.h"
 
 ManageStone::ManageStone(Robot const* robot):
-  my_PILLAR_DISTANCE(Robot::instance()->PILLAR_DISTANCE), my_TEAM(Robot::instance()->TEAM)
+my_TEAM(Robot::instance()->TEAM)
 {}
 
 //stone 2, 3, 4,  same direction 
@@ -62,21 +62,21 @@ void ManageStone::dropInStorage(){
   return;
 }
 
-void ManageStone::moveArmToPillar(){
-  if(Robot::instance()->direction){
-      pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  }
-  else{
-      pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  }
-  while (true){
-    if(readSonar()<=my_PILLAR_DISTANCE || digitalRead(ARM_SIDES_LIMIT) == HIGH){
-      pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
-      pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);   
-      return; 
-    }
-  }
-}
+// void ManageStone::moveArmToPillar(){
+//   if(Robot::instance()->direction){
+//       pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+//   }
+//   else{
+//       pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+//   }
+//   while (true){
+//     if(readSonar()<=my_PILLAR_DISTANCE || digitalRead(ARM_SIDES_LIMIT) == HIGH){
+//       pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
+//       pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);   
+//       return; 
+//     }
+//   }
+// }
 
 void ManageStone::turnClaw(){
   if(Robot::instance()->direction){
@@ -107,14 +107,14 @@ void ManageStone::turnClaw(){
 //   }
 // }
 
-int ManageStone::readSonar(){ //cm
-  digitalWrite(SONAR_TRIG, LOW);
-  delayMicroseconds(2);
-  digitalWrite(SONAR_TRIG, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(SONAR_TRIG, LOW);
-  return pulseIn(SONAR_ECHO, HIGH)*(0.034/2);
-}
+// int ManageStone::readSonar(){ //cm
+//   digitalWrite(SONAR_TRIG, LOW);
+//   delayMicroseconds(2);
+//   digitalWrite(SONAR_TRIG, HIGH);
+//   delayMicroseconds(10);
+//   digitalWrite(SONAR_TRIG, LOW);
+//   return pulseIn(SONAR_ECHO, HIGH)*(0.034/2);
+// }
 
 
 
