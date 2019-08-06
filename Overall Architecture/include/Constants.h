@@ -23,7 +23,6 @@
 #define MAX_SPEED 1024 
 #define CLOCK_FQ 100000 
 
-<<<<<<< HEAD
 //pins
 #define MULTIPLEX_A PB12 
 #define MULTIPLEX_B PB13
@@ -55,42 +54,6 @@
 #define L_ALIGN PA_0
 
 #define T_OR_M PA13 //switch, HIGH = THANOS
-=======
-// PiINS
-#define COLLISION PA15
-// Servos
-#define ARM_SERVO PA8
-#define CLAW_SERVO PA9
-#define GAUNTLET_SERVO PA10
-// Phototransistors
-#define L_ALIGN PA_0
-#define L_DECIDE PA_1
-#define L_TAPE_FOLLOW PA_2
-#define R_TAPE_FOLLOW PA_3
-#define R_DECIDE PA_4
-#define R_ALIGN PA_5
-// Motors
-#define LEFT_FORWARD_WHEEL_MOTOR PB_6
-#define RIGHT_FORWARD_WHEEL_MOTOR PB_8
-#define LEFT_BACKWARD_WHEEL_MOTOR PB_7
-#define RIGHT_BACKWARD_WHEEL_MOTOR PB_9
-#define ARM_MOTOR_LEFT PA_6
-#define ARM_MOTOR_RIGHT PA_7
-#define ARM_MOTOR_UP PB_0
-#define ARM_MOTOR_DOWN PB_1
-// Setup
-#define T_OR_M PA14 //switch, HIGH = THANOS
-#define CALIBRATE PA13 //do we want to calibrate the robot
-#define TUNING_KNOB_A PB12
-#define TUNING_KNOB_B PB13
-#define TUNING_BUTTON PB3
-// Arm and claw
-#define ARM_SIDES_LIMIT PA12
-#define ARM_TOP_BOTTOM_LIMIT PA11
-#define SONAR_ECHO PB14
-#define SONAR_TRIG PB15
-
->>>>>>> master
 
 // ManageStone library
 #define THREE_INCHES 3000 //ms since 1 in/s
