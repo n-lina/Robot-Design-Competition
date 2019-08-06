@@ -66,6 +66,8 @@
 #define ANGLE_START 70 
 #define ANGLE_FINISH 140
 #define START_DETECTION 30000 //number of loops to run before starting junction detection 
+#define TOP_PATH_SIZE 4
+#define BOTTOM_PATH_SIZE 6
 
 #define _KP_WHEEL 162
 #define _KD_WHEEL 12

@@ -11,7 +11,7 @@ Robot::Robot():
   stoneNumber(0), 
   collisionNumber(0), 
   junctionNumber(0), 
-  direction_facing(), 
+  direction_facing(true), 
   direction(), 
   armServo(), 
   clawServo(), 

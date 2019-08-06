@@ -12,6 +12,7 @@
 
 #include <Robot.h>
 #include <stack>
+#include "Constants.h"
 
 class TapeFollower
 {
@@ -58,8 +59,8 @@ class TapeFollower
     std::stack<bool> my_path;
    // std::vector<Junction> topPath;
    // std::vector<Junction> bottomPath;
-    bool topPath [4];
-    bool bottomPath [6];
+    bool topPath [TOP_PATH_SIZE];
+    bool bottomPath [BOTTOM_PATH_SIZE];
 };
 
 #endif

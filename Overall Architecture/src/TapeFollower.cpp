@@ -21,7 +21,7 @@ TapeFollower::TapeFollower(Robot const* robot):
   loopCounter(0),
   pressed(false), 
   my_path(),
-  topPath{SPLIT, SPLIT, TAB, TAB}, 
+  topPath{SPLIT, SPLIT, TAB, TAB},
   bottomPath{SPLIT, SPLIT, TAB, TAB, TAB, TAB}
   {}
 
@@ -128,17 +128,6 @@ void TapeFollower::turnLeft(){
   }
 }
 
-// void TapeFollower::turnLeftSoft(){
-//   pwm_start(RIGHT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 550, 0); //turn right
-//   pwm_start(LEFT_FORWARD_WHEEL_MOTOR, CLOCK_FQ, MAX_SPEED, 100, 0); 
-//   delay(SOFT_TURN_DELAY_TIME);
-//   while(true){
-//     if(analogRead(L_TAPE_FOLLOW) >= THRESHOLD || analogRead(R_TAPE_FOLLOW) >= THRESHOLD){
-//       return;
-//     }
-//   }
-// }
-
 void TapeFollower::turnRight(){
   digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
   digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
@@ -154,16 +143,16 @@ void TapeFollower::turnRight(){
 
 void TapeFollower::goDistance(int loopNumber){ 
   while(loopCounter < loopNumber){
-    // if(!pressed && digitalRead(ARM_SIDES_LIMIT)==HIGH){
-    //   digitalWrite(DEMULTIPLEX_ARM_H, HIGH);
-    //   pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, 0, 0);
-    //   digitalWrite(DEMULTIPLEX_ARM_H, LOW);
-    //   pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, 0, 0);
-    //   pressed = true;
-    // }
+    if(!pressed && digitalRead(ARM_SIDES_LIMIT)==HIGH){
+      digitalWrite(DEMULTIPLEX_ARM_H, HIGH);
+      pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, 0, 0);
+      digitalWrite(DEMULTIPLEX_ARM_H, LOW);
+      pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, 0, 0);
+      pressed = true;
+    }
 
-    // leftTapeFollow = analogRead(L_TAPE_FOLLOW)>= _THRESHOLD;
-    // rightTapeFollow = analogRead(R_TAPE_FOLLOW)>= _THRESHOLD;
+    leftTapeFollow = analogRead(L_TAPE_FOLLOW)>= _THRESHOLD;
+    rightTapeFollow = analogRead(R_TAPE_FOLLOW)>= _THRESHOLD;
     timeStep++;
 
     if (leftTapeFollow  && rightTapeFollow ){
@@ -186,10 +175,10 @@ void TapeFollower::goDistance(int loopNumber){
     derivative = (position - lastPosition) / timeStep; 
     PID = (_KP_WHEEL * position) + (_KD_WHEEL * derivative); 
     
-    // digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
-    // digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
-    // pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)-PID, 0);
-    // pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)+PID, 0); 
+    digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
+    digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
+    pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)-PID, 0);
+    pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)+PID, 0); 
 
     if(lastPosition != position){
       number++;
@@ -200,14 +189,14 @@ void TapeFollower::goDistance(int loopNumber){
     }
     lastPosition = position; 
     loopCounter++;
-    Serial.println(String(loopCounter));
   }
-  Serial.println("done goDistance");
   Robot::instance()->state = FOLLOW_TAPE; 
   return;
 }
 
 void TapeFollower::turnInPlaceLeft(){
+  if (Robot::instance()->direction_facing) Robot::instance()->direction_facing = false; 
+  else Robot::instance()->direction_facing = true;
   digitalWrite(DEMULTIPLEX_L_WHEEL, LOW);
   pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 500, 0); 
   digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
@@ -221,13 +210,12 @@ void TapeFollower::turnInPlaceLeft(){
       return;
     }
   }
-  if (Robot::instance()->direction_facing) Robot::instance()->direction_facing = false; 
-  else Robot::instance()->direction_facing = true;
   return;
 }
 
-
 void TapeFollower::turnInPlaceRight(){
+  if (Robot::instance()->direction_facing) Robot::instance()->direction_facing = false; 
+  else Robot::instance()->direction_facing = true;
   digitalWrite(DEMULTIPLEX_R_WHEEL, LOW);
   pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 500, 0); 
   digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
@@ -241,27 +229,27 @@ void TapeFollower::turnInPlaceRight(){
       return;
     }
   }
-  if (Robot::instance()->direction_facing) Robot::instance()->direction_facing = false; 
-  else Robot::instance()->direction_facing = true;
   return;
 }
 
 void TapeFollower::splitDecide(){ //TODO
   if(Robot::instance()->direction_facing){
-    my_path.push(topPath[Robot::instance()->junctionNumber]);
+    if(Robot::instance()->junctionNumber < TOP_PATH_SIZE){
+      my_path.push(topPath[Robot::instance()->junctionNumber]);
+    }
     if(THANOS){
       switch(Robot::instance()->junctionNumber){
         case 0: 
           stop();
           turnLeft();
-          return;
+          break;
         case 1: 
           if(leftDecide){
             turnRight();
           }
-          return;
+          break;
         case 2: 
-          return;
+          break;
         case 3: 
           digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
           digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
@@ -269,12 +257,12 @@ void TapeFollower::splitDecide(){ //TODO
           pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 450, 0);
           delay(1500);
           turnInPlaceLeft();
-          return;   
+          break;  
         case 4: //first stone on bottom path 
           my_path.push(TAB);
           alignPillar();
           Robot::instance()->state = COLLECT_STONE; 
-          return;  
+          break;
       }
     }
     else{
@@ -282,14 +270,14 @@ void TapeFollower::splitDecide(){ //TODO
         case 0: 
           stop();
           turnRight();
-          return;
+          break;
         case 1: 
           if(leftDecide){
             turnLeft();
           }
-          return;
+          break;
         case 2: 
-          return;
+          break;
         case 3: 
           digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
           digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
@@ -297,15 +285,16 @@ void TapeFollower::splitDecide(){ //TODO
           pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 450, 0);
           delay(1500);
           turnInPlaceRight();
-          return;
+          break;
         case 4: //first stone on bottom path 
           my_path.push(TAB);
           alignPillar();
           Robot::instance()->state = COLLECT_STONE; 
-          return;          
+          break;         
       }
     }
   Robot::instance()->junctionNumber++;
+  return;
   }
   else{ //facing backwards
     if(my_path.top() == TAB){
@@ -315,7 +304,7 @@ void TapeFollower::splitDecide(){ //TODO
       return;
     }
     else{
-      Robot::instance()->state = GO_HOME; //going home at path split
+      Robot::instance()->state = GO_HOME; //going home at path split instead of turning to go to bottom
       return;
     }
   }
@@ -336,7 +325,7 @@ void TapeFollower::goHome(){ //TODO
     rightTapeFollow = analogRead(R_TAPE_FOLLOW) >= _THRESHOLD;
     leftDecide = analogRead(L_DECIDE) >= _DECIDE_THRESHOLD;
     rightDecide = analogRead(R_DECIDE) >= _DECIDE_THRESHOLD;
-
+    
     if(leftDecide|| rightDecide) {
       if(Robot::instance()->TEAM){ //thanos
         stop();
@@ -358,13 +347,13 @@ void TapeFollower::goHome(){ //TODO
         delay(500);
         turnInPlaceLeft();
       }  
-      digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
+      digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH); // going straight towards to gauntlet
       digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
       pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 300, 0);
       pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 300, 0);
       delay(500);
       dropGauntlet();
-      digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
+      digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH); //moving a bit to push the stones in place
       digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
       pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 500, 0);
       pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 500, 0);
@@ -372,9 +361,7 @@ void TapeFollower::goHome(){ //TODO
       stop();
       Robot::instance()->state = PARK;
       return;
-      debounce=0;
     }
-
     timeStep++;
 
     if (leftTapeFollow  && rightTapeFollow){
@@ -436,7 +423,7 @@ void TapeFollower::park(){
 }
 
 void TapeFollower::avoidCollision(){ //TODO
-  digitalWrite(DEMULTIPLEX_L_WHEEL, LOW);
+  digitalWrite(DEMULTIPLEX_L_WHEEL, LOW); //backing up
   digitalWrite(DEMULTIPLEX_R_WHEEL, LOW);
   pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 300, 0);
   pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 300, 0);
