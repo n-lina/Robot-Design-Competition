@@ -61,6 +61,19 @@ private:
    Robot(Robot const& bot){};  // copy constructor is private
    Robot& operator=(Robot const& bot){}; // assignment operator is private
    static Robot* m_pInstance;
+<<<<<<< HEAD
+=======
+   void toggleMenu();
+   void adjustVariables();
+   bool multi(bool C, bool B, bool A);
+   int* CV_Addresses [NUM_VARIABLES];
+   int CV_Values [NUM_VARIABLES];
+   String labels [NUM_VARIABLES-1];
+   volatile int value; 
+   bool lastEncoderValue;
+   bool encoderValue;   
+   Adafruit_SSD1306 display;
+>>>>>>> master
 };
 
 
