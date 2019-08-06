@@ -3,16 +3,6 @@
 #include "TapeFollower.h"
 #include "ManageStone.h"
 #include "Constants.h"
-#include <Wire.h>
-#include <Adafruit_SSD1306.h>
-#include <FreeMono9pt7b.h>
-
-#define OLED_RESET -1  // Not used
-Adafruit_SSD1306 display(OLED_RESET);
-
-#if (SSD1306_LCDHEIGHT != 64)
-#error("Height incorrect, please fix Adafruit_SSD1306.h!");
-#endif
 
 //#define TUNING true
 #define ALL_TOGETHER true
