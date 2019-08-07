@@ -26,6 +26,7 @@
 //pins
 #define MULTIPLEX_A PB12 
 #define MULTIPLEX_B PB13
+#define MULTIPLEX_OUT PA6
 #define DEMULTIPLEX_ARM_H PB14 
 #define DEMULTIPLEX_ARM_V PB15
 #define DEMULTIPLEX_R_WHEEL PB5
@@ -71,9 +72,9 @@
 
 #define _KP_WHEEL 185
 #define _KD_WHEEL 12
-#define _THRESHOLD 300
-#define _DECIDE_THRESHOLD 300
-#define _ALIGN_THRESHOLD 450
+// #define _THRESHOLD 300
+// #define _DECIDE_THRESHOLD 300
+// #define _ALIGN_THRESHOLD 450
 
 #endif
 

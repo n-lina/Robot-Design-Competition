@@ -31,6 +31,9 @@ class TapeFollower
 
   private:
     bool my_TEAM;
+    int my_THRESHOLD; 
+    int my_DECIDE_THRESHOLD; 
+    int my_ALIGN_THRESHOLD;
     int derivative;  
     int default_speed;
     int timeStep; 
@@ -57,7 +60,7 @@ class TapeFollower
     void alignPillarLeft();
     void alignPillarRight();
     std::stack<bool> my_path;
-    bool bottomPath [BOTTOM_PATH_SIZE];
+    bool multi(bool A, bool B);
 };
 
 #endif

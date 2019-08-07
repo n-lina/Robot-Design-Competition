@@ -1,14 +1,12 @@
 #ifndef Robot_h
 #define Robot_h
 
-// #include <Wire.h>
-// #include <Adafruit_SSD1306.h>
-// #include <FreeMono12pt7b.h>
+#include <Wire.h>
+#include <Adafruit_SSD1306.h>
+#include <FreeMono12pt7b.h>
 #include <Servo.h>
 #include <stack>
 #include <vector>
-//#include "Junction.h"
-
 
 using namespace std;
 
@@ -57,12 +55,17 @@ public:
    Servo clawServo; // 0 = open; 180 = closed
    Servo L_GauntletServo;
    Servo R_GauntletServo;
+   int DECIDE_THRESHOLD; 
+   int ALIGN_THRESHOLD; 
+   int THRESHOLD; 
+   Adafruit_SSD1306 display;
 
 private:
    Robot();  // Private so that it can not be called
    Robot(Robot const& bot){};  // copy constructor is private
    Robot& operator=(Robot const& bot){}; // assignment operator is private
    static Robot* m_pInstance;
+   bool multi(bool A, bool B);
 };
 
 

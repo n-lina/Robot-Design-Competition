@@ -16,7 +16,8 @@ Robot::Robot():
   armServo(), 
   clawServo(), 
   L_GauntletServo(), 
-  R_GauntletServo()
+  R_GauntletServo(),
+  display(Adafruit_SSD1306(-1))
 {
 }
 
@@ -82,6 +83,8 @@ void Robot::setup(){
     pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   }
 }
+
+
 
 
 
