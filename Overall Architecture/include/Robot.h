@@ -19,6 +19,8 @@ enum RobotStates {
    SPLIT_CHOOSER,
    COLLECT_STONE, 
    GO_HOME,
+   TURN_IN_PLACE_RIGHT,
+   TURN_IN_PLACE_LEFT,
    PARK,
    NUM_STATES,
 };

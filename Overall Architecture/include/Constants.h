@@ -61,19 +61,19 @@
 // TapeFollower library
 #define SPEED_TUNING 1.8
 #define TURN_DELAY_TIME 200 
-#define TURN_IN_PLACE_DELAY_TIME 400 // to ensure 180 degree turn 
-#define DEBOUNCE 1000 // once junction detected, must be DEBOUNCE loops before next one 
+#define TURN_IN_PLACE_DELAY_TIME 800 // to ensure 180 degree turn 
+#define DEBOUNCE 800 // once junction detected, must be DEBOUNCE loops before next one 
 #define ANGLE_START 70 
 #define ANGLE_FINISH 140
 #define START_DETECTION 30000 //number of loops to run before starting junction detection 
 #define TOP_PATH_SIZE 4
 #define BOTTOM_PATH_SIZE 6
 
-#define _KP_WHEEL 162
+#define _KP_WHEEL 185
 #define _KD_WHEEL 12
-#define _THRESHOLD 200
+#define _THRESHOLD 300
 #define _DECIDE_THRESHOLD 300
-#define _ALIGN_THRESHOLD 400
+#define _ALIGN_THRESHOLD 450
 
 #endif
 

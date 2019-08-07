@@ -25,6 +25,9 @@ class TapeFollower
     void goHome(); 
     void park();
     void avoidCollision();
+    void dropGauntlet();
+    void turnInPlaceLeft();
+    void turnInPlaceRight();
 
   private:
     bool my_TEAM;
@@ -49,17 +52,11 @@ class TapeFollower
     void stop();
     void turnLeft();
     void turnRight();
-    void turnInPlaceLeft();
-    void turnInPlaceRight();
-    void turnRightAfterPillar();
-    void alignPillarSixTHANOS();
     void getPosition();
-    void dropGauntlet();
     void alignPillar();
+    void alignPillarLeft();
+    void alignPillarRight();
     std::stack<bool> my_path;
-   // std::vector<Junction> topPath;
-   // std::vector<Junction> bottomPath;
-    bool topPath [TOP_PATH_SIZE];
     bool bottomPath [BOTTOM_PATH_SIZE];
 };
 

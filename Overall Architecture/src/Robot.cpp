@@ -7,7 +7,7 @@ Robot* Robot::m_pInstance = NULL;
 
 Robot::Robot(): 
   state(GO_DISTANCE), 
-  TEAM(), 
+  TEAM(digitalRead(T_OR_M) == HIGH), 
   stoneNumber(0), 
   collisionNumber(0), 
   junctionNumber(0), 
@@ -63,12 +63,23 @@ void Robot::setup(){
   L_GauntletServo.attach(GAUNTLET_SERVO);
   R_GauntletServo.attach(GAUNTLET_SERVO);
 
-  //   // Team 
-  if(digitalRead(T_OR_M)==HIGH){
-    TEAM = THANOS; 
+  clawServo.write(0);
+  L_GauntletServo.write(70);
+
+  if(THANOS){
+    armServo.write(180);
   }
   else{
-    TEAM = METHANOS; 
+    armServo.write(0);
+  }
+
+  if(THANOS){
+    digitalWrite(DEMULTIPLEX_ARM_H, LOW);
+    pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  }
+  else{
+    digitalWrite(DEMULTIPLEX_ARM_H, HIGH);
+    pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   }
 }
 

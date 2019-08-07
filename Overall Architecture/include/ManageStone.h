@@ -9,7 +9,7 @@ class ManageStone
   public:
     ManageStone(Robot const* robot);
     void collectStone(); //left = 1, right = 0
-    void dropInStorage(); 
+    void dropInStorage(int stoneCollected); 
 
   private: 
     bool my_TEAM;

@@ -5,7 +5,7 @@
 TapeFollower::TapeFollower(Robot const* robot):
   my_TEAM(Robot::instance()->TEAM),
   derivative(0), 
-  default_speed(MAX_SPEED/SPEED_TUNING), 
+  default_speed(MAX_SPEED), 
   timeStep(0), 
   position(0), 
   lastPosition(0), 
@@ -20,9 +20,7 @@ TapeFollower::TapeFollower(Robot const* robot):
   rightAlign(0), 
   loopCounter(0),
   pressed(false), 
-  my_path(),
-  topPath{SPLIT, SPLIT, TAB, TAB},
-  bottomPath{SPLIT, SPLIT, TAB, TAB, TAB, TAB}
+  my_path()
   {}
 
 
@@ -198,15 +196,15 @@ void TapeFollower::turnInPlaceLeft(){
   if (Robot::instance()->direction_facing) Robot::instance()->direction_facing = false; 
   else Robot::instance()->direction_facing = true;
   digitalWrite(DEMULTIPLEX_L_WHEEL, LOW);
-  pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 500, 0); 
   digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
-  pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 500, 0); 
+  pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 280, 0); 
+  pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 280, 0); 
   delay(TURN_IN_PLACE_DELAY_TIME);
   while(true){
     if(analogRead(L_TAPE_FOLLOW) >= _THRESHOLD || analogRead(R_TAPE_FOLLOW) >= _THRESHOLD){
       stop();
-      delay(50);
-      turnRight();
+      debounce = 500;
+      Robot::instance()->state = FOLLOW_TAPE; 
       return;
     }
   }
@@ -217,94 +215,131 @@ void TapeFollower::turnInPlaceRight(){
   if (Robot::instance()->direction_facing) Robot::instance()->direction_facing = false; 
   else Robot::instance()->direction_facing = true;
   digitalWrite(DEMULTIPLEX_R_WHEEL, LOW);
-  pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 500, 0); 
   digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
-  pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 500, 0); 
+  pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 280, 0); 
+  pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 280, 0); 
   delay(TURN_IN_PLACE_DELAY_TIME);
   while(true){
     if(analogRead(L_TAPE_FOLLOW) >= _THRESHOLD || analogRead(R_TAPE_FOLLOW) >= _THRESHOLD){
       stop();
-      delay(50);
-      turnLeft();
+      debounce = 500;
+      Robot::instance()->state = FOLLOW_TAPE; 
       return;
     }
   }
   return;
 }
 
-void TapeFollower::splitDecide(){ //TODO
+void TapeFollower::splitDecide(){ 
   if(Robot::instance()->direction_facing){
-    if(Robot::instance()->junctionNumber < TOP_PATH_SIZE){
-      my_path.push(topPath[Robot::instance()->junctionNumber]);
-    }
+
     if(THANOS){
       switch(Robot::instance()->junctionNumber){
         case 0: 
           stop();
+          my_path.push(SPLIT);
           turnLeft();
+          Robot::instance()->state = FOLLOW_TAPE;
           break;
-        case 1: 
-          if(leftDecide){
+        case 1: case 4:
+          if(rightDecide || analogRead(R_DECIDE) > _DECIDE_THRESHOLD){
             turnRight();
           }
+          my_path.push(SPLIT);
+          Robot::instance()->state = FOLLOW_TAPE;
           break;
         case 2: 
+          my_path.push(TAB);
+          Robot::instance()->state = FOLLOW_TAPE;
           break;
         case 3: 
-          digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
-          digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
-          pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 450, 0);
-          pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 450, 0);
-          delay(1500);
-          turnInPlaceLeft();
-          break;  
-        case 4: //first stone on bottom path 
+          stop();
           my_path.push(TAB);
+          delay(1000);
           alignPillar();
-          Robot::instance()->state = COLLECT_STONE; 
-          break;
+          Robot::instance()->state = COLLECT_STONE;
+          break;  
+        case 5: 
+          stop();
+          my_path.push(TAB);
+          delay(1000);
+          alignPillarRight();
+          Robot::instance()->state = COLLECT_STONE;
+          break;  
       }
     }
     else{
       switch(Robot::instance()->junctionNumber){
         case 0: 
           stop();
+          my_path.push(SPLIT);
           turnRight();
+          Robot::instance()->state = FOLLOW_TAPE;
           break;
-        case 1: 
-          if(leftDecide){
+        case 1: case 4: 
+          if(leftDecide || analogRead(L_DECIDE) > _DECIDE_THRESHOLD){
             turnLeft();
           }
+          my_path.push(SPLIT);
+          Robot::instance()->state = FOLLOW_TAPE;
           break;
         case 2: 
-          break;
-        case 3: 
-          digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
-          digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
-          pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 450, 0);
-          pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 450, 0);
-          delay(1500);
-          turnInPlaceRight();
-          break;
-        case 4: //first stone on bottom path 
           my_path.push(TAB);
+          Robot::instance()->state = FOLLOW_TAPE;
+          break;
+        case 3: //first stone on bottom path 
+          stop();
+          my_path.push(TAB);
+          delay(1000);
           alignPillar();
-          Robot::instance()->state = COLLECT_STONE; 
-          break;         
+          Robot::instance()->state = COLLECT_STONE;
+          break;   
+        case 5:
+          stop();
+          my_path.push(TAB);
+          delay(1000);
+          alignPillarLeft();
+          Robot::instance()->state = COLLECT_STONE;
+          break;   
       }
     }
   Robot::instance()->junctionNumber++;
   return;
   }
   else{ //facing backwards
-    if(my_path.top() == TAB){
-      alignPillar();
+    if(my_path.top() == TAB && my_path.size() == TOP_PATH_SIZE){
       my_path.pop();
-      Robot::instance()->state = COLLECT_STONE;
+      default_speed = 700;
+      Robot::instance()->state = FOLLOW_TAPE;
       return;
     }
-    else{
-      Robot::instance()->state = GO_HOME; //going home at path split instead of turning to go to bottom
+    else if(my_path.top() == TAB && my_path.size() < TOP_PATH_SIZE){
+      digitalWrite(LEFT_WHEEL, HIGH);
+      digitalWrite(RIGHT_WHEEL, HIGH);
+      pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 600, 0);
+      pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 800, 0);
+      delay(30);
+      my_path.pop();
+      default_speed = MAX_SPEED; 
+      Robot::instance()->state = FOLLOW_TAPE;
+      return;
+    }
+    else if(my_path.top() == SPLIT && Robot::instance()->junctionNumber < TOP_PATH_SIZE){ 
+      // first time encountering path split facing backwards    
+      digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
+      digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
+      pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 400, 0);
+      pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 400, 0);
+      delay(700);
+      turnInPlaceRight();
+      my_path.pop();
+      Robot::instance()->state = FOLLOW_TAPE;
+      return;
+    }
+    else if(my_path.size() == SPLIT && Robot::instance()->junctionNumber > TOP_PATH_SIZE){
+      // second time encountering path split facing backwards 
+      my_path.pop();
+      Robot::instance()->state = GO_HOME;
       return;
     }
   }
@@ -446,11 +481,10 @@ void TapeFollower::avoidCollision(){ //TODO
 }
 
 void TapeFollower::alignPillar(){
-  stop();
   digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
   digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
-  pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 100, 0); //very slow
-  pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 100, 0);
+  pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 170, 0); //very slow
+  pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 170, 0);
   while(true){
     getPosition();
     if(analogRead(L_ALIGN) >= _ALIGN_THRESHOLD){
@@ -469,24 +503,34 @@ void TapeFollower::alignPillar(){
   return;
 }
 
-void TapeFollower::turnRightAfterPillar(){ //when there is a right turn coming out of a pillar 
-  digitalWrite(DEMULTIPLEX_L_WHEEL, LOW);
-  digitalWrite(DEMULTIPLEX_R_WHEEL, LOW);
-  pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 200, 0); 
-  pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 700, 0); 
-  delay(TURN_DELAY_TIME);
+void TapeFollower::alignPillarLeft(){
+  digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
+  digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
+  pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 170, 0); //very slow
+  pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 250, 0);
   while(true){
-    if(analogRead(L_TAPE_FOLLOW) >= _ALIGN_THRESHOLD || analogRead(R_TAPE_FOLLOW) >= _ALIGN_THRESHOLD){
+    getPosition();
+    if(analogRead(L_ALIGN) >= _ALIGN_THRESHOLD){
+      stop();
+      Robot::instance()->direction = LEFT;
+      Robot::instance()->state = COLLECT_STONE; 
+      return;
+    }
+    else if(analogRead(R_ALIGN)>= _ALIGN_THRESHOLD){
+      stop();
+      Robot::instance()->direction = RIGHT;
+      Robot::instance()->state = COLLECT_STONE; 
       return;
     }
   }
+  return;
 }
 
-void TapeFollower::alignPillarSixTHANOS(){
-  digitalWrite(DEMULTIPLEX_L_WHEEL, LOW);
-  digitalWrite(DEMULTIPLEX_R_WHEEL, LOW);
-  pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 350, 0); //very slow
-  pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 160, 0);
+void TapeFollower::alignPillarRight(){
+  digitalWrite(DEMULTIPLEX_L_WHEEL, HIGH);
+  digitalWrite(DEMULTIPLEX_R_WHEEL, HIGH);
+  pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 250, 0); //very slow
+  pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 170, 0);
   while(true){
     getPosition();
     if(analogRead(L_ALIGN) >= _ALIGN_THRESHOLD){
@@ -529,17 +573,13 @@ void TapeFollower::getPosition(){ // to return to tape after aligning with pilla
 } 
 
 void TapeFollower::dropGauntlet(){
-  for (int i = ANGLE_START; i <= ANGLE_FINISH; i = i + 3) {
-    Robot::instance()->L_GauntletServo.write(i);
-    delay(15);
+  for(volatile int i=0; i<10; i++){
+    Robot::instance()->L_GauntletServo.write(150);
+    delay(1000);
+    Robot::instance()->L_GauntletServo.write(140);
+    delay(1000);
   }
-  delay(1000);
-
-  for (int i = ANGLE_START; i >= ANGLE_FINISH; i = i - 3) {
-    Robot::instance()->L_GauntletServo.write(i);
-    delay(15);
-  }
-  delay(1000);
+  Robot::instance()->state = PARK;
 }
 
 

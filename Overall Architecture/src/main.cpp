@@ -7,12 +7,12 @@
 #include <Adafruit_SSD1306.h>
 #include <FreeMono9pt7b.h>
 
-#define OLED_RESET -1  // Not used
-Adafruit_SSD1306 display(OLED_RESET);
+// #define OLED_RESET -1  // Not used
+// Adafruit_SSD1306 display(OLED_RESET);
 
-#if (SSD1306_LCDHEIGHT != 64)
-#error("Height incorrect, please fix Adafruit_SSD1306.h!");
-#endif
+// #if (SSD1306_LCDHEIGHT != 64)
+// #error("Height incorrect, please fix Adafruit_SSD1306.h!");
+// #endif
 
 //#define TUNING true
 #define ALL_TOGETHER true
@@ -27,8 +27,8 @@ TapeFollower robot(Robot::instance());
 ManageStone Robot(Robot::instance());
 
 void setup() {
- Robot::instance()->setup();
- Serial.begin(9600);
+  Robot::instance()->setup();
+  Serial.begin(9600);
 }
 
 void loop() {
@@ -46,12 +46,19 @@ void loop() {
       robot.splitDecide();
       break;
     case COLLECT_STONE: // Collect Stone {3}
-      Robot.collectStone();
+      Robot.collectStone(); 
       break;
     case GO_HOME: // Go home and deposit stones at certain time (1:30) {2} turn off collision interrupts 
       robot.goHome();
       break;
+    case TURN_IN_PLACE_RIGHT:
+      robot.turnInPlaceRight();
+      break; 
+    case TURN_IN_PLACE_LEFT:
+      robot.turnInPlaceLeft();
+      break;
     case PARK: // park at gauntlet
+      robot.dropGauntlet();
       robot.park();
       break;
   }
