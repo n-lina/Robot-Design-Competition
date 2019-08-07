@@ -8,6 +8,9 @@ Robot* Robot::m_pInstance = NULL;
 Robot::Robot(): 
   state(GO_DISTANCE), 
   TEAM(digitalRead(T_OR_M) == HIGH), 
+  THRESHOLD(_THRESHOLD),
+  ALIGN_THRESHOLD(_ALIGN_THRESHOLD),
+  DECIDE_THRESHOLD(_DECIDE_THRESHOLD),
   stoneNumber(0), 
   collisionNumber(0), 
   junctionNumber(0), 
@@ -64,6 +67,19 @@ void Robot::setup(){
   L_GauntletServo.attach(GAUNTLET_SERVO);
   R_GauntletServo.attach(GAUNTLET_SERVO);
 
+  // display.begin(SSD1306_SWITCHCAPVCC, 0x3C); 
+  // while(digitalRead(CALIBRATE)){
+  //     display.clearDisplay();
+  //     display.setCursor(0,0);
+  //     display.println("Threshold: " + String(multi(0,0)));
+  //     display.println("Fork Threshold: " + String(multi(0,1)));
+  //     display.println("Align Threshold: " + String(multi(1,0)));
+  //     display.display();      
+  // }
+  // THRESHOLD = multi(0,0);
+  // ALIGN_THRESHOLD = multi(1,0);
+  // DECIDE_THRESHOLD = multi(0,1);
+
   clawServo.write(0);
   L_GauntletServo.write(70);
 
@@ -84,6 +100,11 @@ void Robot::setup(){
   }
 }
 
+bool Robot::multi(bool A, bool B){
+  digitalWrite(MULTIPLEX_A, A);
+  digitalWrite(MULTIPLEX_B, B);
+  return analogRead(MULTIPLEX_OUT);
+}
 
 
 

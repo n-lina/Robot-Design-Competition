@@ -4,9 +4,9 @@
 
 TapeFollower::TapeFollower(Robot const* robot):
   my_TEAM(Robot::instance()->TEAM),
-  my_DECIDE_THRESHOLD(multi(0,0)),
-  my_ALIGN_THRESHOLD(multi(0,1)),
-  my_THRESHOLD(multi(1,0)),
+  my_DECIDE_THRESHOLD(Robot::instance()->DECIDE_THRESHOLD),
+  my_ALIGN_THRESHOLD(Robot::instance()->ALIGN_THRESHOLD),
+  my_THRESHOLD(Robot::instance()->THRESHOLD),
   derivative(0), 
   default_speed(MAX_SPEED), 
   timeStep(0), 
@@ -585,11 +585,7 @@ void TapeFollower::dropGauntlet(){
   Robot::instance()->state = PARK;
 }
 
-bool TapeFollower::multi(bool A, bool B){
-  digitalWrite(MULTIPLEX_A, A);
-  digitalWrite(MULTIPLEX_B, B);
-  return analogRead(MULTIPLEX_OUT);
-}
+
 
 
 

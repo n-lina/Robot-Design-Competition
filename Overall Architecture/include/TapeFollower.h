@@ -60,7 +60,6 @@ class TapeFollower
     void alignPillarLeft();
     void alignPillarRight();
     std::stack<bool> my_path;
-    bool multi(bool A, bool B);
 };
 
 #endif

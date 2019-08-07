@@ -29,8 +29,8 @@
 #define MULTIPLEX_OUT PA6
 #define DEMULTIPLEX_ARM_H PB14 
 #define DEMULTIPLEX_ARM_V PB15
-#define DEMULTIPLEX_R_WHEEL PB5
-#define DEMULTIPLEX_L_WHEEL PB4
+#define DEMULTIPLEX_R_WHEEL PB4
+#define DEMULTIPLEX_L_WHEEL PB5
 
 #define ARM_SERVO PA7
 #define CLAW_SERVO PB0
@@ -55,6 +55,7 @@
 #define L_ALIGN PA_0
 
 #define T_OR_M PA13 //switch, HIGH = THANOS
+#define CALIBRATE PA14
 
 // ManageStone library
 #define THREE_INCHES 3000 //ms since 1 in/s
@@ -72,9 +73,9 @@
 
 #define _KP_WHEEL 185
 #define _KD_WHEEL 12
-// #define _THRESHOLD 300
-// #define _DECIDE_THRESHOLD 300
-// #define _ALIGN_THRESHOLD 450
+#define _THRESHOLD 300
+#define _DECIDE_THRESHOLD 300
+#define _ALIGN_THRESHOLD 450
 
 #endif
 
