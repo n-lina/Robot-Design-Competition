@@ -20,24 +20,26 @@
 // test no stone, choose stoneNumber 1,2, or 3 
 //#define COLLECT_STONE_SONAR true
 //#define GO_HOME true 
-//#define MULTIPLEX
+//#define MULTIPLEX true 
 
 #ifdef ALL_TOGETHER 
 TapeFollower robot(Robot::instance());
 ManageStone Robot(Robot::instance());
 
 void setup() {
-  Robot::instance()->setup();
   Serial.begin(9600);
+  Robot::instance()->setup();
 }
 
 void loop() {
+  Serial.println(Robot::instance()->state);
   switch (Robot::instance()->state){
     case GO_DISTANCE: // Go a certain distance without checking for tabs/splits
       robot.goDistance(START_DETECTION);
       break;
     case FOLLOW_TAPE: // Follow Tape checking splits/tabs
       robot.followTape();
+      Serial.println("hello");
       break;
     case AVOID_COLLISION: // Avoid Collision {4}
       robot.avoidCollision();
@@ -109,5 +111,22 @@ void loop(){
 
   // //Robot::instance()->setup();
   // delay(1000);
+}
+#endif
+
+#ifdef MULTIPLEX
+
+void setup(){
+  Robot::instance()->setup();
+}
+void loop(){
+digitalWrite(DEMULTIPLEX_L_WHEEL, LOW);
+pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 900, 0);
+digitalWrite(DEMULTIPLEX_R_WHEEL, LOW);
+pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 900, 0);
+digitalWrite(DEMULTIPLEX_ARM_H, LOW);
+pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, 900, 0);
+digitalWrite(DEMULTIPLEX_ARM_V, LOW);
+pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, 900, 0);
 }
 #endif

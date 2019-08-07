@@ -29,12 +29,13 @@ TapeFollower::TapeFollower(Robot const* robot):
 
 void TapeFollower::followTape(){ //add encoder polling
   while(Robot::instance()->state==FOLLOW_TAPE){
-    if(digitalRead(COLLISION)==HIGH){
-      stop();
-      Robot::instance()->collisionNumber++;
-      Robot::instance()->state = AVOID_COLLISION;
-      return;
-    }
+    
+    // if(digitalRead(COLLISION)==HIGH){ 
+    //   stop();
+    //   Robot::instance()->collisionNumber++;
+    //   Robot::instance()->state = AVOID_COLLISION;
+    //   return;
+    // }
 
     if(!pressed && digitalRead(ARM_SIDES_LIMIT)==HIGH){
       digitalWrite(DEMULTIPLEX_ARM_H, HIGH);
@@ -349,7 +350,7 @@ void TapeFollower::splitDecide(){
 }
 
 //only call between 2nd split and 1st tabs 
-void TapeFollower::goHome(){ //TODO 
+void TapeFollower::goHome(){ 
   // if(Robot::instance()->direction_facing){ 
   //   if(Robot::instance()->direction){
   //     turnInPlaceLeft(); //facing forward and tabs to the right

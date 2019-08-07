@@ -19,8 +19,8 @@ Robot::Robot():
   armServo(), 
   clawServo(), 
   L_GauntletServo(), 
-  R_GauntletServo(),
-  display(Adafruit_SSD1306(-1))
+  R_GauntletServo()
+ // display(Adafruit_SSD1306(-1))
 {
 }
 
@@ -100,11 +100,11 @@ void Robot::setup(){
   }
 }
 
-bool Robot::multi(bool A, bool B){
-  digitalWrite(MULTIPLEX_A, A);
-  digitalWrite(MULTIPLEX_B, B);
-  return analogRead(MULTIPLEX_OUT);
-}
+// bool Robot::multi(bool A, bool B){
+//   digitalWrite(MULTIPLEX_A, A);
+//   digitalWrite(MULTIPLEX_B, B);
+//   return analogRead(MULTIPLEX_OUT);
+// }
 
 
 
