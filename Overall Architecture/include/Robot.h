@@ -48,7 +48,6 @@ public:
    Servo armServo; // 0 = left; 180 = right
    Servo clawServo; // 0 = open; 180 = closed
    Servo L_GauntletServo;
-   Servo R_GauntletServo;
 
 private:
    Robot();  // Private so that it can not be called

@@ -6,27 +6,26 @@
 
 
 //#define TUNING true
-#define ALL_TOGETHER true
+//#define ALL_TOGETHER true
 //#define COLLECT_STONE_X true //change X to be what stoneNumber u want, check the direction
 // test no stone, choose stoneNumber 1,2, or 3 
 //#define COLLECT_STONE_SONAR true
 //#define GO_HOME true 
-//#define MULTIPLEX true 
+#define MULTIPLEX true 
 
 #ifdef ALL_TOGETHER 
 TapeFollower robot(Robot::instance());
 ManageStone Robot(Robot::instance());
 
 void setup() {
-  Serial.begin(9600);
+  //Serial.begin(9600);
   Robot::instance()->setup();
 }
 
 void loop() {
-  Serial.println(Robot::instance()->state);
   switch (Robot::instance()->state){
     case GO_DISTANCE: // Go a certain distance without checking for tabs/splits
-      robot.goDistance(2000);
+      robot.goDistance(START_DETECTION);
       break;
     case FOLLOW_TAPE: // Follow Tape checking splits/tabs
       robot.followTape();
@@ -54,7 +53,7 @@ void loop() {
       robot.park();
       break;
   }
-}
+
 #endif
 
 #ifdef COLLECT_STONE_X
@@ -106,43 +105,34 @@ void loop(){
 
 #ifdef MULTIPLEX
  
- Servo Gauntlet;
- Servo claw; 
- Servo arm; 
-
+ Servo gauntlet;
 void setup(){
-  Robot::instance()->setup();
-  //pinMode(GAUNTLET_SERVO, PA6);
-  //Robot::instance()->L_GauntletServo.attach(GAUNTLET_SERVO);
+  //Robot::instance()->setup();
+    pinMode(L_DECIDE, INPUT_PULLUP);
+  pinMode(L_ALIGN, INPUT_PULLUP);
+  pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
+  pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
+  pinMode(R_DECIDE, INPUT_PULLUP);
+  pinMode(R_ALIGN, INPUT_PULLUP); 
+  Serial.begin(9600);
 
-  // pinMode(GAUNTLET_SERVO, OUTPUT);
-  // Gauntlet.attach(GAUNTLET_SERVO);
-  // pinMode(CLAW_SERVO, OUTPUT);
-  // claw.attach(CLAW_SERVO);
-  // pinMode(ARM_SERVO, OUTPUT);
-  // arm.attach(ARM_SERVO);
-  // pinMode(DEMULTIPLEX_L_WHEEL, OUTPUT);
-  // pinMode(DEMULTIPLEX_R_WHEEL, OUTPUT);
-  // pinMode(LEFT_WHEEL, OUTPUT);
-  // pinMode(RIGHT_WHEEL, OUTPUT);
 }
 void loop(){
-  // Robot::instance()->L_GauntletServo.write(0);
-  // delay(1000);
-  // Robot::instance()->L_GauntletServo.write(90);
-  // delay(1000);
+  Serial.println("R Align: " + String(analogRead(R_ALIGN)));
+  Serial.println("R Decide: " + String(analogRead(R_DECIDE)));
+  Serial.println("R TapeFollow: " +String(analogRead(R_TAPE_FOLLOW)));
+  Serial.println("L TapeFollow: " +String(analogRead(L_TAPE_FOLLOW)));
+  Serial.println("L Decide: " + String(analogRead(L_DECIDE)));
+  Serial.println("L Align: " + String(analogRead(L_ALIGN)));
+  Serial.println("___________________________");
+
   // Robot::instance()->clawServo.write(0);
   // delay(1000);
+
+
+
+  
   // Robot::instance()->clawServo.write(180);
   // delay(1000);
-  // Robot::instance()->armServo.write(180);
-  // delay(1000);
-  // Robot::instance()->armServo.write(0);
-  // delay(1000);
-  // Gauntlet.write(0);
-  // delay(1000);
-  // Gauntlet.write(90);
-  // delay(1000);
-
 }
 #endif

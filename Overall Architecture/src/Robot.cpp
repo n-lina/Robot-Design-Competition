@@ -7,8 +7,7 @@ Robot* Robot::m_pInstance = NULL;
 
 Robot::Robot(): 
   state(GO_DISTANCE), 
-  TEAM(digitalRead(T_OR_M) == HIGH), 
-  //TEAM(THANOS),
+  TEAM(), 
   stoneNumber(0), 
   collisionNumber(0), 
   junctionNumber(0), 
@@ -16,8 +15,7 @@ Robot::Robot():
   direction(), 
   armServo(), 
   clawServo(), 
-  L_GauntletServo(), 
-  R_GauntletServo()
+  L_GauntletServo()
 {
 }
 
@@ -28,7 +26,6 @@ Robot* Robot::instance(){
 }
 
 void Robot::setup(){
-  pinMode(ARM_TOP_BOTTOM_LIMIT, INPUT);
   pinMode(ARM_SIDES_LIMIT, INPUT);
   pinMode(L_DECIDE, INPUT_PULLUP);
   pinMode(L_ALIGN, INPUT_PULLUP);
@@ -65,25 +62,23 @@ void Robot::setup(){
   armServo.attach(ARM_SERVO);
   clawServo.attach(CLAW_SERVO);
   L_GauntletServo.attach(GAUNTLET_SERVO);
-  R_GauntletServo.attach(GAUNTLET_SERVO);
 
   clawServo.write(0);
-  L_GauntletServo.write(70);
+  L_GauntletServo.write(100);
 
-  if(THANOS){
-    armServo.write(180);
-  }
-  else{
+  if(digitalRead(T_OR_M) == HIGH){
+    TEAM = METHANOS; 
     armServo.write(0);
-  }
-
-  if(THANOS){
-    pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  }
-  else{
     pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   }
+  else{
+    TEAM = THANOS; 
+    armServo.write(180);
+    pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  }
+
 }
+
 
 
 

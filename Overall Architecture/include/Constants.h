@@ -25,24 +25,22 @@
 
 //pins
 
-#define ARM_SERVO PA6
-#define CLAW_SERVO PB0
-#define GAUNTLET_SERVO PA7
+#define ARM_SERVO PA10
+#define CLAW_SERVO PA8
+#define GAUNTLET_SERVO PA9
 
-#define ARM_TOP_BOTTOM_LIMIT PA11
-#define ARM_SIDES_LIMIT PA12
-#define COLLISION PA15
-#define TUNING_BUTTON PB3
+#define ARM_SIDES_LIMIT PA11
+#define COLLISION PA12
 
-#define LEFT_WHEEL_FORWARD PB_1
-#define LEFT_WHEEL_BACKWARD PB_0
+#define LEFT_WHEEL_FORWARD PB_0
+#define LEFT_WHEEL_BACKWARD PB_1
 #define RIGHT_WHEEL_FORWARD PA_7
 #define RIGHT_WHEEL_BACKWARD PA_6
 
-#define ARM_MOTOR_RIGHT PB_9
-#define ARM_MOTOR_LEFT PB_8
-#define ARM_MOTOR_UP PB_6
-#define ARM_MOTOR_DOWN PB_7
+#define ARM_MOTOR_RIGHT PB_7
+#define ARM_MOTOR_LEFT PB_6
+#define ARM_MOTOR_UP PB_8
+#define ARM_MOTOR_DOWN PB_9
 
 #define R_ALIGN PA_5
 #define R_DECIDE PA_4
@@ -57,7 +55,7 @@
 #define THREE_INCHES 3000 //ms since 1 in/s
 
 // TapeFollower library
-#define SPEED_TUNING 1.8
+#define SPEED_TUNING 1
 #define TURN_DELAY_TIME 200 
 #define TURN_IN_PLACE_DELAY_TIME 800 // to ensure 180 degree turn 
 #define DEBOUNCE 800 // once junction detected, must be DEBOUNCE loops before next one 
