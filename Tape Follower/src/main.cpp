@@ -176,7 +176,7 @@ else{
         pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 400, 0);
         pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 400, 0);
         delay(500);
-        turnInPlaceRightPillar();
+        turnInPlaceRight();
         break;
 
       case 7:
@@ -198,7 +198,7 @@ else{
         dropOffStone();
         stop();
         delay(500);
-        turnInPlaceRightPillar();
+        turnInPlaceRight();
 
       case 8:
         break;
@@ -222,8 +222,8 @@ else{
         break;
 
       case 10:
-        pwm_start(L_MOTOR_FORWARD,CLOCK_FQ, MAX_SPEED, 280, 0);
-        pwm_start(R_MOTOR_FORWARD,CLOCK_FQ, MAX_SPEED, 265, 0);
+        pwm_start(LEFT_WHEEL_FORWARD,CLOCK_FQ, MAX_SPEED, 280, 0);
+        pwm_start(RIGHT_WHEEL_FORWARD,CLOCK_FQ, MAX_SPEED, 265, 0);
         delay(500);
         stop();
         delay(1000);
@@ -333,7 +333,7 @@ else{
  // L on, R off : position = positive, want to turn LEFT 
  // R on, L off : position = negative, want to turn RIGHT 
   derivative = (position - lastPosition) / timeStep; 
-  PID = (KP * position) + (KD * derivative); 
+  PID = (_KP_WHEEL * position) + (_KD_WHEEL * derivative); 
 
   if(PID>(default_speed)){
     PID = default_speed;
@@ -565,7 +565,7 @@ void dropOffStone(){
     }
 
     else if(stoneCollected == 3){
-      pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);      //move the arm to the left for a bit, then drop it off
+      pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);      //move the arm to the left for a bit, then drop it off
       delay(2000);
       cottonCandy.write(100);
       armServo.write(90);
@@ -610,7 +610,7 @@ void dropOffStone(){
 
     else if(stoneCollected == 3){
       //move arm slightly to right and move to the second right one
-      pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);      //move the arm to the left for a bit, then drop it off
+      pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);      //move the arm to the left for a bit, then drop it off
       delay(2000);
       cottonCandy.write(100);
       armServo.write(90);
@@ -690,7 +690,7 @@ void setupRobot(){
   cottonCandy.attach(GAUNTLET_SERVO);
 
   clawServo.write(0);
-  cottonCandywrite(100);
+  cottonCandy.write(100);
 
   if(digitalRead(T_OR_M) == HIGH){
     TEAM = METHANOS; 
