@@ -136,16 +136,16 @@ else{
         }
         break;
       case 2: 
-      if(TEAM == METHANOS){
-        if(leftDecide || (analogRead(L_DECIDE) > _DECIDE_THRESHOLD)){
-          turnLeft();
+        if(TEAM == METHANOS){
+          if(leftDecide || (analogRead(L_DECIDE) > _DECIDE_THRESHOLD)){
+            turnLeft();
+          }
         }
-      }
-      else{
-        if(rightDecide || (analogRead(R_DECIDE) > _DECIDE_THRESHOLD)){
-          turnRight();
+        else{
+          if(rightDecide || (analogRead(R_DECIDE) > _DECIDE_THRESHOLD)){
+            turnRight();
+          }
         }
-      }
         break;
       case 3:
         break;
@@ -154,7 +154,6 @@ else{
         delay(1000);
         alignPillar();
         collectStone();
-        dropOffStone();
         stop();
         delay(500);
         pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 600, 0);
@@ -178,39 +177,21 @@ else{
         delay(500);
         turnInPlaceRight();
         break;
-
       case 7:
         stop();
         delay(1000);
-        pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-        delay(3000);
-        pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0 ,0);
-        clawServo.write(0);
-        delay(500);
-        cottonCandy.write(70);
-        delay(500);
-        armServo.write(0);
-        pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-        delay(3000);
-        pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
         alignPillarRight();
         collectStone();
-        dropOffStone();
         stop();
         delay(500);
         turnInPlaceRight();
-
       case 8:
         break;
-      
       case 9:
         stop();
         delay(500);
         default_speed = 280;
-        // pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 300, 0);
-        // pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 300, 0);
-        //delay(300);
-        if(METHANOS){
+        if(TEAM == METHANOS){
           turnLeft();
           stop();
           delay(200);
@@ -525,104 +506,30 @@ void collectStone(){
   delay(4000);
   pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
   delay(100);
-  // armServo.write(180);
-  // delay(500);
-  //clawServo.write(0);
-  //delay(3000);
+  dropOffStone();
   return;  
 }
 
 void dropOffStone(){
-  if(THANOS){
-    //claw is still closed before entering function
-    //when claw is on right side of bot
-    if(stoneCollected == 2){
-      cottonCandy.write(100);
-      armServo.write(80);
-      delay(500);
-      clawServo.write(0);
-      delay(500);
-      cottonCandy.write(70);
-      //delay(500);
-      armServo.write(180);  
+  if(TEAM == METHANOS){
+    switch(stoneCollected){
+      case 1: 
+        cottonCandy.write(100);
+        armServo.write(75);
+        break;
+      case 2:
+        cottonCandy.write(100);
+        armServo.write(89);
+        break;
     }
-
-    //second right channel
-    else if(stoneCollected == 1){
-      cottonCandy.write(100);
-      armServo.write(94);
-      delay(500);
-      clawServo.write(0);
-      delay(500);
-      cottonCandy.write(70);
-      delay(500);
-      armServo.write(180);
-
-      // cottonCandy.write(130);
-      // delay(1000);
-      // cottonCandy.write(70);
-      // delay(1000);
-    }
-
-    else if(stoneCollected == 3){
-      pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);      //move the arm to the left for a bit, then drop it off
-      delay(2000);
-      cottonCandy.write(100);
-      armServo.write(90);
-      delay(500);
-      clawServo.write(0);
-      delay(500);
-      cottonCandy.write(70);
-      delay(500);
-      armServo.write(180);
+    delay(500);
+    clawServo.write(0);
+    delay(500);
+    cottonCandy.write(70);
+    armServo.write(0);
     }
   }
 
-  //when claw is on left side of bot
-  else{
-    if(stoneCollected == 2){
-      cottonCandy.write(100);
-      armServo.write(89);
-      delay(500);
-      pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-      delay(6000);
-      pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
-      clawServo.write(0);
-      delay(500);
-      cottonCandy.write(70);
-      armServo.write(0);
-      pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-      delay(6000);
-      pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
-    }
-
-    //second left channel
-    else if(stoneCollected == 1){
-      cottonCandy.write(100);
-      armServo.write(75);
-      delay(500);
-      // clawServo.write(0);
-      // delay(500);
-      // cottonCandy.write(70);
-      // delay(500);
-      // armServo.write(0);
-    }
-
-    else if(stoneCollected == 3){
-      //move arm slightly to right and move to the second right one
-      pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);      //move the arm to the left for a bit, then drop it off
-      delay(2000);
-      cottonCandy.write(100);
-      armServo.write(90);
-      delay(500);
-      clawServo.write(0);
-      delay(500);
-      cottonCandy.write(70);
-      delay(500);
-      armServo.write(0);
-    }
-  }
-}
 
 void deployCottonCandy(){
   cottonCandy.write(150);
@@ -967,50 +874,44 @@ void stop(){
 
 
 void turnInPlaceLeft(){
-  pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
+  pwm_start(L_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 300, 0); 
+  pwm_start(R_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 300, 0); 
   delay(TURN_DELAY_TIME);
   while(true){
     if(analogRead(PHOTO_0) >= THRESHOLD || analogRead(PHOTO_1) >= THRESHOLD){
       stop();
-      delay(50);
-      turnRight();
+      debounce = 500; 
       return;
     }
   }
 }
 
 void turnInPlaceRight(){
-  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 900, 0); 
-  delay(TURN_DELAY_TIME);
+  pwm_start(R_MOTOR_BACKWARD, CLOCK_FQ, MAX_SPEED, 300, 0); 
+  pwm_start(L_MOTOR_FORWARD, CLOCK_FQ, MAX_SPEED, 300, 0); 
+  delay(800);
   while(true){
     if(analogRead(PHOTO_0) >= THRESHOLD || analogRead(PHOTO_1) >= THRESHOLD){
       stop();
-      delay(50);
-      turnLeft();
+      debounce = 500;
       return;
     }
   }
 }
 
 void collectStone(){
-  clawServo.write(90);
-  armServo.write(0);
- // pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-//pwm_start(CLAW_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  while(true){
-    if(digitalRead(ARM_SIDES_LIMIT)==HIGH){
-      pwm_start(ARM_RIGHT, CLOCK_FQ, MAX_SPEED, 0, 0);
-      pwm_start(ARM_LEFT, CLOCK_FQ, MAX_SPEED, 0, 0);
-      break;
-    }
+  stoneCollected++;
+  clawServo.write(0);
+  if(TEAM == METHANOS){
+    armServo.write(180);
+  }
+  else{
+    armServo.write(0);
   }
   clawServo.write(180); 
   delay(1000);
   pwm_start(CLAW_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-  delay(3500);
+  delay(4000);
   pwm_start(CLAW_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
   armServo.write(90);
   delay(1000);
