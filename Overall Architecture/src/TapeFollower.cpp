@@ -162,8 +162,8 @@ void TapeFollower::goDistance(int loopNumber){
     derivative = (position - lastPosition) / timeStep; 
     PID = (_KP_WHEEL * position) + (_KD_WHEEL * derivative); 
     
-    pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)-PID, 0);
-    pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, (MAX_SPEED/SPEED_TUNING)+PID, 0); 
+    pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed+PID, 0);
+    pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, default_speed-PID, 0); 
 
     if(lastPosition != position){
       number++;
@@ -174,7 +174,6 @@ void TapeFollower::goDistance(int loopNumber){
     }
     lastPosition = position; 
     loopCounter++;
-    Serial.println(String(loopCounter));
   }
   Robot::instance()->state = FOLLOW_TAPE; 
   return;
@@ -250,10 +249,6 @@ void TapeFollower::splitDecide(){
           Robot::instance()->state = COLLECT_STONE;
           break;  
       }
-    Serial.println("Junction Number: " + String(Robot::instance()->junctionNumber));
-    Serial.println("Top: " + String(my_path.top()));
-    Serial.println("Size: " + String(my_path.size()));
-    Serial.println("State: " + String(Robot::instance()->state));
     }
     else{
       switch(Robot::instance()->junctionNumber){

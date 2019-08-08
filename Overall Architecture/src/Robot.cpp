@@ -69,12 +69,12 @@ void Robot::setup(){
   if(digitalRead(T_OR_M) == HIGH){
     TEAM = METHANOS; 
     armServo.write(0);
-    pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+    pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   }
   else{
     TEAM = THANOS; 
     armServo.write(180);
-    pwm_start(ARM_MOTOR_LEFT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+    pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   }
 
 }

@@ -6,12 +6,12 @@
 
 
 //#define TUNING true
-//#define ALL_TOGETHER true
+#define ALL_TOGETHER true
 //#define COLLECT_STONE_X true //change X to be what stoneNumber u want, check the direction
 // test no stone, choose stoneNumber 1,2, or 3 
 //#define COLLECT_STONE_SONAR true
 //#define GO_HOME true 
-#define MULTIPLEX true 
+//#define MULTIPLEX true 
 
 #ifdef ALL_TOGETHER 
 TapeFollower robot(Robot::instance());
@@ -20,6 +20,7 @@ ManageStone Robot(Robot::instance());
 void setup() {
   //Serial.begin(9600);
   Robot::instance()->setup();
+  Robot::instance()->state = GO_DISTANCE;
 }
 
 void loop() {
@@ -53,7 +54,7 @@ void loop() {
       robot.park();
       break;
   }
-
+}
 #endif
 
 #ifdef COLLECT_STONE_X
@@ -107,32 +108,26 @@ void loop(){
  
  Servo gauntlet;
 void setup(){
-  //Robot::instance()->setup();
-    pinMode(L_DECIDE, INPUT_PULLUP);
-  pinMode(L_ALIGN, INPUT_PULLUP);
-  pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
-  pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
-  pinMode(R_DECIDE, INPUT_PULLUP);
-  pinMode(R_ALIGN, INPUT_PULLUP); 
+  Robot::instance()->setup();
+  //   pinMode(L_DECIDE, INPUT_PULLUP);
+  // pinMode(L_ALIGN, INPUT_PULLUP);
+  // pinMode(L_TAPE_FOLLOW, INPUT_PULLUP);
+  // pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
+  // pinMode(R_DECIDE, INPUT_PULLUP);
+  // pinMode(R_ALIGN, INPUT_PULLUP); 
   Serial.begin(9600);
 
 }
 void loop(){
-  Serial.println("R Align: " + String(analogRead(R_ALIGN)));
-  Serial.println("R Decide: " + String(analogRead(R_DECIDE)));
-  Serial.println("R TapeFollow: " +String(analogRead(R_TAPE_FOLLOW)));
-  Serial.println("L TapeFollow: " +String(analogRead(L_TAPE_FOLLOW)));
-  Serial.println("L Decide: " + String(analogRead(L_DECIDE)));
-  Serial.println("L Align: " + String(analogRead(L_ALIGN)));
-  Serial.println("___________________________");
-
-  // Robot::instance()->clawServo.write(0);
+  // Serial.println("R Align: " + String(analogRead(R_ALIGN)));
+  // Serial.println("R Decide: " + String(analogRead(R_DECIDE)));
+  // Serial.println("R TapeFollow: " +String(analogRead(R_TAPE_FOLLOW)));
+  // Serial.println("L TapeFollow: " +String(analogRead(L_TAPE_FOLLOW)));
+  // Serial.println("L Decide: " + String(analogRead(L_DECIDE)));
+  // Serial.println("L Align: " + String(analogRead(L_ALIGN)));
+  // Serial.println("___________________________");
   // delay(1000);
-
-
-
-  
-  // Robot::instance()->clawServo.write(180);
-  // delay(1000);
+  pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+   pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
 }
 #endif

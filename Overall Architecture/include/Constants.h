@@ -42,12 +42,12 @@
 #define ARM_MOTOR_UP PB_8
 #define ARM_MOTOR_DOWN PB_9
 
-#define R_ALIGN PA_5
-#define R_DECIDE PA_4
-#define R_TAPE_FOLLOW PA_3
-#define L_TAPE_FOLLOW PA_2
-#define L_DECIDE PA_1
-#define L_ALIGN PA_0
+#define R_ALIGN PA_0
+#define R_DECIDE PA_1
+#define R_TAPE_FOLLOW PA_2
+#define L_TAPE_FOLLOW PA_3
+#define L_DECIDE PA_4
+#define L_ALIGN PA_5
 
 #define T_OR_M PA13 //switch, HIGH = THANOS
 
