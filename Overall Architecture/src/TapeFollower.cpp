@@ -47,6 +47,9 @@ void TapeFollower::followTape(){ //add encoder polling
     rightDecide = analogRead(R_DECIDE)>=_DECIDE_THRESHOLD;
     leftDecide=true;
     if((leftDecide || rightDecide) && (debounce > DEBOUNCE)){
+      // if(Robot::instance()->junctionNumber % 2 ==0){
+      // //  digitalWrite(PB15, HIGH);
+      // }
       stop();
       debounce = 0;
       Robot::instance()->state = SPLIT_CHOOSER; 
@@ -108,9 +111,8 @@ void TapeFollower::stop(){
 }
 
 void TapeFollower::turnLeft(){
-
   pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0); 
-  pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 700, 0); 
+  pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); 
   delay(TURN_DELAY_TIME);
   while(true){
     if(analogRead(L_TAPE_FOLLOW) >= _THRESHOLD || analogRead(R_TAPE_FOLLOW) >= _THRESHOLD){
@@ -121,7 +123,7 @@ void TapeFollower::turnLeft(){
 
 void TapeFollower::turnRight(){
   pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0); //turn right
-  pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 700, 0); 
+  pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); 
   delay(TURN_DELAY_TIME);
   while(true){
     if(analogRead(L_TAPE_FOLLOW) >= _THRESHOLD || analogRead(R_TAPE_FOLLOW) >= _THRESHOLD){
@@ -180,6 +182,7 @@ void TapeFollower::goDistance(int loopNumber){
 }
 
 void TapeFollower::turnInPlaceLeft(){
+  digitalWrite(PB15, HIGH);
   if (Robot::instance()->direction_facing) Robot::instance()->direction_facing = false; 
   else Robot::instance()->direction_facing = true;
   pwm_start(LEFT_WHEEL_BACKWARD, CLOCK_FQ, MAX_SPEED, 280, 0); 
@@ -215,7 +218,7 @@ void TapeFollower::turnInPlaceRight(){
 
 void TapeFollower::splitDecide(){ 
   if(Robot::instance()->direction_facing){
-    if(THANOS){
+    if(my_TEAM == THANOS){
       switch(Robot::instance()->junctionNumber){
         case 0: 
           stop();
@@ -260,7 +263,7 @@ void TapeFollower::splitDecide(){
           break;
         case 1: case 4: 
           if(leftDecide || analogRead(L_DECIDE) > _DECIDE_THRESHOLD){
-            turnLeft();
+            turnLeft(); //TODO
           }
           my_path.push(SPLIT);
           Robot::instance()->state = FOLLOW_TAPE;
@@ -422,7 +425,9 @@ void TapeFollower::avoidCollision(){ //TODO
   delay(500);
   if(Robot::instance()->direction_facing){
     if(Robot::instance()->direction){
-      turnInPlaceLeft(); //facing forward and tabs to the right
+      //turnInPlaceRight(); //facing forward and tabs to the right
+      stop();
+      delay(1000);
       Robot::instance()->state = FOLLOW_TAPE;
       return;
     }

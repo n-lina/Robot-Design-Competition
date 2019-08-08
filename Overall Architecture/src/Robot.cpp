@@ -42,6 +42,7 @@ void Robot::setup(){
   pinMode(ARM_MOTOR_DOWN, OUTPUT);
   pinMode(ARM_SERVO, OUTPUT);
   pinMode(CLAW_SERVO, OUTPUT);
+  pinMode(PB15, OUTPUT);
   pinMode(GAUNTLET_SERVO, OUTPUT);
   pinMode(RIGHT_WHEEL_FORWARD, OUTPUT);
   pinMode(LEFT_WHEEL_FORWARD, OUTPUT);
@@ -58,7 +59,7 @@ void Robot::setup(){
   pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 1);
   pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 1);
 
-   // Attaching servos 
+   //Attaching servos 
   armServo.attach(ARM_SERVO);
   clawServo.attach(CLAW_SERVO);
   L_GauntletServo.attach(GAUNTLET_SERVO);
@@ -77,6 +78,7 @@ void Robot::setup(){
     pwm_start(ARM_MOTOR_RIGHT, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
   }
 
+  digitalWrite(PB15, LOW);
 }
 
 

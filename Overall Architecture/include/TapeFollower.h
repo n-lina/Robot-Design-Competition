@@ -28,6 +28,7 @@ class TapeFollower
     void dropGauntlet();
     void turnInPlaceLeft();
     void turnInPlaceRight();
+    void turnRight();
 
   private:
     bool my_TEAM;
@@ -50,7 +51,7 @@ class TapeFollower
     bool pressed;
     void stop();
     void turnLeft();
-    void turnRight();
+    //void turnRight();
     void getPosition();
     void alignPillar();
     void alignPillarLeft();

@@ -6,19 +6,19 @@
 
 
 //#define TUNING true
-#define ALL_TOGETHER true
+//#define ALL_TOGETHER true
 //#define COLLECT_STONE_X true //change X to be what stoneNumber u want, check the direction
 // test no stone, choose stoneNumber 1,2, or 3 
 //#define COLLECT_STONE_SONAR true
 //#define GO_HOME true 
-//#define MULTIPLEX true 
+#define MULTIPLEX true 
 
 #ifdef ALL_TOGETHER 
 TapeFollower robot(Robot::instance());
 ManageStone Robot(Robot::instance());
 
 void setup() {
-  //Serial.begin(9600);
+  Serial.begin(9600);
   Robot::instance()->setup();
   Robot::instance()->state = GO_DISTANCE;
 }
@@ -115,8 +115,8 @@ void setup(){
   // pinMode(R_TAPE_FOLLOW, INPUT_PULLUP);
   // pinMode(R_DECIDE, INPUT_PULLUP);
   // pinMode(R_ALIGN, INPUT_PULLUP); 
-  Serial.begin(9600);
-
+  // Serial.begin(9600);
+  //pinMode(PB15 , OUTPUT);
 }
 void loop(){
   // Serial.println("R Align: " + String(analogRead(R_ALIGN)));
@@ -127,7 +127,8 @@ void loop(){
   // Serial.println("L Align: " + String(analogRead(L_ALIGN)));
   // Serial.println("___________________________");
   // delay(1000);
-  pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-   pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  // pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  //  pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+  Robot::instance()->L_GauntletServo.write(100);
 }
 #endif

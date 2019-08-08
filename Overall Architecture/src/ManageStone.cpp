@@ -8,11 +8,11 @@ my_TEAM(Robot::instance()->TEAM)
 
 void ManageStone::collectStone(){ // dropInStorage moves claw to correct height + 2cm to not hit the stone.
   Robot::instance()->clawServo.write(0); // opening claw 
-  if(Robot::instance()->direction == LEFT){ 
-    Robot::instance()->armServo.write(180); 
+  if(my_TEAM == THANOS){ 
+    Robot::instance()->armServo.write(0); 
   }
   else{ 
-    Robot::instance()->armServo.write(0);
+    Robot::instance()->armServo.write(180);
   }
   Robot::instance()->stoneNumber++;
   switch(Robot::instance()->stoneNumber){
@@ -28,14 +28,14 @@ void ManageStone::collectStone(){ // dropInStorage moves claw to correct height 
       // pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);
       // pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);
       // delay(500);
+      dropInStorage(1); //stone 1
       pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 600, 0);
       pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 400, 0);
       delay(500);
-      if(METHANOS) Robot::instance()->state = TURN_IN_PLACE_RIGHT;
+      if(my_TEAM == METHANOS) Robot::instance()->state = TURN_IN_PLACE_RIGHT;
       else Robot::instance()->state = TURN_IN_PLACE_LEFT;
       return;
     case 2: 
-      dropInStorage(1); // stone 1
       pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ,  MAX_SPEED, MAX_SPEED, 0);
       delay(4000);
       pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
@@ -47,7 +47,7 @@ void ManageStone::collectStone(){ // dropInStorage moves claw to correct height 
       pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);
       pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);
       delay(500);
-      if(METHANOS) Robot::instance()->state = TURN_IN_PLACE_RIGHT;
+      if(my_TEAM == METHANOS) Robot::instance()->state = TURN_IN_PLACE_RIGHT;
       else Robot::instance()->state = TURN_IN_PLACE_LEFT;
       return;
   }
@@ -55,7 +55,7 @@ void ManageStone::collectStone(){ // dropInStorage moves claw to correct height 
 }
 
 void ManageStone::dropInStorage(int stoneCollected){
-  if(Robot::instance()->direction == LEFT){
+  if(my_TEAM == THANOS){
     switch(stoneCollected){
       case 1: 
         pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
@@ -93,13 +93,9 @@ void ManageStone::dropInStorage(int stoneCollected){
         break;  
     }
   }
-  else{ //direction == RIGHT 
+  else{ 
     switch(stoneCollected){
       case 1: 
-        pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-        delay(4000);
-        pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
-        delay(100);
         Robot::instance()->L_GauntletServo.write(100);
         Robot::instance()->armServo.write(94);
         delay(500);
@@ -110,10 +106,6 @@ void ManageStone::dropInStorage(int stoneCollected){
           delay(200);
         }
         delay(300);
-        pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
-        delay(4000);
-        pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
-        delay(100);
         break;
       case 2: 
         pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
