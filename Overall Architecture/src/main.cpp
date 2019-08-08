@@ -3,16 +3,7 @@
 #include "TapeFollower.h"
 #include "ManageStone.h"
 #include "Constants.h"
-#include <Wire.h>
-#include <Adafruit_SSD1306.h>
-#include <FreeMono9pt7b.h>
 
-// #define OLED_RESET -1  // Not used
-// Adafruit_SSD1306 display(OLED_RESET);
-
-// #if (SSD1306_LCDHEIGHT != 64)
-// #error("Height incorrect, please fix Adafruit_SSD1306.h!");
-// #endif
 
 //#define TUNING true
 #define ALL_TOGETHER true
@@ -35,11 +26,10 @@ void loop() {
   Serial.println(Robot::instance()->state);
   switch (Robot::instance()->state){
     case GO_DISTANCE: // Go a certain distance without checking for tabs/splits
-      robot.goDistance(START_DETECTION);
+      robot.goDistance(2000);
       break;
     case FOLLOW_TAPE: // Follow Tape checking splits/tabs
       robot.followTape();
-      Serial.println("hello");
       break;
     case AVOID_COLLISION: // Avoid Collision {4}
       robot.avoidCollision();
@@ -115,18 +105,44 @@ void loop(){
 #endif
 
 #ifdef MULTIPLEX
+ 
+ Servo Gauntlet;
+ Servo claw; 
+ Servo arm; 
 
 void setup(){
   Robot::instance()->setup();
+  //pinMode(GAUNTLET_SERVO, PA6);
+  //Robot::instance()->L_GauntletServo.attach(GAUNTLET_SERVO);
+
+  // pinMode(GAUNTLET_SERVO, OUTPUT);
+  // Gauntlet.attach(GAUNTLET_SERVO);
+  // pinMode(CLAW_SERVO, OUTPUT);
+  // claw.attach(CLAW_SERVO);
+  // pinMode(ARM_SERVO, OUTPUT);
+  // arm.attach(ARM_SERVO);
+  // pinMode(DEMULTIPLEX_L_WHEEL, OUTPUT);
+  // pinMode(DEMULTIPLEX_R_WHEEL, OUTPUT);
+  // pinMode(LEFT_WHEEL, OUTPUT);
+  // pinMode(RIGHT_WHEEL, OUTPUT);
 }
 void loop(){
-digitalWrite(DEMULTIPLEX_L_WHEEL, LOW);
-pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 900, 0);
-digitalWrite(DEMULTIPLEX_R_WHEEL, LOW);
-pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 900, 0);
-digitalWrite(DEMULTIPLEX_ARM_H, LOW);
-pwm_start(ARM_MOTOR_H, CLOCK_FQ, MAX_SPEED, 900, 0);
-digitalWrite(DEMULTIPLEX_ARM_V, LOW);
-pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, 900, 0);
+  // Robot::instance()->L_GauntletServo.write(0);
+  // delay(1000);
+  // Robot::instance()->L_GauntletServo.write(90);
+  // delay(1000);
+  // Robot::instance()->clawServo.write(0);
+  // delay(1000);
+  // Robot::instance()->clawServo.write(180);
+  // delay(1000);
+  // Robot::instance()->armServo.write(180);
+  // delay(1000);
+  // Robot::instance()->armServo.write(0);
+  // delay(1000);
+  // Gauntlet.write(0);
+  // delay(1000);
+  // Gauntlet.write(90);
+  // delay(1000);
+
 }
 #endif

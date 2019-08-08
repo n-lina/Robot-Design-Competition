@@ -31,9 +31,6 @@ class TapeFollower
 
   private:
     bool my_TEAM;
-    int my_THRESHOLD; 
-    int my_DECIDE_THRESHOLD; 
-    int my_ALIGN_THRESHOLD;
     int derivative;  
     int default_speed;
     int timeStep; 
@@ -48,9 +45,8 @@ class TapeFollower
     bool rightDecide;
     bool leftAlign;
     bool rightAlign;
-    int lastEncoder;
-    int encoder;
     int loopCounter;
+    bool atGauntlet;
     bool pressed;
     void stop();
     void turnLeft();

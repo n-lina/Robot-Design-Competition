@@ -14,52 +14,38 @@ void ManageStone::collectStone(){ // dropInStorage moves claw to correct height 
   else{ 
     Robot::instance()->armServo.write(0);
   }
+  Robot::instance()->stoneNumber++;
   switch(Robot::instance()->stoneNumber){
-    Robot::instance()->stoneNumber++;
     case 1: 
-      digitalWrite(ARM_MOTOR_V, LOW);
-      pwm_start(ARM_MOTOR_V, CLOCK_FQ,  MAX_SPEED, MAX_SPEED, 0);
+      pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ,  MAX_SPEED, MAX_SPEED, 0);
       delay(4000);
-      digitalWrite(ARM_MOTOR_V, LOW);
-      pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, 0, 0);
+      pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
       Robot::instance()->clawServo.write(180);
-      digitalWrite(ARM_MOTOR_V, HIGH);
-      pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+      pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
       delay(4000);
-      digitalWrite(ARM_MOTOR_V, HIGH);
-      pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, 0, 0);
+      pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
       delay(100);
-      digitalWrite(LEFT_WHEEL, HIGH);
-      digitalWrite(RIGHT_WHEEL, HIGH);
-      pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 0, 0);
-      pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 0, 0);
-      delay(500);
-      digitalWrite(LEFT_WHEEL, HIGH);
-      digitalWrite(RIGHT_WHEEL, HIGH);
-      pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 600, 0);
-      pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 400, 0);
+      // pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);
+      // pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);
+      // delay(500);
+      pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 600, 0);
+      pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 400, 0);
       delay(500);
       if(METHANOS) Robot::instance()->state = TURN_IN_PLACE_RIGHT;
       else Robot::instance()->state = TURN_IN_PLACE_LEFT;
       return;
     case 2: 
       dropInStorage(1); // stone 1
-      digitalWrite(ARM_MOTOR_V, LOW);
-      pwm_start(ARM_MOTOR_V, CLOCK_FQ,  MAX_SPEED, MAX_SPEED, 0);
+      pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ,  MAX_SPEED, MAX_SPEED, 0);
       delay(4000);
-      digitalWrite(ARM_MOTOR_V, LOW);
-      pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, 0, 0);
+      pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
       Robot::instance()->clawServo.write(180);
-      digitalWrite(ARM_MOTOR_V, HIGH);
-      pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); //picking stone up 
+      pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0); //picking stone up 
       delay(4000);
-      digitalWrite(ARM_MOTOR_V, HIGH);
-      pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, 0, 0);
+      pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
       dropInStorage(2); // stone 2
-      digitalWrite(LEFT_WHEEL, HIGH);
-      digitalWrite(RIGHT_WHEEL, HIGH);
-      pwm_start(LEFT_WHEEL, CLOCK_FQ, MAX_SPEED, 0, 0);
-      pwm_start(RIGHT_WHEEL, CLOCK_FQ, MAX_SPEED, 0, 0);
+      pwm_start(LEFT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);
+      pwm_start(RIGHT_WHEEL_FORWARD, CLOCK_FQ, MAX_SPEED, 0, 0);
       delay(500);
       if(METHANOS) Robot::instance()->state = TURN_IN_PLACE_RIGHT;
       else Robot::instance()->state = TURN_IN_PLACE_LEFT;
@@ -69,14 +55,12 @@ void ManageStone::collectStone(){ // dropInStorage moves claw to correct height 
 }
 
 void ManageStone::dropInStorage(int stoneCollected){
-  if(Robot::instance()->direction == RIGHT){
+  if(Robot::instance()->direction == LEFT){
     switch(stoneCollected){
       case 1: 
-        digitalWrite(ARM_MOTOR_V, LOW);
-        pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+        pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
         delay(4000);
-        digitalWrite(ARM_MOTOR_V, LOW);
-        pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, 0, 0);
+        pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
         delay(100);
         Robot::instance()->L_GauntletServo.write(100);
         Robot::instance()->armServo.write(94);
@@ -88,19 +72,53 @@ void ManageStone::dropInStorage(int stoneCollected){
           delay(200);
         }
         delay(300);
-        digitalWrite(ARM_MOTOR_V, HIGH);
-        pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+        pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
         delay(4000);
-        digitalWrite(ARM_MOTOR_V, HIGH);
-        pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, 0, 0);
+        pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
         delay(100);
         break;
       case 2: 
-        digitalWrite(ARM_MOTOR_V, LOW);
-        pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+        pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
         delay(4000);
-        digitalWrite(ARM_MOTOR_V, LOW);
-        pwm_start(ARM_MOTOR_V, CLOCK_FQ, MAX_SPEED, 0, 0);
+        pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
+        delay(100);
+        Robot::instance()->L_GauntletServo.write(100);
+        Robot::instance()->armServo.write(0);
+        delay(500);
+        for(volatile int i=100; i>=70; i=i-3){
+          Robot::instance()->L_GauntletServo.write(i);
+          delay(200);
+        }
+        delay(300);    
+        break;  
+    }
+  }
+  else{ //direction == RIGHT 
+    switch(stoneCollected){
+      case 1: 
+        pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+        delay(4000);
+        pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
+        delay(100);
+        Robot::instance()->L_GauntletServo.write(100);
+        Robot::instance()->armServo.write(94);
+        delay(500);
+        Robot::instance()->clawServo.write(0);
+        delay(500);
+        for(volatile int i=100; i>=70; i=i-3){
+          Robot::instance()->L_GauntletServo.write(i);
+          delay(200);
+        }
+        delay(300);
+        pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+        delay(4000);
+        pwm_start(ARM_MOTOR_UP, CLOCK_FQ, MAX_SPEED, 0, 0);
+        delay(100);
+        break;
+      case 2: 
+        pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, MAX_SPEED, 0);
+        delay(4000);
+        pwm_start(ARM_MOTOR_DOWN, CLOCK_FQ, MAX_SPEED, 0, 0);
         delay(100);
         Robot::instance()->L_GauntletServo.write(100);
         Robot::instance()->armServo.write(0);

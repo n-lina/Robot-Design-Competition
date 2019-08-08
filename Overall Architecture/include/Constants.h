@@ -24,28 +24,25 @@
 #define CLOCK_FQ 100000 
 
 //pins
-#define MULTIPLEX_A PB12 
-#define MULTIPLEX_B PB13
-#define MULTIPLEX_OUT PA6
-#define DEMULTIPLEX_ARM_H PB14 
-#define DEMULTIPLEX_ARM_V PB15
-#define DEMULTIPLEX_R_WHEEL PB4
-#define DEMULTIPLEX_L_WHEEL PB5
 
-#define ARM_SERVO PA7
+#define ARM_SERVO PA6
 #define CLAW_SERVO PB0
-#define GAUNTLET_SERVO PB1
+#define GAUNTLET_SERVO PA7
 
 #define ARM_TOP_BOTTOM_LIMIT PA11
 #define ARM_SIDES_LIMIT PA12
 #define COLLISION PA15
 #define TUNING_BUTTON PB3
 
-#define LEFT_WHEEL PB_8
-#define RIGHT_WHEEL PB_9
+#define LEFT_WHEEL_FORWARD PB_8
+#define LEFT_WHEEL_BACKWARD PB_9
+#define RIGHT_WHEEL_FORWARD PB_8
+#define RIGHT_WHEEL_BACKWARD PB_9
 
-#define ARM_MOTOR_H PA_8
-#define ARM_MOTOR_V PA_10
+#define ARM_MOTOR_RIGHT PA_8
+#define ARM_MOTOR_LEFT PA_8
+#define ARM_MOTOR_UP PA_8
+#define ARM_MOTOR_DOWN PA_8
 
 #define R_ALIGN PA_5
 #define R_DECIDE PA_4
@@ -55,7 +52,6 @@
 #define L_ALIGN PA_0
 
 #define T_OR_M PA13 //switch, HIGH = THANOS
-#define CALIBRATE PA14
 
 // ManageStone library
 #define THREE_INCHES 3000 //ms since 1 in/s
