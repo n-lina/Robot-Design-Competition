@@ -76,11 +76,10 @@ Making **critical optimization decisions** considering the strict time constrain
 
 <pre> Our robot in action </pre>
 
-{% include youtubePlayer.html id="Xdj1wyurvZQ" %}
+https://youtu.be/Xdj1wyurvZQ
 
 <br>
 
 <pre> Competition Day </pre> 
 <img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/competition.jpeg?raw=true" width="500"/>
 
-<iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2FCityNewsVAN%2Fvideos%2F583404632190468%2F&show_text=0&width=560" width="560" height="315" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowFullScreen="true"></iframe>
