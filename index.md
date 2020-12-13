@@ -72,9 +72,13 @@ Long, long days (and nights) were spent in the lab ...
 # Results 
 Making **critical optimization decisions** considering the strict time constraint, we decided to focus most on collecting stones, avoiding collisions, and accurate tape following. 
 
+<br>
+
 <pre> Our robot in action </pre>
 
 {% include youtubePlayer.html id="vNxQQTK-OrE" %}
+
+<br>
 
 <pre> Competition Day </pre> 
 <img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/competition.jpeg?raw=true" width="500"/>
