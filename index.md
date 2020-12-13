@@ -76,7 +76,7 @@ Making **critical optimization decisions** considering the strict time constrain
 
 <pre> Our robot in action </pre>
 
-{% include youtubePlayer.html id="vNxQQTK-OrE" %}
+{% include youtubePlayer.html id="Xdj1wyurvZQ" %}
 
 <br>
 
