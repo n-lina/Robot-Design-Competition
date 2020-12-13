@@ -1,37 +1,82 @@
-## Welcome to GitHub Pages
+<pre> Meet the team! 
+ From left to right: Michelle, Thien, Karina, and me, Lina. </pre> 
+<img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/team.jpeg?raw=true" width="600"/>
 
-You can use the [editor on GitHub](https://github.com/n-lina/Avengers-Robot-Competition/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
+# Overview
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+In the summer of 2019, my team and I competed in an Avengers themed robot design competition, for which we created a fully functional robot capable of autonomous navigation and Infinity stone collection!
 
-### Markdown
+**The Challenge**: Two robots, one representing Thanos and the other representing Methanos, chosen at random, compete to collect the Infinity stones and the Avengers plushies. Stealing from the other team's gauntlet is fair play!
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+2 points are scored for every Infinity stone successfully returned to the gauntlet. 1 point is scored for every Avenger plushie 'rescued.' Collisions with the other robot, restarts, and manual assistance all result in point deductions. 
 
-```markdown
-Syntax highlighted code block
+<pre> Competition Surface </pre> 
 
-# Header 1
-## Header 2
-### Header 3
+<img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/surface.png?raw=true" width="600"/>
 
-- Bulleted
-- List
+# Software Breakdown 
+The software engineer of the team, I implemented accurate PID control algorithms and a round-robin state-machine software architecture that prioritizes efficiency, robustness, and code safety.
 
-1. Numbered
-2. List
+### Overall Round-Robin State-Machine Architecture 
+-  The infinite loop features a state machine with 7 states: 
 
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
+```cpp
+void loop() {
+  switch (Robot::instance()->state){
+    case GO_DISTANCE: // Go a certain distance without checking for tabs/splits
+      robot.goDistance(START_DETECTION);
+      break;
+    case FOLLOW_TAPE: // Follow Tape checking splits/tabs
+      robot.followTape();
+      break;
+    case AVOID_COLLISION: // Avoid Collision {4}
+      robot.avoidCollision();
+      break; 
+    case SPLIT_CHOOSER: // Split Chooser 
+      robot.splitDecide();
+      break;
+    case COLLECT_STONE: // Collect Stone {3}
+      Robot.collectStone();
+      break;
+    case GO_HOME: // Go home and deposit stones at certain time (1:30) {2} turn off collision interrupts 
+      robot.goHome();
+      break;
+    case PARK: // park at gauntlet
+      robot.park();
+      break;
+  }
+}
 ```
+The state-machine breaks the complicated, multi-variable design problem down into manageable, discrete states in which the robot's behaviour is clearly defined. Given more time, possible improvements include using interrupts or even a real-time operating system for increased control, safety, and robustness. 
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+### TapeFollower.cpp — PID Control Algorithm, Autonomous Navigation
+-  The more accurate our tape following, the less we had to worry about falling off the edge or getting lost on the track. As such, this component of the software was imperative to our success. Dedicating 3 phototransistors to tape following, we achieved highly accurate tape following via a **Proportional-Integral-Derivative (PID) control algorithm!**
+-  **Notable methods:** followTape(), turnLeft(), turnRight(), splitDecide(), avoidCollision(), alignPillar(), getPosition(), dropGauntlet()
+-  This library is primarily responsible for the robot's autonomous navigation, position tracking, decision making, and alignment. 
 
-### Jekyll Themes
+### ManageStone.cpp
+-  **Notable methods:** collectStone(), dropInStorage()
+-   This library includes methods that implement the robot's ability to collect Infinity stones and drop them in the gauntlet. 
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/n-lina/Avengers-Robot-Competition/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+### Robot.cpp 
+-   Setting up the robot; intializing variables 
 
-### Support or Contact
+# Design Process 
+Long, long days (and nights) were spent in the lab ... 
+<pre> A typical day in the lab ... at 10pm ..  </pre> 
+<img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/lab.jpeg?raw=true" width="500"/>
 
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+<pre> One Possible STM32 Bluepill Microcontroller IO Pin Layout </pre>
+<img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/image0.jpeg?raw=true" width="500"/>
+
+# Results 
+Making **critical optimization decisions** considering the strict time constraint, we decided to focus most on collecting stones, avoiding collisions, and accurate tape following. 
+
+<pre> Our robot in action </pre>
+
+{% include youtubePlayer.html id="vNxQQTK-OrE" %}
+
+<pre> Competition Day </pre> 
+<img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/competition.jpeg?raw=true" width="500"/>
+
+<iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2FCityNewsVAN%2Fvideos%2F583404632190468%2F&show_text=0&width=560" width="560" height="315" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share" allowFullScreen="true"></iframe>
