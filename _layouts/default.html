@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8">
+
+<!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Avengers-Robot-Competition | The software for Groot — our fully-functional, autonomously-navigating, stone-collecting robot built for an Avengers-Themed Robot Competition!</title>
+<meta name="generator" content="Jekyll v3.9.0" />
+<meta property="og:title" content="Avengers-Robot-Competition" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="The software for Groot — our fully-functional, autonomously-navigating, stone-collecting robot built for an Avengers-Themed Robot Competition!" />
+<meta property="og:description" content="The software for Groot — our fully-functional, autonomously-navigating, stone-collecting robot built for an Avengers-Themed Robot Competition!" />
+<link rel="canonical" href="https://n-lina.github.io/Avengers-Robot-Competition/" />
+<meta property="og:url" content="https://n-lina.github.io/Avengers-Robot-Competition/" />
+<meta property="og:site_name" content="Avengers-Robot-Competition" />
+<script type="application/ld+json">
+{"headline":"Avengers-Robot-Competition","@type":"WebSite","url":"https://n-lina.github.io/Avengers-Robot-Competition/","description":"The software for Groot — our fully-functional, autonomously-navigating, stone-collecting robot built for an Avengers-Themed Robot Competition!","name":"Avengers-Robot-Competition","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#157878">
+    <link rel="stylesheet" href="/Avengers-Robot-Competition/assets/css/style.css?v=310d54191d75c067c5faae35c6b46e08e1724a90">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Avengers Robot Competition</h1>
+      <h2 class="project-tagline">The software for Groot — our fully-functional, autonomously-navigating, stone-collecting robot built for an Avengers-Themed Robot Competition! </h2>
+      
+        <a href="https://github.com/n-lina/Avengers-Robot-Competition" class="btn">View on GitHub</a>
+      
+      
+    </section>
+
+    <section class="main-content">
+      <pre> Meet the team! 
+ From left to right: Michelle, Thien, Karina, and me, Lina. </pre>
+<p><img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/team.jpeg?raw=true" width="600" /></p>
+
+<h1 id="overview">Overview</h1>
+
+<p>In the summer of 2019, my team and I competed in an Avengers themed robot design competition, for which we created a fully functional robot capable of autonomous navigation and Infinity stone collection!</p>
+
+<p><strong>The Challenge</strong>: Two robots, one representing Thanos and the other representing Methanos, chosen at random, compete to collect the Infinity stones and the Avengers plushies. Stealing from the other team’s gauntlet is fair play!</p>
+
+<p>2 points are scored for every Infinity stone successfully returned to the gauntlet. 1 point is scored for every Avenger plushie ‘rescued.’ Collisions with the other robot, restarts, and manual assistance all result in point deductions.</p>
+
+<pre> Competition Surface </pre>
+
+<p><img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/surface.png?raw=true" width="600" /></p>
+
+<h1 id="software-breakdown">Software Breakdown</h1>
+<p>The software engineer of the team, I implemented accurate PID control algorithms and a round-robin state-machine software architecture that prioritizes efficiency, robustness, and code safety.</p>
+
+<h3 id="overall-round-robin-state-machine-architecture">Overall Round-Robin State-Machine Architecture</h3>
+<ul>
+  <li>The infinite loop features a state machine with 7 states:</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">switch</span> <span class="p">(</span><span class="n">Robot</span><span class="o">::</span><span class="n">instance</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">){</span>
+    <span class="k">case</span> <span class="n">GO_DISTANCE</span><span class="p">:</span> <span class="c1">// Go a certain distance without checking for tabs/splits</span>
+      <span class="n">robot</span><span class="p">.</span><span class="n">goDistance</span><span class="p">(</span><span class="n">START_DETECTION</span><span class="p">);</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">FOLLOW_TAPE</span><span class="p">:</span> <span class="c1">// Follow Tape checking splits/tabs</span>
+      <span class="n">robot</span><span class="p">.</span><span class="n">followTape</span><span class="p">();</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">AVOID_COLLISION</span><span class="p">:</span> <span class="c1">// Avoid Collision {4}</span>
+      <span class="n">robot</span><span class="p">.</span><span class="n">avoidCollision</span><span class="p">();</span>
+      <span class="k">break</span><span class="p">;</span> 
+    <span class="k">case</span> <span class="n">SPLIT_CHOOSER</span><span class="p">:</span> <span class="c1">// Split Chooser </span>
+      <span class="n">robot</span><span class="p">.</span><span class="n">splitDecide</span><span class="p">();</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">COLLECT_STONE</span><span class="p">:</span> <span class="c1">// Collect Stone {3}</span>
+      <span class="n">Robot</span><span class="p">.</span><span class="n">collectStone</span><span class="p">();</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">GO_HOME</span><span class="p">:</span> <span class="c1">// Go home and deposit stones at certain time (1:30) {2} turn off collision interrupts </span>
+      <span class="n">robot</span><span class="p">.</span><span class="n">goHome</span><span class="p">();</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">PARK</span><span class="p">:</span> <span class="c1">// park at gauntlet</span>
+      <span class="n">robot</span><span class="p">.</span><span class="n">park</span><span class="p">();</span>
+      <span class="k">break</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>The state-machine breaks the complicated, multi-variable design problem down into manageable, discrete states in which the robot’s behaviour is clearly defined. Given more time, possible improvements include using interrupts or even a real-time operating system for increased control, safety, and robustness.</p>
+
+<h3 id="tapefollowercpp--pid-control-algorithm-autonomous-navigation">TapeFollower.cpp — PID Control Algorithm, Autonomous Navigation</h3>
+<ul>
+  <li>The more accurate our tape following, the less we had to worry about falling off the edge or getting lost on the track. As such, this component of the software was imperative to our success. Dedicating 3 phototransistors to tape following, we achieved highly accurate tape following via a <strong>Proportional-Integral-Derivative (PID) control algorithm!</strong></li>
+  <li><strong>Notable methods:</strong> followTape(), turnLeft(), turnRight(), splitDecide(), avoidCollision(), alignPillar(), getPosition(), dropGauntlet()</li>
+  <li>This library is primarily responsible for the robot’s autonomous navigation, position tracking, decision making, and alignment.</li>
+</ul>
+
+<h3 id="managestonecpp">ManageStone.cpp</h3>
+<ul>
+  <li><strong>Notable methods:</strong> collectStone(), dropInStorage()</li>
+  <li>This library includes methods that implement the robot’s ability to collect Infinity stones and drop them in the gauntlet.</li>
+</ul>
+
+<h3 id="robotcpp">Robot.cpp</h3>
+<ul>
+  <li>Setting up the robot; intializing variables</li>
+</ul>
+
+<h1 id="design-process">Design Process</h1>
+<p>Long, long days (and nights) were spent in the lab …</p>
+<pre> A typical day in the lab ... at 10pm ..  </pre>
+<p><img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/lab.jpeg?raw=true" width="500" /></p>
+
+<pre> One Possible STM32 Bluepill Microcontroller IO Pin Layout </pre>
+<p><img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/image0.jpeg?raw=true" width="500" /></p>
+
+<h1 id="results">Results</h1>
+<p>Making <strong>critical optimization decisions</strong> considering the strict time constraint, we decided to focus most on collecting stones, avoiding collisions, and accurate tape following.</p>
+
+<p><br /></p>
+
+<pre> Our robot in action </pre>
+
+<head>
+  <link rel="stylesheet" href="styles.css" type="text/css" />
+</head>
+
+<div class="embed-youtube">
+    <iframe src="https://www.youtube.com/embed/Xdj1wyurvZQ" width="560" height="315" frameborder="0" allowfullscreen="">
+    </iframe>
+</div>
+
+<p><br /></p>
+
+<pre> Competition Day </pre>
+<p><img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/competition.jpeg?raw=true" width="500" /></p>
+
+<iframe src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2FCityNewsVAN%2Fvideos%2F583404632190468%2F&amp;show_text=0&amp;width=560" width="560" height="315" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+
+
+      <footer class="site-footer">
+        
+          <span class="site-footer-owner"><a href="https://github.com/n-lina/Avengers-Robot-Competition">Avengers-Robot-Competition</a> is maintained by <a href="https://github.com/n-lina">n-lina</a>.</span>
+        
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a>.</span>
+      </footer>
+    </section>
+
+    
+  </body>
+</html>
