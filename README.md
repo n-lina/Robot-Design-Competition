@@ -4,7 +4,7 @@
 
 # Overview
 
-In the summer of 2019, my team and I competed in an Avengers themed robot design competition, for which we created a fully functional robot capable of autonomous navigation and Infinity stone collection!
+In the summer of 2019, my team and I competed in an Avengers themed robot design competition, for which we created a fully functional robot capable of autonomous navigation and 'Infinity stone' collection!
 
 **The Challenge**: Two robots, one representing Thanos and the other representing Methanos, chosen at random, compete to collect the Infinity stones and the Avengers plushies. Stealing from the other team's gauntlet is fair play!
 
@@ -70,7 +70,7 @@ Long, long days (and nights) were spent in the lab ...
 <img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/image0.jpeg?raw=true" width="500"/>
 
 # Results 
-Making **critical optimization decisions** considering the strict time constraint, we decided to focus most on collecting stones, avoiding collisions, and accurate tape following. 
+Making **critical optimization decisions** considering the strict time constraint, we decided to focus most on collecting stones, avoiding collisions, and accurate tape following. As a result, we were among the **top three teams in time trials.**
 
 <br>
 
