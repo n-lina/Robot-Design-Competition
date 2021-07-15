@@ -6,9 +6,7 @@
 
 In the summer of 2019, my team and I competed in an Avengers themed robot design competition, for which we created a fully functional robot capable of autonomous navigation and 'Infinity stone' collection!
 
-**The Challenge**: Two robots, one representing Thanos and the other representing Methanos, chosen at random, compete to collect the Infinity stones and the Avengers plushies. Stealing from the other team's gauntlet is fair play!
-
-2 points are scored for every Infinity stone successfully returned to the gauntlet. 1 point is scored for every Avenger plushie 'rescued.' Collisions with the other robot, restarts, and manual assistance all result in point deductions. 
+**The Challenge**: To compete against another robot to collect 'Infinity' stones and Avengers plushies. 2 points are scored for every Infinity stone successfully returned to the gauntlet. 1 point is scored for every Avenger plushie 'rescued.' Collisions with the other robot, restarts, and manual assistance all result in point deductions. 
 
 <pre> Competition Surface </pre> 
 
@@ -74,7 +72,7 @@ Making **critical optimization decisions** considering the strict time constrain
 
 <br>
 
-<pre> Our robot in action </pre>
+<pre> Our Robot in Action </pre>
 
 https://youtu.be/Xdj1wyurvZQ
 
