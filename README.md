@@ -4,13 +4,17 @@
 
 # Overview
 
-In the summer of 2019, my team and I competed in an Avengers themed robot design competition, for which we created a fully functional robot capable of autonomous navigation and 'Infinity stone' collection!
+In the summer of 2019, my team and I competed in an Avengers themed robot design competition, for which we created a fully functional robot capable of autonomous navigation and 'Infinity' stone collection!
 
 **The Challenge**: To compete against another robot to collect 'Infinity' stones and Avengers plushies. 2 points are scored for every Infinity stone successfully returned to the gauntlet. 1 point is scored for every Avenger plushie 'rescued.' Collisions with the other robot, restarts, and manual assistance all result in point deductions. 
 
 <pre> Competition Surface </pre> 
 
 <img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/surface.png?raw=true" width="600"/>
+
+<pre> 'Infinity' Stone & Plushie </pre> 
+
+<img src="https://github.com/n-lina/Robot-Design-Competition/blob/master/robotcomp.jpg?raw=true" width="200"/>
 
 # Software Breakdown 
 The software engineer of the team, I implemented accurate PID control algorithms and a round-robin state-machine software architecture that prioritizes efficiency, robustness, and code safety.
